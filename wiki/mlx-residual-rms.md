@@ -54,4 +54,6 @@ M512 的 fast 路径在两个 dtype、三轮进程中位数排序中均最低，
 
 运行以成功完成结束，90 份预检查输出、全部输入/CPU 参考、54 份 benchmark 首次输出及全部 756 项计时与在线检查指标已留存。成功的 162 次预热和 540 次预热后输出没有逐张保留，不能宣称后续可对其全部独立重算。来源 `local-mlx-residual-rms-20261007`，逻辑引用 `2026-10-07-mlx-residual-rms/derived/summary.json`；原始记录在仓库外、未随公开库发布，外部读者不能据页面独立复验原运行。
 
+后续[自定义 Metal 比较](mlx-custom-rms.md)另立同时返回 y/s 的契约，并检查真实非连续输入；它的时间不能直接与本页 y-only 路径比较。
+
 配合 [融合候选](fusion.md)、[MLX 执行](mlx-execution.md)、[测量范围](measurement.md) 使用。

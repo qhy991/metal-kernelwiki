@@ -10,6 +10,8 @@
 
 本机现有 [残差 RMSNorm 三路比较](mlx-residual-rms.md)：F32/BF16 的表达式、compile、fast 全部通过指定数值门，但小 M 排序反转、编译路径进程间波动明显。所读 [v0.31.2 通用融合列表](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/compile.cpp#L73) 不含 Reduce 或 RMSNorm primitive；含归约的表达式不能因包上 compile 就宣称整段单 kernel。该运行仅返回归一化结果，没有 profiler 或模型收益证据。
 
+后续[自定义 Metal 双输出比较](mlx-custom-rms.md)同时保留归一化 y 和 residual s。M512 隔列输入时，默认连续化 custom 比原生路径更慢，显式 stride 路径较快；BF16 差异很小，小尺寸没有统一赢家。布局处理属于完整路径成本；此结果没有证明复制占比、实际 dispatch 数或整模型收益。
+
 ## MLX custom Metal 的隐藏成本
 
 默认 row-contiguous 保障可能生成输入拷贝；关闭后必须按真实 strides 寻址。把这种转换计入 end-to-end 路径。先对照普通 MLX 运算和 fast primitive，再用小范围自定义内核处理已知热点。[Custom Metal 文档](https://ml-explore.github.io/mlx/build/html/dev/custom_metal_kernels.html)

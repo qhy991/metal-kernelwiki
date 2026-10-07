@@ -1,6 +1,6 @@
 # MLX 执行：惰性计时、编译融合与 custom Metal
 
-证据状态：官方文档；核查于 2026-10-07，页面显示 MLX 0.32.3。求值边界已有 [M4/MLX 0.31.2 限定观测](mlx-async-evaluation.md)；残差 RMSNorm 的编译/fast 候选已有 [三路限定比较](mlx-residual-rms.md)；custom Metal 候选仍未本机验证。先 profile，再决定是否改 kernel。
+证据状态：官方文档；核查于 2026-10-07，页面显示 MLX 0.32.3。求值边界已有 [M4/MLX 0.31.2 限定观测](mlx-async-evaluation.md)；残差 RMSNorm 的编译/fast 候选已有 [三路限定比较](mlx-residual-rms.md)；custom Metal 双输出 RMSNorm 也已有[连续/隔列输入限定比较](mlx-custom-rms.md)。先 profile，再决定是否改 kernel。
 
 ## 测的是计算还是构图
 
@@ -23,6 +23,8 @@ profile 若显示 elementwise 中间读写或许多小 dispatch，可比较 `mx.
 ## 最后才写 custom Metal
 
 `mx.fast.metal_kernel` 创建可能触发 JIT，应复用对象。默认 `ensure_row_contiguous=True` 可能产生输入复制；若关闭，kernel 必须正确处理 shape/strides。当前文档默认 safe math；masked softmax 依赖 `exp(-inf)=0`，不能无条件改为 relaxed/fast。[Custom Metal Kernels](https://ml-explore.github.io/mlx/build/html/dev/custom_metal_kernels.html)
+
+本机 0.31.2 的接口没有上面新版文档的 `compile_options` 参数；[版本源码](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/custom_kernel.cpp)与所保留安装接口相符。[本轮双输出探针](mlx-custom-rms.md)在安装版本下验证了连续/隔列切片与 D4103 尾部，不能扩展为任意布局支持。
 
 以连续、转置、切片、尾部、不同 dtype 和极值输入对照参考；将隐式复制计入路径。搜索 threadgroup 与每线程工作量时观察 profiler 的分配、调度、访存及占用相关证据。采用条件是正确性、代表性 shape 和端到端收益同时成立；某个孤立 kernel 更快不足以通过。所有建议均为候选生成规则，不是跨 Apple 芯片的固定调参答案。
 

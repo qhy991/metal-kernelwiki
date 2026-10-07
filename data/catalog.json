@@ -331,6 +331,18 @@
       "计时波动",
       "性能波动",
       "延迟长尾"
+    ],
+    "noncontiguous": [
+      "非连续",
+      "隔列切片",
+      "strided",
+      "non-contiguous"
+    ],
+    "custom-metal": [
+      "自定义metal",
+      "自定义内核",
+      "metal kernel",
+      "custom kernel"
     ]
   },
   "pages": [
@@ -400,7 +412,8 @@
         "apple-resource-sync",
         "mlx-command-buffer-issue",
         "mlx-compile-fusion-0312",
-        "local-mlx-residual-rms-20261007"
+        "local-mlx-residual-rms-20261007",
+        "local-mlx-custom-rms-20261007"
       ],
       "summary": "用 trace 区分表达式、kernel 和提交开销，比较融合收益与寄存器、复制、同步代价。"
     },
@@ -771,7 +784,9 @@
         "local-mlx-m4-r1",
         "local-mlx-boundaries-20261007",
         "mlx-compile-fusion-0312",
-        "local-mlx-residual-rms-20261007"
+        "local-mlx-residual-rms-20261007",
+        "local-mlx-custom-rms-20261007",
+        "mlx-custom-metal-impl-0312"
       ],
       "summary": "完成惰性求值再计时，优先采用 fast 原语与稳定子图编译，最后依据 profile 编写 custom Metal。"
     },
@@ -1268,9 +1283,42 @@
         "mlx-rms-fast-0312",
         "mlx-rms-metal-0312",
         "mlx-compile-fusion-0312",
-        "local-mlx-residual-rms-20261007"
+        "local-mlx-residual-rms-20261007",
+        "local-mlx-custom-rms-20261007"
       ],
       "summary": "M4上残差RMSNorm的表达式/compile/fast三路，F32与BF16共90数值配置和756计时样本过门；M512的fast逐轮较快，小M排序反转、r2-compiled波动大，不推出单核融合或模型收益。"
+    },
+    {
+      "id": "mlx-custom-rms",
+      "title": "自定义 Metal RMSNorm：双输出与非连续输入的成本",
+      "path": "wiki/mlx-custom-rms.md",
+      "type": "technique",
+      "engines": [
+        "mlx",
+        "metal"
+      ],
+      "tags": [
+        "custom-metal",
+        "rmsnorm",
+        "residual",
+        "noncontiguous",
+        "fusion",
+        "local-validation"
+      ],
+      "symptoms": [
+        "copy-overhead",
+        "numerical-drift",
+        "small-kernel-overhead"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-custom-metal",
+        "mlx-custom-metal-guide-0312",
+        "mlx-custom-metal-impl-0312",
+        "mlx-normalization-0312",
+        "local-mlx-custom-rms-20261007"
+      ],
+      "summary": "M4/MLX0.31.2的双输出RMSNorm，native fast与自动连续化/显式stride两个custom路径：216项正确性及1512计时样本过门；M512隔列copy更慢，strided较快，BF16仅小幅差异，小尺寸无统一赢家。"
     }
   ],
   "sources": [
@@ -2283,6 +2331,46 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-mlx-residual-rms/derived/summary.json",
       "note": "90 F32/BF16 shape-pattern-route prechecks pass; all 756 timed outputs pass online gates. 54 first/162 warmup/540 post-warmup samples; r2-compiled variance retained. Raw outputs for 90 prechecks and 54 first calls, remaining success outputs metrics only. No profiler/kernel-count/model speed claim; raw records external/unpublished."
+    },
+    {
+      "id": "mlx-custom-metal-guide-0312",
+      "title": "MLX v0.31.2 custom Metal kernel guide",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/docs/src/dev/custom_metal_kernels.rst",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "版本固定的创建/调用、grid总线程数、模板类型、shape/strides、默认连续化与输出契约；不用当前文档的新增参数推定旧版能力。"
+    },
+    {
+      "id": "mlx-custom-metal-impl-0312",
+      "title": "MLX v0.31.2 custom Metal signature and dispatch implementation",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/custom_kernel.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag; installed binary internals not profiled",
+      "mutable": true,
+      "note": "source触发元数据注入、0D标量引用、ensure_row_contiguous复制和init_value填充、线程组clamp与pipeline上限。一次调用不等于完整路径单dispatch。"
+    },
+    {
+      "id": "mlx-normalization-0312",
+      "title": "MLX v0.31.2 Metal normalization allocation and donation",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/normalization.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag; local buffer donation not measured",
+      "mutable": true,
+      "note": "RMSNorm检查布局、按is_donatable复用或分配输出；保留residual可能改变缓冲生命周期，不能拿y-only与(y,s)直接比较融合收益。"
+    },
+    {
+      "id": "local-mlx-custom-rms-20261007",
+      "title": "M4 custom residual RMSNorm dual-output and stride comparison",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "M4 MLX0.31.2 macOS27.0(26A428); 216 checks and nine benchmark processes",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-mlx-custom-rms/derived/summary.json",
+      "note": "216 F32/BF16 prechecks and 1512 online timed-output gates pass for native and two custom routes. Both y and residual required; real contiguous/step2 metadata checked. D4103 correctness only; random D4096 timing. 216 check and 108 first output pairs retained; 1404 success pairs metrics only. No profiler/model claim; raw records external/unpublished."
     }
   ]
 }

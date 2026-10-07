@@ -48,6 +48,7 @@ python3 scripts/validate.py
 | 左填充、旋转后 chunk 续写、mask 错位 | [mask 与返回槽位对齐](../wiki/mlx-cache-mask-alignment.md) |
 | 保存缓存、加载后报错、升级后的文件兼容 | [保存恢复与续写](../wiki/mlx-cache-persistence.md) |
 | 残差 RMSNorm、compile 与 fast 的精度及延迟 | [三路数值/计时比较](../wiki/mlx-residual-rms.md) |
+| 自定义 Metal、非连续输入复制、双输出 RMSNorm | [布局与融合的成本](../wiki/mlx-custom-rms.md) |
 | 边界探针已测与未测范围 | [探针进度](../wiki/mlx-regression-probes.md) |
 | llama.cpp 测试空跑、数值或计时范围不明 | [验证流程](../wiki/llamacpp-validation.md) |
 
