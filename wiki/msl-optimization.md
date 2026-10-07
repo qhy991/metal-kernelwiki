@@ -38,6 +38,8 @@ Apple [function specialization](https://developer.apple.com/documentation/metal/
 
 真实源码例子是 RMSNorm **VJP** 的 `has_w [[function_constant(20)]]`：host 设置 index 20，并区分 `_w/_now` cache key。它说明 shader/host 必须共同维护特化与缓存身份，**不说明 forward 推理能省掉权重乘法**。禁用分支后的可选输入访问、tail fallback 和输出形状仍要用共同 oracle 检查。
 
+矩阵场景进一步看 [公开 SIMD-group API 与 Steel tile 复用](msl-matrix.md)：手工 lane fragment 映射属于实现细节，FP16 buffer、矩阵/累加类型和输出 dtype 分别决定数值行为，不能把降低中间精度当成无语义变化的优化。
+
 ## 调参要回到证据
 
 实际 dispatch 的线程组大小、pipeline 报告的合法上限、编译 descriptor 的 `maxTotalThreadsPerThreadgroup` 是相关但不同的量。不能把 MLX 的 `threadgroup=(...)` 当作已经修改了编译器资源提示；也不能把最大合法值当最快值。[Apple 线程组指南](https://developer.apple.com/documentation/metal/calculating-threadgroup-and-grid-sizes)

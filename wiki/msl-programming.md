@@ -107,4 +107,6 @@ barrier 要同时检查参与线程、控制流和内存域。`mem_none` 不为�
 
 这组检查不包含 FP16/BF16、NaN/Inf、任意转置/负 stride、非完整归约线程组、原子、function constants 或矩阵/tensor 操作，也没有证明向量访存指令、最优 TG 或速度收益。来源 `local-msl-usage-20261007`，逻辑引用 `2026-10-07-msl-usage/derived/summary.json`；原始记录在仓库外且未公开，公开页面不能独立重放本机结果。
 
+矩阵协作的统一参与、无 masked load/store、float/half 中间精度见 [MSL 矩阵乘](msl-matrix.md)，包含独立于本页的 324 项数值检查与失败。
+
 配合 [线程组与内存](metal-memory-threadgroups.md)、[MSL 优化](msl-optimization.md)、[自定义 RMSNorm](mlx-custom-rms.md)、[测量范围](measurement.md)使用。编译通过、正确性通过、生成预期指令、性能收益是四项不同证据。

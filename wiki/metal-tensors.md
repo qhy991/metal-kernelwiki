@@ -6,6 +6,8 @@
 
 先分析目标框架实际热点。大 GEMM 可尝试 MPP `mpp::tensor_ops`；小 batch decode 则先核查权重/KV 读取和调度开销。M5 专用矩阵硬件不能保证小矩阵或端到端同幅提速。M5 技术讲座给出的版本节点是：26.1 BF16 tensor、26.3 cooperative tensor 输入 matmul、26.4 INT4/INT8 tensor；必须继续核查具体 symbol 的 SDK availability。[M5 ML 讲座](https://developer.apple.com/videos/play/tech-talks/111432/)
 
+旧式8×8 `simdgroup_matrix` 与 MPP cooperative tensor 的区别，见 [MSL 矩阵乘](msl-matrix.md)。该页的 M4 运行只验证公开 SIMD-group 示例，没有运行本页 MPP/TensorOps 候选。
+
 ## GEMM 先验证 cache 与 tile
 
 MPP 指南的 GEMM 路径强调直接访问 device memory 并利用 cache；不要默认移植 CUDA 的 shared-memory staging 和软件流水线。候选变量包括 SIMD/threadgroup tile、保持局部性的遍历顺序、完整 tile 的静态 extent、K 分段频率、寄存器内 epilogue。指南的 M5 起始参数只是该目标的候选，不能跨代固定。[MPP 指南](https://developer.apple.com/download/files/Metal-Performance-Primitives-Programming-Guide.pdf)

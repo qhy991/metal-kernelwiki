@@ -438,6 +438,24 @@
       "函数常量",
       "template",
       "模板特化"
+    ],
+    "simd-matrix": [
+      "simdgroup_matrix",
+      "simdgroup_load",
+      "simdgroup_store",
+      "simdgroup_multiply_accumulate",
+      "SIMD矩阵",
+      "MSL矩阵乘",
+      "矩阵乘加",
+      "fragment"
+    ],
+    "accumulation-precision": [
+      "accumulator",
+      "accumulation precision",
+      "累加精度",
+      "FP16累加",
+      "F32累加",
+      "half matrix"
     ]
   },
   "pages": [
@@ -1668,6 +1686,45 @@
         "apple-m5-profiling"
       ],
       "summary": "从MLX具体MSL写法解释每线程多元素、重读与寄存器保留、两级归约、function constant/template；区分源码机制与尚未测量的收益。"
+    },
+    {
+      "id": "msl-matrix",
+      "title": "MSL 矩阵乘：SIMD-group、尾块、累加精度与 tile 复用",
+      "path": "wiki/msl-matrix.md",
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx"
+      ],
+      "tags": [
+        "msl",
+        "simd-matrix",
+        "gemm",
+        "accumulation-precision",
+        "register-pressure",
+        "threadgroups",
+        "tail-correctness",
+        "strides",
+        "local-validation"
+      ],
+      "symptoms": [
+        "numerical-drift",
+        "slow-prefill",
+        "slow-kernel"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "mlx-steel-mma-0312",
+        "mlx-steel-gemm-fused-0312",
+        "mlx-metal-matmul-host-0312",
+        "mlx-steel-nax-0312",
+        "apple-feature-tables-20260521",
+        "local-msl-matrix-20261007",
+        "apple-msl-spec-41",
+        "mlx-custom-metal-guide-0312",
+        "mlx-custom-metal-impl-0312"
+      ],
+      "summary": "公开8×8矩阵API、完整组/tail规则与Steel复用机制；M4三条F32路径243项通过，half矩阵81项失败，整体失败保留。源码lane映射非可移植合同，无性能结论。"
     }
   ],
   "sources": [
@@ -3049,7 +3106,7 @@
       "revision": "Version 4.1; 2026-06-04",
       "checked": "2026-10-07",
       "mutable": true,
-      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。"
+      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。 矩阵页另读§2.4/6.8/7.2.1，区分同T公开签名、未规定lane映射及MPP接口条件。"
     },
     {
       "id": "apple-msl-generic-pointers",
@@ -3130,6 +3187,66 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-msl-usage/derived/summary.json",
       "note": "50 affine and120 row sums pass original numeric gates, independently recomputed from all170 saved outputs. 1/30 metadata checks fails: singleton step2 reports stride1. Overall corrected run remains failed. No speed, instruction or MSL4.1 API runtime claim. Raw records unpublished."
+    },
+    {
+      "id": "mlx-steel-mma-0312",
+      "title": "MLX v0.31.2 Steel GEMM fragment/MMA",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/steel/gemm/mma.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 (tag; mutable)",
+      "mutable": true,
+      "note": "BaseMMAFrag<8,8>、MMATile、BlockMMA；手工 fragment 装载和 simdgroup_multiply_accumulate。lane 映射是实现细节，未实测。"
+    },
+    {
+      "id": "mlx-steel-gemm-fused-0312",
+      "title": "MLX v0.31.2 Steel fused GEMM kernel",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/steel/gemm/kernels/steel_gemm_fused.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 (tag; mutable)",
+      "mutable": true,
+      "note": "gemm 模板、threadgroup staging、align function constants、K/M/N tail 分支；未审计 loader 定义。"
+    },
+    {
+      "id": "mlx-metal-matmul-host-0312",
+      "title": "MLX v0.31.2 Metal matmul host dispatch",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/matmul.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 (tag; mutable)",
+      "mutable": true,
+      "note": "check_transpose、regular tile dispatch、split-K/NAX selection；硬件可用性函数本体不在四文件范围内。"
+    },
+    {
+      "id": "mlx-steel-nax-0312",
+      "title": "MLX v0.31.2 Steel NAX MPP fragments",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/steel/gemm/nax.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 (tag; mutable)",
+      "mutable": true,
+      "note": "BaseNAXFrag::mma 使用 matmul2d cooperative tensors；不是旧 simdgroup_matrix 的别名，未验证本机可执行性。"
+    },
+    {
+      "id": "apple-feature-tables-20260521",
+      "title": "Apple Metal Feature Set Tables (May21 2026)",
+      "url": "https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "May21 2026; mutable official PDF URL",
+      "mutable": true,
+      "note": "Pages2/4/6: M4 Apple9, SIMD-scoped matrix multiply begins Apple7; programming-model column is not MSL language version. Does not prove actual instructions or performance."
+    },
+    {
+      "id": "local-msl-matrix-20261007",
+      "title": "M4 MSL matrix: F32 routes pass, half matrix violates common F32-output contract",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "2026-10-07; M4/MLX0.31.2; complete run exits2",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-msl-matrix/derived/summary.json",
+      "note": "324 numerical and81 metadata cases; three F32 routes each81pass, matrix_f16 all81fail, including27cases with +Inf. Independent math.fsum audit reproduces all results from saved arrays. Overall failure retained; no timing/profiler/model claims. Raw records unpublished."
     }
   ]
 }
