@@ -520,6 +520,43 @@
       "affine抵消",
       "group_factored",
       "word_literal"
+    ],
+    "softmax": [
+      "softmax",
+      "归一化指数",
+      "概率归一化"
+    ],
+    "online-softmax": [
+      "online softmax",
+      "在线softmax",
+      "在线归一化",
+      "online normalizer",
+      "在线normalizer"
+    ],
+    "masked-softmax": [
+      "masked softmax",
+      "全mask",
+      "全 mask",
+      "fully masked",
+      "空行",
+      "empty row",
+      "遮蔽概率"
+    ],
+    "chunk-merge": [
+      "chunk merge",
+      "分块合并",
+      "split256",
+      "空块",
+      "empty chunk",
+      "normalizer merge"
+    ],
+    "exp-precision": [
+      "precise::exp",
+      "fast::exp",
+      "precise flag",
+      "指数精度",
+      "exp精度",
+      "precise参数"
     ]
   },
   "pages": [
@@ -1901,6 +1938,42 @@
         "mlx-custom-metal-impl-0312"
       ],
       "summary": "原创MSL packed4解包、word/group分工和scale/bias因式分解。M4同门348/360数值通过；12项affine抵消失败由CPU诊断并保留，区分量化损失、解码舍入与累加误差；无速度结论。"
+    },
+    {
+      "id": "msl-softmax",
+      "title": "MSL softmax：在线归一化、分块合并与 mask 契约",
+      "path": "wiki/msl-softmax.md",
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx"
+      ],
+      "tags": [
+        "msl",
+        "softmax",
+        "online-softmax",
+        "masked-softmax",
+        "chunk-merge",
+        "exp-precision",
+        "simd-reduction",
+        "noncontiguous",
+        "local-validation"
+      ],
+      "symptoms": [
+        "slow-prefill",
+        "slow-decode",
+        "numerical-drift"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-softmax-kernel-0312",
+        "mlx-softmax-dispatch-0312",
+        "online-softmax-1805.02867-v2",
+        "local-msl-softmax-20261007",
+        "apple-msl-spec-41",
+        "mlx-quantization-api-bindings-0312"
+      ],
+      "summary": "原创SG32/TG128、在线normalizer、split256状态合并与空mask处理。M4六路径144项概率、24状态、48元数据通过独立审查；区分API precise与MSL指数函数，无速度或完整attention结论。"
     }
   ],
   "sources": [
@@ -3282,7 +3355,7 @@
       "revision": "Version 4.1; 2026-06-04",
       "checked": "2026-10-07",
       "mutable": true,
-      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。 矩阵页另读§2.4/6.8/7.2.1，区分同T公开签名、未规定lane映射及MPP接口条件。 GEMV页另读§6.10.2的shuffle XOR与活跃lane reduction语义。 量化GEMV页另读§3.1无符号移位与§6.10.2归约参与语义。"
+      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。 矩阵页另读§2.4/6.8/7.2.1，区分同T公开签名、未规定lane映射及MPP接口条件。 GEMV页另读§6.10.2的shuffle XOR与活跃lane reduction语义。 量化GEMV页另读§3.1无符号移位与§6.10.2归约参与语义。 Softmax页另核对float exp精度表、precise/fast区分、活跃lane归约及threadgroup barrier；不从函数拼写推定周边算术精度。"
     },
     {
       "id": "apple-msl-generic-pointers",
@@ -3486,13 +3559,13 @@
     },
     {
       "id": "mlx-quantization-api-bindings-0312",
-      "title": "MLX v0.31.2 quantize/dequantize/quantized_matmul Python API docstrings",
+      "title": "MLX v0.31.2 Python API bindings: quantization and softmax",
       "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/python/src/ops.cpp",
       "kind": "upstream-code",
       "checked": "2026-10-07",
       "revision": "v0.31.2 tag (mutable)",
       "mutable": true,
-      "note": "固定版本API绑定：low-to-high uint32 packing、末维affine分组、group/bit/mode与transpose语义、dequantize dtype。文档简化量化公式不代替actual packed/scales/biases；没有逐位FMA或归约顺序承诺。"
+      "note": "固定版本API绑定：low-to-high uint32 packing、末维affine分组、group/bit/mode与transpose语义、dequantize dtype。文档简化量化公式不代替actual packed/scales/biases；没有逐位FMA或归约顺序承诺。 Softmax页另读L3021绑定：precise默认false，手写签名漏项；实际参数不等于MSL precise::exp，standalone接口没有mask策略。"
     },
     {
       "id": "local-msl-qmv-20261007",
@@ -3503,6 +3576,46 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-msl-qmv/derived/summary.json",
       "note": "72saved inputs: G32/64/128,12shapes,3patterns,2layouts. 144decode and72metadata checks pass; group_factored/native_qmm each fail6 K8192 affine-cancellation cases. Independent fmaf/math.fsum audit retains failures; CPU group-order model accounts for custom bias-product rounding. No timing, binary-dispatch, model or universal-error claim. Raw records unpublished."
+    },
+    {
+      "id": "mlx-softmax-kernel-0312",
+      "title": "MLX v0.31.2 Metal softmax block and looped kernels",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/softmax.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag (mutable)",
+      "mutable": true,
+      "note": "softmax_single_row/softmax_looped: private AccT arrays, two-stage SIMD reductions, online max/normalizer rescaling, second input pass and fast::exp. Source mechanism only; no runtime dispatch or standalone all-masked-zero promise."
+    },
+    {
+      "id": "mlx-softmax-dispatch-0312",
+      "title": "MLX v0.31.2 Metal Softmax::eval_gpu host dispatch",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/softmax.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag (mutable)",
+      "mutable": true,
+      "note": "4096 row threshold; block threads rounded to32 by SOFTMAX_N_READS; looped uses pipeline maximum threads; noncontiguous input copy condition and non-F32 precise naming. Three-file scope does not establish kernel template instantiation or runtime pipeline limit."
+    },
+    {
+      "id": "online-softmax-1805.02867-v2",
+      "title": "Online normalizer calculation for softmax",
+      "url": "https://arxiv.org/pdf/1805.02867v2",
+      "kind": "research-paper",
+      "checked": "2026-10-07",
+      "revision": "arXiv:1805.02867v2; 2018-07-28",
+      "mutable": false,
+      "note": "Milakov/Gimelshein原论文：Algorithm3在线normalizer、§3.1并行(m,l)合并；Algorithm4另含Top-K。仅引用机制，实数结合律不承诺F32逐位相同；mask/count/空行策略为本探针扩展，不移用论文速度数字。"
+    },
+    {
+      "id": "local-msl-softmax-20261007",
+      "title": "M4 MSL masked softmax: online normalization and split-state validation",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "2026-10-07; M4/MLX0.31.2; 144numeric+24state+48metadata pass",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-msl-softmax/derived/summary.json",
+      "note": "24saved inputmatrices (12widths,8rows,2layouts) and144outputs. IndependentCPU math.exp/fsum audit confirms probability/rowsum/L1/maskedpositivezero gates, split max/count/mass, translation and layout diagnostics. Installed precise=True nativecall accepts; does not prove precise::exp. Explicit finite input and allmasked policy, no speed/model claim. Raw records unpublished."
     }
   ]
 }

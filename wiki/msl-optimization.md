@@ -46,6 +46,8 @@ Apple [function specialization](https://developer.apple.com/documentation/metal/
 
 [量化GEMV的参数提取](msl-quantized-gemv.md)比较word与group分工、逐项FMA与bias factoring。后者减少源码affine表达式，却在合成抵消输入上未过相同数值门；记录解码和算术误差后才能进入性能选择，不能把更少运算直接当作可采用优化。
 
+[MSL softmax](msl-softmax.md)比较三遍重读、在线统计和三阶段分块合并，说明空块neutral与跨SIMD初始化；同门数值通过与读次数、指数函数精度、实际速度分别记录。MLX API的precise参数也不能直接解释成MSL precise::exp。
+
 ## 调参要回到证据
 
 实际 dispatch 的线程组大小、pipeline 报告的合法上限、编译 descriptor 的 `maxTotalThreadsPerThreadgroup` 是相关但不同的量。不能把 MLX 的 `threadgroup=(...)` 当作已经修改了编译器资源提示；也不能把最大合法值当最快值。[Apple 线程组指南](https://developer.apple.com/documentation/metal/calculating-threadgroup-and-grid-sizes)

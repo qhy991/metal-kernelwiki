@@ -109,4 +109,6 @@ barrier 要同时检查参与线程、控制流和内存域。`mem_none` 不为�
 
 矩阵协作的统一参与、无 masked load/store、float/half 中间精度见 [MSL 矩阵乘](msl-matrix.md)，包含独立于本页的 324 项数值检查与失败。
 
+在线max/normalizer状态、空mask与三阶段依赖的具体写法见 [MSL softmax](msl-softmax.md)；其全空行归零是显式合同，不由softmax数学式或原生API名字自动给出。
+
 配合 [线程组与内存](metal-memory-threadgroups.md)、[MSL 优化](msl-optimization.md)、[自定义 RMSNorm](mlx-custom-rms.md)、[测量范围](measurement.md)使用。编译通过、正确性通过、生成预期指令、性能收益是四项不同证据。

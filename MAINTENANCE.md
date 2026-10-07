@@ -8,6 +8,7 @@
 
 页面字段：`id,title,path,type,engines,tags,symptoms,confidence,sources,summary`。
 来源公共字段：`id,title,kind,checked,revision,mutable,note`。远端来源另有 `url`；`kind=local-experiment` 的本地来源只用 `artifact_ref`，格式为 `运行ID/相对文件`，不混用 URL 或本机绝对路径。它是仓库外原记录的逻辑引用，不是仓库内文件。
+`kind=research-paper` 用于作者原始论文，记录明确版本与论文适用范围；理论机制或其他设备的报告不等于本机性能证据。
 `checked` 是读取日期，不是发布日；`revision` 如为 `main/master (mutable)` 就不代表固定快照。PR 合入不证明用户已安装它；issue/discussion 中的观察不能升级为已验证事实。
 
 `documented` 指文档描述的机制；`source-reported` 指实现或作者报告；`inferred` 指分析推断；`experimental` 指有待验证的方向；`locally-measured` 指保留原始记录的有限本机观测。一个页面可以包含文档事实与推断，但必须在相应段落明确区分。任何本机测量结论都需独立结果路径与完整配置，不能仅改标签。

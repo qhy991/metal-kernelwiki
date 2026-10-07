@@ -14,7 +14,7 @@ from _kb import ROOT, KnowledgeBaseError, load_catalog, read_page, safe_path
 PAGE_TEXT = ("id", "title", "path", "type", "confidence", "summary")
 PAGE_LISTS = ("engines", "tags", "symptoms", "sources")
 SOURCE_TEXT = ("id", "title", "kind", "checked", "revision", "note")
-SOURCE_KINDS = {"official-doc", "upstream-code", "merged-pr", "issue", "discussion", "local-experiment"}
+SOURCE_KINDS = {"official-doc", "research-paper", "upstream-code", "merged-pr", "issue", "discussion", "local-experiment"}
 
 
 def nonempty_text(value):
