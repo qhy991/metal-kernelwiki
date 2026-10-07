@@ -30,4 +30,6 @@ CPU 参考在历史不超过 8 个 token 时全部保留；超过后按位置保
 
 此轮未执行 BatchGenerator、服务请求、attention/mask、padding、不同长度、量化缓存、extract 后的继续生成，也未测性能。原始运行与失败状态保存在仓库外：来源 `local-mlx-qvm-cache-20261007`，逻辑引用 `2026-10-07-mlx-qvm-cache/results-summary.json`。原始数组、脚本和日志未随公开仓库提供。
 
+后续独立运行在 keep=0 下加入不同长度、左填充、mask 和零 Q attention，观察到旋转后多 token 续写的 mask 错位，详见 [mask 对齐](mlx-cache-mask-alignment.md)。该结果不改变本页 keep=4 失败，也不使本页原运行成为已测 attention 的记录。
+
 与 [KV cache 部署](mlx-kv-cache.md)、[服务并发](mlx-serving.md)、[边界探针进度](mlx-regression-probes.md) 配合使用。

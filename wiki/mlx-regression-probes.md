@@ -1,6 +1,6 @@
 # MLX 边界探针：异步依赖、singleton GQA、多行 qvm 与缓存生命周期
 
-检查日期：2026-10-07。**四项均已有范围限定的 M4 观测；第 3 项数值门失败，第 4 项发现策略损失且尚未覆盖 mask/服务路径**。保留原始设计与后续观测的区别。执行新配置前固定芯片、OS、安装版本、seed、dtype、shape、容差与求值范围，按项目授权和 gate 运行，失败保留原始记录。
+检查日期：2026-10-07。**四项均已有范围限定的 M4 观测；第 3 项数值门失败，第 4 项发现策略损失；另测 keep=0 mask 有限定失败，服务仍未测**。保留原始设计与后续观测的区别。执行新配置前固定芯片、OS、安装版本、seed、dtype、shape、容差与求值范围，按项目授权和 gate 运行，失败保留原始记录。
 
 本地 r1 只检查了同步 SDPA 的 `D=64`、四组非 singleton 长度，以及另一组 `transpose=True/M>=16` 量化乘法和缓存 API 行为；其结果见 [M4 本地观测](local-mlx-m4.md)，相关方法见 [量化乘法验证](quantized-matmul-validation.md)。r1 结果不覆盖下面四项，独立 capture 导出也没有解析执行路径。后续运行 `2026-10-07-mlx-boundaries` 单独保留了第 1、2 项结果，没有改变 r1 的证据范围。
 
@@ -39,9 +39,11 @@
 
 逐行报告误差，避免总均值隐藏第二、三行错误。此检查不覆盖 5D GQA broadcast、任意 tail 或 speculative decoding 的模型质量；r1 的转置方向和 M 范围不同，不能代替它。
 
-## 4. RotatingKVCache：keep 策略跨 batching 保存（存储路径已执行，mask 未测）
+## 4. RotatingKVCache：keep 策略跨 batching 保存（存储路径与另组 mask 已执行，服务未测）
 
 同轮直接 merge/update/extract 接受了 keep=(4,4) 与混合 (0,4)，随后丢失 keep=4 的策略和前缀；(0,0) 对照通过。详见 [缓存生命周期](mlx-cache-lifecycle.md)。未执行 attention/mask、服务或模型质量验证，因此原设计的这些判据仍未满足；没有将 keep 改为 0 后重报通过。
+
+后续 `2026-10-07-mlx-cache-mask` 单独检查 keep=0、不同长度及左填充，经逐 token 旋转后切回多 token 追加，90 项中 4 项 mask/attention 失败，内容与 offset 检查全部通过。详见 [mask 对齐](mlx-cache-mask-alignment.md)。它补充了另一策略的 mask 范围，尚未完成本节原 keep=4 设计的 attention 或服务验收。
 
 [上游 #1631](https://github.com/ml-explore/mlx-lm/issues/1631) 报告外部 supplied cache 经过 merge/extract 后可能丢失 sink policy；本机现已有直接存储路径的限定复现，仍不能推广到每条服务路径。
 

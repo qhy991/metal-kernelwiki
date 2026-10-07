@@ -283,6 +283,20 @@
       "内存核算",
       "额外内存",
       "memory accounting"
+    ],
+    "attention-mask": [
+      "attention mask",
+      "mask对齐",
+      "mask 对齐",
+      "掩码",
+      "遮罩",
+      "mask alignment"
+    ],
+    "left-padding": [
+      "left padding",
+      "左填充",
+      "左侧填充",
+      "不等长请求"
     ]
   },
   "pages": [
@@ -988,9 +1002,10 @@
         "mlx-qvm-multirow-test",
         "mlx-rotating-keep-lifecycle-issue",
         "local-mlx-boundaries-20261007",
-        "local-mlx-qvm-cache-20261007"
+        "local-mlx-qvm-cache-20261007",
+        "local-mlx-cache-mask-20261007"
       ],
-      "summary": "四项已有M4限定观测：异步与singleton通过指定检查，多行QVM失败，rotating keep合并后丢失；mask和服务路径仍未验证。"
+      "summary": "四项已有M4限定观测：异步与singleton通过指定检查，多行QVM失败，rotating keep合并后丢失；另测keep0 mask在旋转后chunk续写时错位，服务与模型仍未验证。"
     },
     {
       "id": "mlx-async-evaluation",
@@ -1080,7 +1095,8 @@
         "mlx-rotating-keep-lifecycle-issue",
         "mlx-lm-cache-0313",
         "mlx-lm-generate-0313",
-        "local-mlx-qvm-cache-20261007"
+        "local-mlx-qvm-cache-20261007",
+        "local-mlx-cache-mask-20261007"
       ],
       "summary": "M4/MLX-LM0.31.3直接merge/extract将keep4变为0并在跨容量后丢失前缀，keep0对照通过；区分已受保护的模型缓存入口，不扩大为服务或模型质量结论。"
     },
@@ -1120,6 +1136,38 @@
         "local-mlx-qmm-paths-20261007"
       ],
       "summary": "M4/BF16 transpose=True的packed、逐次反量化、常驻dense共30个条件过数值门，18进程计时波动明显；C多驻4MiB，B操作窗口也出现额外占用。保留候选，不推导模型切换阈值。"
+    },
+    {
+      "id": "mlx-cache-mask-alignment",
+      "title": "旋转缓存 mask：内容正确仍可能屏蔽有效历史",
+      "path": "wiki/mlx-cache-mask-alignment.md",
+      "type": "technique",
+      "engines": [
+        "mlx",
+        "metal"
+      ],
+      "tags": [
+        "kv-cache",
+        "rotating-cache",
+        "attention-mask",
+        "left-padding",
+        "chunked-prefill",
+        "batching",
+        "local-validation"
+      ],
+      "symptoms": [
+        "wrong-output",
+        "mask-misalignment",
+        "batch-dependent-output"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-lm-cache-0313",
+        "mlx-lm-base-mask-0313",
+        "mlx-lm-cache-tests-0313",
+        "local-mlx-cache-mask-20261007"
+      ],
+      "summary": "M4/MLX-LM0.31.3的90项窗口检查中4项失败：不等长旋转缓存切回3-token追加时mask屏蔽有效token，attention误差0.03125；K/V、offset、参考mask对照通过，无模型或性能结论。"
     }
   ],
   "sources": [
@@ -1945,13 +1993,13 @@
     },
     {
       "id": "mlx-lm-cache-0313",
-      "title": "MLX-LM v0.31.3 rotating cache merge/extract",
+      "title": "MLX-LM v0.31.3 rotating cache lifecycle and mask",
       "url": "https://github.com/ml-explore/mlx-lm/blob/v0.31.3/mlx_lm/models/cache.py",
       "kind": "upstream-code",
       "checked": "2026-10-07",
       "revision": "v0.31.3 tag",
       "mutable": true,
-      "note": "merge检查max_size而未保留keep；extract默认keep0。直接缓存生命周期的本机结果另存，不扩展到所有服务入口。"
+      "note": "merge检查max_size而未保留keep；extract默认keep0。直接缓存生命周期的本机结果另存，不扩展到所有服务入口。 另核查make_mask与_update_concat归序/裁剪时序；独立mask探针保留在另一运行。"
     },
     {
       "id": "mlx-lm-generate-0313",
@@ -2022,6 +2070,36 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-mlx-qmm-paths/derived/summary.json",
       "note": "Shared packed inputs, BF16 transpose=True, 30 initial gates and 1170 measured-output checks pass. Three process repetitions use identical seeds; host intervals vary and allocator metrics are not RSS. Validation adds GPU float32 conversion outside windows. No profiler/model/deployment claim, no repair of prior transpose=False failure. Raw records retained externally, not published."
+    },
+    {
+      "id": "mlx-lm-base-mask-0313",
+      "title": "MLX-LM v0.31.3 causal and sliding-window mask semantics",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/v0.31.3/mlx_lm/models/base.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.3 tag",
+      "mutable": true,
+      "note": "窗口包含当前token，key<=query<key+window并排除padding；作为逻辑参考的语义来源，不复制cache物理roll公式。"
+    },
+    {
+      "id": "mlx-lm-cache-tests-0313",
+      "title": "MLX-LM v0.31.3 prompt cache tests",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/v0.31.3/tests/test_prompt_cache.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.3 tag",
+      "mutable": true,
+      "note": "test_batch_rotating_kv_cache覆盖部分padding/wrap；最后prompt→single→chunk场景断言mask常量，未继续更新并检查返回token可见性。"
+    },
+    {
+      "id": "local-mlx-cache-mask-20261007",
+      "title": "M4 rotating cache mask alignment and zero-query attention failures",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "M4 MLX0.31.2 mlx-lm0.31.3 macOS27.0(26A428); one deterministic process, exit2",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-mlx-cache-mask/derived/summary.json",
+      "note": "90 window checks across six trajectories; native mask/attention 86 pass, 4 fail at N3/W8 after rotation for shorter request. 8 false-negative mask bits and query rows, max_abs0.03125. All K/V/coverage/offset and CPU-mask attention checks pass. No model, serving, nonzero Q or timing; raw records external, unpublished."
     }
   ]
 }

@@ -24,6 +24,8 @@
 
 本机 MLX-LM 0.31.3 的直接合并探针观察到 keep=4 在 extract 时变为 0，跨容量后丢失前缀；keep=0 对照通过。模型 make_cache 的另一路入口已有明确拒绝，不能把直接合并行为扩大成所有服务路径。完整输入、对照、失败和未测范围见 [缓存生命周期](mlx-cache-lifecycle.md)。吞吐候选先保留各请求语义，不能把改 keep=0 当等价修复。
 
+独立 keep=0 探针又发现：不等长左填充 batch 旋转后切回 3-token 追加，缓存内容与 offset 正确仍可能使用错误 mask。90 项检查有 4 项失败且影响零 Q attention，详见 [mask 对齐](mlx-cache-mask-alignment.md)。窗口、padding 和单步/多步切换应与返回 K/V 一起验证；此结果未覆盖服务或模型。
+
 ## 自定义缓存：避免每 token 复制历史
 
 若 profiler 显示分配开销与核间空闲，比较逐步 concatenate 和分块预分配加 slice update。前者每步复制历史并改变 buffer 大小，后者可摊销增长。[Fast KV Cache](https://ml-explore.github.io/mlx/build/html/usage/kv_cache.html) 该文档的“256 倍数启用 cuDNN fused attention”是 CUDA 条件，不是 Metal 规则。
