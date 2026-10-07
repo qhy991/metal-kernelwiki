@@ -8,6 +8,8 @@
 2. **Kernel 层**：对已有热点考虑 RMSNorm+残差、RoPE/缓存写入、GEMM epilogue 等融合候选。它们必须保持原数据依赖和 dtype；若 live values 增多、spill 或 occupancy 下降，独立 fast primitives 可能更快。此列表是候选方向，不是这些融合在所有框架中已有支持的声明。
 3. **提交层**：复用 pipeline/资源，减少不必要的 CPU 读回与等待，观察 command buffer 粒度。不要删除必要的跨 encoder/queue 同步；异步返回更快不能算 GPU 工作更快。低层同步和内存见 [Metal 页](metal-memory-threadgroups.md)。
 
+本机现有 [残差 RMSNorm 三路比较](mlx-residual-rms.md)：F32/BF16 的表达式、compile、fast 全部通过指定数值门，但小 M 排序反转、编译路径进程间波动明显。所读 [v0.31.2 通用融合列表](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/compile.cpp#L73) 不含 Reduce 或 RMSNorm primitive；含归约的表达式不能因包上 compile 就宣称整段单 kernel。该运行仅返回归一化结果，没有 profiler 或模型收益证据。
+
 ## MLX custom Metal 的隐藏成本
 
 默认 row-contiguous 保障可能生成输入拷贝；关闭后必须按真实 strides 寻址。把这种转换计入 end-to-end 路径。先对照普通 MLX 运算和 fast primitive，再用小范围自定义内核处理已知热点。[Custom Metal 文档](https://ml-explore.github.io/mlx/build/html/dev/custom_metal_kernels.html)

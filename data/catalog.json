@@ -314,6 +314,23 @@
       "恢复失败",
       "读回失败",
       "加载后报错"
+    ],
+    "rmsnorm": [
+      "rms norm",
+      "rms_norm",
+      "均方根归一化",
+      "rms归一化"
+    ],
+    "residual": [
+      "残差",
+      "residual add",
+      "残差归一化"
+    ],
+    "timing-variance": [
+      "timing variance",
+      "计时波动",
+      "性能波动",
+      "延迟长尾"
     ]
   },
   "pages": [
@@ -381,7 +398,9 @@
         "mlx-custom-metal",
         "apple-command-buffers",
         "apple-resource-sync",
-        "mlx-command-buffer-issue"
+        "mlx-command-buffer-issue",
+        "mlx-compile-fusion-0312",
+        "local-mlx-residual-rms-20261007"
       ],
       "summary": "用 trace 区分表达式、kernel 和提交开销，比较融合收益与寄存器、复制、同步代价。"
     },
@@ -750,7 +769,9 @@
         "mlx-compilation",
         "mlx-custom-metal",
         "local-mlx-m4-r1",
-        "local-mlx-boundaries-20261007"
+        "local-mlx-boundaries-20261007",
+        "mlx-compile-fusion-0312",
+        "local-mlx-residual-rms-20261007"
       ],
       "summary": "完成惰性求值再计时，优先采用 fast 原语与稳定子图编译，最后依据 profile 编写 custom Metal。"
     },
@@ -1217,6 +1238,39 @@
         "local-mlx-cache-roundtrip-20261007"
       ],
       "summary": "M4/MLX-LM0.31.3的12份缓存文件均读回且张量一致，2份rotated标志错误；BatchRotating恢复后6次续写缺_lengths异常，其他指定对照通过。区分状态、接续与跨版格式。"
+    },
+    {
+      "id": "mlx-residual-rms",
+      "title": "残差 RMSNorm：编译、专用原语与舍入顺序一起比较",
+      "path": "wiki/mlx-residual-rms.md",
+      "type": "technique",
+      "engines": [
+        "mlx",
+        "metal"
+      ],
+      "tags": [
+        "rmsnorm",
+        "residual",
+        "fusion",
+        "compilation",
+        "bfloat16",
+        "timing",
+        "local-validation"
+      ],
+      "symptoms": [
+        "small-kernel-overhead",
+        "numerical-drift",
+        "timing-variance"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-compilation",
+        "mlx-rms-fast-0312",
+        "mlx-rms-metal-0312",
+        "mlx-compile-fusion-0312",
+        "local-mlx-residual-rms-20261007"
+      ],
+      "summary": "M4上残差RMSNorm的表达式/compile/fast三路，F32与BF16共90数值配置和756计时样本过门；M512的fast逐轮较快，小M排序反转、r2-compiled波动大，不推出单核融合或模型收益。"
     }
   ],
   "sources": [
@@ -2189,6 +2243,46 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-mlx-cache-roundtrip/derived/summary.json",
       "note": "12 snapshots load with exact public tensors/user metadata, 2 fail rotated equality; 48 live/load continuations, 42 pass and 6 restored BatchRotating errors for missing _lengths. 84 completed window checks pass. No SDPA/models/timing/process-restart/cross-version execution. Raw snapshots and arrays remain external, unpublished."
+    },
+    {
+      "id": "mlx-rms-fast-0312",
+      "title": "MLX v0.31.2 fast RMSNorm dtype and fallback semantics",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/fast.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag; actual binary dispatch not verified",
+      "mutable": true,
+      "note": "RMSNorm输出类型取x/weight共同类型；fallback float32归一化后cast再乘weight，用于固定比较表达式与低精度舍入边界。"
+    },
+    {
+      "id": "mlx-rms-metal-0312",
+      "title": "MLX v0.31.2 Metal RMSNorm kernels",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/rms_norm.metal",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag; source mechanism, not dispatch proof",
+      "mutable": true,
+      "note": "所读kernel以float累加、precise rsqrt，归一化结果转T后乘weight。不能由源码或API名证明x+r与RMSNorm在本机为单kernel。"
+    },
+    {
+      "id": "mlx-compile-fusion-0312",
+      "title": "MLX v0.31.2 compilation fusion eligibility",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/compile.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "is_fusable列出逐元素unary/binary/ternary与broadcast，不含Reduce或RMSNorm primitive；局部融合机会不等于完整归约子图单核。"
+    },
+    {
+      "id": "local-mlx-residual-rms-20261007",
+      "title": "M4 residual RMSNorm numerical and host timing comparison",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "M4 MLX0.31.2 macOS27.0(26A428); check plus nine benchmark processes",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-mlx-residual-rms/derived/summary.json",
+      "note": "90 F32/BF16 shape-pattern-route prechecks pass; all 756 timed outputs pass online gates. 54 first/162 warmup/540 post-warmup samples; r2-compiled variance retained. Raw outputs for 90 prechecks and 54 first calls, remaining success outputs metrics only. No profiler/kernel-count/model speed claim; raw records external/unpublished."
     }
   ]
 }
