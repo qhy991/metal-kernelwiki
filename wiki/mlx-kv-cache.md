@@ -1,0 +1,29 @@
+# MLX KV cache：前缀复用、容量和量化是不同决策
+
+证据状态：官方说明与上游源码；核查于 2026-10-07。`main` 可变，缓存类型和功能组合必须与安装版本核对。另有不加载模型的 [MLX-LM 0.31.3 本地 API 观察](local-mlx-m4.md)，不构成缓存质量或性能结论。
+
+## 先识别缓存类型
+
+检查模型每层实际 cache 类、token offset、容量、字节占用及是否能 trim/quantize。上游 `make_prompt_cache` 优先采用模型的 `make_cache`；只有默认路径依据 `max_kv_size` 创建旋转缓存。因此不能声称设置一个参数就约束所有模型的缓存。[cache.py](https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/models/cache.py)
+
+## 重复上下文：优先测前缀复用
+
+相同长上下文上的多次提问可保存并读取 prompt cache。当前 `mlx_lm.cache_prompt` 与 `--prompt-cache-file` 将已缓存 token 作为新 prompt 的前缀，模型信息从缓存读取。[官方用法](https://github.com/ml-explore/mlx-lm/blob/main/README.md#long-prompts-and-generations)
+
+验证模型权重、tokenizer、模板、位置与 token 前缀一致；文本相似不是可复用条件。分别测全命中、部分命中、未命中，记录实际跳过的 token、TTFT、缓存内存和读取成本。多轮生成会推进状态；保留可复用基准前缀，避免把已被某条分支更新的缓存误用于另一条分支。
+
+## 内存不足：分别评估旋转和量化
+
+`max_kv_size` 通过丢弃较早信息限制默认旋转缓存；小容量会牺牲长上下文质量。所见默认路径保留最初 4 个 token，且 `RotatingKVCache.to_quantized` 仍拒绝执行；不能假定旋转缓存与 KV 量化可组合。[容量说明](https://github.com/ml-explore/mlx-lm/blob/main/README.md#long-prompts-and-generations)、[缓存实现](https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/models/cache.py)
+
+`generate_step` 另有 `kv_bits`、`kv_group_size`、`quantized_kv_start`。所见默认起点为 5000，`kv_bits=None` 不量化；达到 offset 后尝试调用相应 cache 的转换方法。[量化入口](https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/generate.py) 测试必须跨过触发点，确认哪些层实际转换，记录转换瞬间延迟、KV 字节与 decode 性能。方法存在也不保证组合实现可用。
+
+版本差异已实际出现：本机 MLX-LM 0.31.3 的 `generate_step` 默认起点为 **0**。同次合成 API 检查确认旋转缓存量化抛出 NYI，模型自有 `make_cache` 也优先于传入的最大容量。见 [原始记录说明](local-mlx-m4.md)。不要把本段的任一默认值当作跨版本常数。
+
+## 自定义缓存：避免每 token 复制历史
+
+若 profiler 显示分配开销与核间空闲，比较逐步 concatenate 和分块预分配加 slice update。前者每步复制历史并改变 buffer 大小，后者可摊销增长。[Fast KV Cache](https://ml-explore.github.io/mlx/build/html/usage/kv_cache.html) 该文档的“256 倍数启用 cuDNN fused attention”是 CUDA 条件，不是 Metal 规则。
+
+验证跨容量边界、扩容、trim、前缀分叉、长距离检索与多轮任务；对旋转或量化候选用业务质量门槛验收。将 prompt 复用、容量、KV 量化与权重量化分开记录，不用一个“cache enabled”概括。
+
+保留无优化缓存作为外部对照，核查缓存后的输出或 logits 在约定容差内。若目标是节省容量，报告缓存自身字节与进程峰值两项，区分缓存减少和临时张量增长。遇到混合注意力或其他状态缓存时，逐类记录覆盖范围，不将某层成功转换写成整模型已经量化。

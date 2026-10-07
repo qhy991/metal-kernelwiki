@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.venv/
+.env
+.env.*
+.local/
+*.gputrace/
+*.trace/
+artifacts/
+evidence/
+skill/*/knowledge

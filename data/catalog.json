@@ -1,0 +1,1699 @@
+{
+  "schema_version": 1,
+  "checked": "2026-10-07",
+  "aliases": {
+    "mlx": [
+      "mlx-lm",
+      "mlx_lm",
+      "mlx lm"
+    ],
+    "llama.cpp": [
+      "llamacpp",
+      "llama-cpp",
+      "llama cpp",
+      "gguf"
+    ],
+    "metal": [
+      "apple silicon",
+      "苹果芯片",
+      "苹果gpu"
+    ],
+    "prefill": [
+      "pp",
+      "prompt processing",
+      "首token",
+      "首 token",
+      "首字",
+      "提示词处理",
+      "预填充"
+    ],
+    "high-ttft": [
+      "ttft",
+      "slow-ttft",
+      "首 token 慢",
+      "首token慢",
+      "首字慢"
+    ],
+    "decode": [
+      "tg",
+      "token generation",
+      "解码",
+      "逐token",
+      "逐 token",
+      "生成速度"
+    ],
+    "slow-decode": [
+      "生成慢",
+      "解码慢",
+      "decode slow"
+    ],
+    "long-context": [
+      "long-prompt",
+      "长上下文",
+      "长文本",
+      "超长prompt"
+    ],
+    "kv-cache": [
+      "kv cache",
+      "k/v cache",
+      "键值缓存",
+      "kv缓存"
+    ],
+    "prefix-cache": [
+      "prompt-cache",
+      "prompt cache",
+      "prefix reuse",
+      "前缀缓存",
+      "前缀复用",
+      "提示词缓存"
+    ],
+    "quantization": [
+      "quant",
+      "量化",
+      "低比特",
+      "4bit",
+      "4-bit",
+      "int4"
+    ],
+    "batching": [
+      "continuous batching",
+      "连续批处理",
+      "批处理",
+      "动态批处理"
+    ],
+    "concurrency": [
+      "并发",
+      "并行请求"
+    ],
+    "serving": [
+      "server",
+      "服务部署"
+    ],
+    "speculative-decoding": [
+      "speculative",
+      "draft model",
+      "投机解码",
+      "推测解码",
+      "草稿模型"
+    ],
+    "attention": [
+      "注意力",
+      "sdpa"
+    ],
+    "flash-attention": [
+      "flash attention",
+      "flashattention",
+      "fa"
+    ],
+    "gqa": [
+      "grouped query attention",
+      "mqa",
+      "分组查询"
+    ],
+    "gemm": [
+      "矩阵乘",
+      "矩阵乘法",
+      "matmul"
+    ],
+    "gemv": [
+      "matvec",
+      "矩阵向量乘"
+    ],
+    "moe": [
+      "专家",
+      "混合专家",
+      "gather_qmm"
+    ],
+    "tensorops": [
+      "tensor ops",
+      "tensor-api",
+      "metal4",
+      "metal 4",
+      "mpp",
+      "m5",
+      "neural accelerators"
+    ],
+    "memory-pressure": [
+      "内存不足",
+      "内存压力",
+      "oom",
+      "swap",
+      "交换内存"
+    ],
+    "unified-memory": [
+      "统一内存",
+      "uma"
+    ],
+    "launch-overhead": [
+      "dispatch-overhead",
+      "cpu-overhead",
+      "提交开销",
+      "启动开销",
+      "小算子"
+    ],
+    "gpu-idle": [
+      "gpu空闲",
+      "gpu 空闲",
+      "gpu利用率低",
+      "gpu 利用率低"
+    ],
+    "profiling": [
+      "profile",
+      "profiler",
+      "instruments",
+      "性能分析",
+      "性能诊断"
+    ],
+    "fusion": [
+      "融合",
+      "算子融合"
+    ],
+    "threadgroup": [
+      "threadgroup memory",
+      "线程组",
+      "共享内存"
+    ],
+    "tail-latency": [
+      "high-p95-latency",
+      "p95",
+      "尾延迟"
+    ],
+    "benchmark": [
+      "bench",
+      "基准",
+      "基准测试"
+    ],
+    "correctness": [
+      "正确性",
+      "精度",
+      "oracle"
+    ],
+    "local-validation": [
+      "本地验证",
+      "本机验证",
+      "本地观测",
+      "locally-measured"
+    ],
+    "batch-invariance": [
+      "batch一致性",
+      "batch数值",
+      "批大小误差",
+      "batch invariance"
+    ],
+    "toolchain": [
+      "工具链",
+      "xcrun",
+      "xctrace"
+    ],
+    "version-compatibility": [
+      "版本兼容",
+      "force_fused",
+      "版本差异"
+    ],
+    "empty-tests": [
+      "空跑",
+      "零用例",
+      "false pass",
+      "no tests"
+    ],
+    "numerical-drift": [
+      "数值漂移",
+      "精度变化",
+      "舍入误差",
+      "容差",
+      "容差放宽",
+      "误差",
+      "tolerance"
+    ],
+    "regression-probe": [
+      "边界测试",
+      "回归探针",
+      "待验证"
+    ]
+  },
+  "pages": [
+    {
+      "id": "attention",
+      "title": "Attention：prefill、decode 与 GQA",
+      "path": "wiki/attention.md",
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx",
+        "llama.cpp"
+      ],
+      "tags": [
+        "attention",
+        "flash-attention",
+        "gqa",
+        "kv-cache",
+        "softmax",
+        "prefill",
+        "decode"
+      ],
+      "symptoms": [
+        "attention-bottleneck",
+        "long-context",
+        "slow-prefill",
+        "slow-decode"
+      ],
+      "confidence": "inferred",
+      "sources": [
+        "mlx-sdpa-api",
+        "llama-tuning",
+        "mlx-custom-metal",
+        "local-mlx-m4-r1"
+      ],
+      "summary": "保持 mask 和 GQA 语义，按查询与 KV 形状选择融合或分块路径，并验证极值与尾部。"
+    },
+    {
+      "id": "fusion",
+      "title": "融合与提交：小算子和 command buffer 开销",
+      "path": "wiki/fusion.md",
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx",
+        "llama.cpp"
+      ],
+      "tags": [
+        "fusion",
+        "compilation",
+        "command-buffer",
+        "synchronization",
+        "metal-kernel"
+      ],
+      "symptoms": [
+        "launch-overhead",
+        "gpu-idle",
+        "extra-copies",
+        "fusion-regression"
+      ],
+      "confidence": "inferred",
+      "sources": [
+        "mlx-compilation",
+        "mlx-custom-metal",
+        "apple-command-buffers",
+        "apple-resource-sync",
+        "mlx-command-buffer-issue"
+      ],
+      "summary": "用 trace 区分表达式、kernel 和提交开销，比较融合收益与寄存器、复制、同步代价。"
+    },
+    {
+      "id": "gemm-moe",
+      "title": "GEMM、GEMV、Split-K 与 MoE gather",
+      "path": "wiki/gemm-moe.md",
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx",
+        "llama.cpp"
+      ],
+      "tags": [
+        "gemm",
+        "gemv",
+        "moe",
+        "split-k",
+        "quantization",
+        "tensorops"
+      ],
+      "symptoms": [
+        "slow-prefill",
+        "slow-decode",
+        "incorrect-tail",
+        "cross-device-regression"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "mlx-splitk-pr",
+        "mlx-gather-tiling-pr",
+        "mlx-gather-qmm-api",
+        "mlx-gather-tail-issue"
+      ],
+      "summary": "从合入 PR 提取形状相关候选，检查索引、排序、归约和尾部，而非照搬历史阈值。"
+    },
+    {
+      "id": "llamacpp-deployment",
+      "title": "llama.cpp：Metal 部署、容量与阶段基准",
+      "path": "wiki/llamacpp-deployment.md",
+      "type": "deployment",
+      "engines": [
+        "llama.cpp"
+      ],
+      "tags": [
+        "metal",
+        "gguf",
+        "flash-attention",
+        "kv-cache",
+        "unified-memory",
+        "prefill",
+        "decode",
+        "benchmark"
+      ],
+      "symptoms": [
+        "slow-prefill",
+        "slow-decode",
+        "memory-pressure",
+        "cpu-fallback",
+        "long-context"
+      ],
+      "confidence": "documented",
+      "sources": [
+        "llama-build",
+        "llama-args",
+        "llama-bench",
+        "llama-context",
+        "llama-metal-device"
+      ],
+      "summary": "先确认 Metal 路径，再按 prefill、decode、上下文深度与总内存预算比较 FA、KV 量化和 batch。"
+    },
+    {
+      "id": "llamacpp-metal-tuning",
+      "title": "llama.cpp：Metal FA 调参与后端证据",
+      "path": "wiki/llamacpp-metal-tuning.md",
+      "type": "technique",
+      "engines": [
+        "llama.cpp"
+      ],
+      "tags": [
+        "metal",
+        "flash-attention",
+        "kernel-tuning",
+        "gpu-family",
+        "thermal-drift",
+        "metal4",
+        "tensor-api"
+      ],
+      "symptoms": [
+        "attention-bottleneck",
+        "long-context",
+        "thermal-drift",
+        "cross-device-regression",
+        "missing-metallib"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "llama-fa-tuning-pr",
+        "llama-fa-discussion",
+        "llama-tuning",
+        "llama-metal-device",
+        "llama-contributing"
+      ],
+      "summary": "以目标 GPU 家族和实际形状调优 FA-vec，控制热漂移、检查数值覆盖，并区分 Tensor API 能力和实测收益。"
+    },
+    {
+      "id": "llamacpp-serving",
+      "title": "llama.cpp：并发、前缀缓存与推测解码",
+      "path": "wiki/llamacpp-serving.md",
+      "type": "deployment",
+      "engines": [
+        "llama.cpp"
+      ],
+      "tags": [
+        "metal",
+        "server",
+        "batching",
+        "prompt-cache",
+        "speculative-decoding",
+        "benchmark"
+      ],
+      "symptoms": [
+        "high-ttft",
+        "low-throughput",
+        "tail-latency",
+        "low-draft-acceptance",
+        "memory-pressure"
+      ],
+      "confidence": "documented",
+      "sources": [
+        "llama-server",
+        "llama-batched-bench",
+        "llama-prompt-cache-pr",
+        "llama-speculative",
+        "llama-spec-code",
+        "llama-speed-bench"
+      ],
+      "summary": "固定请求分布与缓存冷热，分别优化服务并发、前缀复用和推测解码，并保留端到端及逐请求证据。"
+    },
+    {
+      "id": "measurement",
+      "title": "测量与瓶颈诊断：TTFT、prefill、decode、服务延迟",
+      "path": "wiki/measurement.md",
+      "type": "workflow",
+      "engines": [
+        "metal",
+        "mlx",
+        "llama.cpp"
+      ],
+      "tags": [
+        "benchmark",
+        "prefill",
+        "decode",
+        "timing",
+        "correctness"
+      ],
+      "symptoms": [
+        "high-ttft",
+        "slow-decode",
+        "misleading-timing",
+        "memory-pressure"
+      ],
+      "confidence": "inferred",
+      "sources": [
+        "apple-mlx-m5-research",
+        "llama-bench",
+        "mlx-eval-api",
+        "mlx-synchronize-api"
+      ],
+      "summary": "固定负载和计时范围，分解阶段并以外部正确性、profiler 和端到端测量检验候选。"
+    },
+    {
+      "id": "metal-capabilities",
+      "title": "Metal 能力与部署边界",
+      "path": "wiki/metal-capabilities.md",
+      "type": "hardware",
+      "engines": [
+        "metal",
+        "mlx",
+        "llama.cpp"
+      ],
+      "tags": [
+        "capability",
+        "gpu-family",
+        "sdk",
+        "runtime",
+        "dispatch"
+      ],
+      "symptoms": [
+        "unsupported-feature",
+        "unexpected-fallback",
+        "missing-acceleration"
+      ],
+      "confidence": "documented",
+      "sources": [
+        "apple-feature-detection",
+        "apple-capabilities",
+        "apple-m5-ml",
+        "apple-mlx-nax-pr",
+        "apple-llama-metal-api"
+      ],
+      "summary": "按 SDK、OS、硬件与后端四层核查能力，区分 API 支持、实际路线与可测加速。"
+    },
+    {
+      "id": "metal-memory-threadgroups",
+      "title": "Metal 内存、线程组与同步",
+      "path": "wiki/metal-memory-threadgroups.md",
+      "type": "technique",
+      "engines": [
+        "metal"
+      ],
+      "tags": [
+        "memory",
+        "threadgroup",
+        "simd",
+        "synchronization",
+        "occupancy",
+        "registers"
+      ],
+      "symptoms": [
+        "low-occupancy",
+        "memory-stall",
+        "incorrect-tail",
+        "data-race",
+        "allocation-overhead"
+      ],
+      "confidence": "documented",
+      "sources": [
+        "apple-threadgroup-sizing",
+        "apple-silicon-porting",
+        "apple-storage-modes",
+        "apple-shared-storage",
+        "apple-cpu-gpu-sync",
+        "apple-m3-profiling",
+        "apple-m5-profiling"
+      ],
+      "summary": "从 pipeline 限制调线程组，明确统一内存的时序与 ownership，并用 profiler 解释占用率。"
+    },
+    {
+      "id": "metal-profiling",
+      "title": "Metal LLM 性能诊断与证据",
+      "path": "wiki/metal-profiling.md",
+      "type": "profiling",
+      "engines": [
+        "metal",
+        "mlx"
+      ],
+      "tags": [
+        "profiling",
+        "instruments",
+        "gpu-capture",
+        "counters",
+        "command-buffer",
+        "benchmark"
+      ],
+      "symptoms": [
+        "slow-ttft",
+        "slow-decode",
+        "gpu-idle",
+        "cpu-overhead",
+        "fusion-regression"
+      ],
+      "confidence": "documented",
+      "sources": [
+        "apple-metal-tools",
+        "apple-command-buffers",
+        "apple-m3-profiling",
+        "apple-m5-profiling",
+        "apple-metal4-core",
+        "apple-resource-sync",
+        "apple-gpu-counters"
+      ],
+      "summary": "先追踪请求关键路径再捕获热点 kernel，按 counter 建立假设并保存正确性及端到端基准证据。"
+    },
+    {
+      "id": "metal-tensors",
+      "title": "TensorOps、量化与融合候选",
+      "path": "wiki/metal-tensors.md",
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx"
+      ],
+      "tags": [
+        "tensorops",
+        "mpp",
+        "gemm",
+        "quantization",
+        "fusion",
+        "attention"
+      ],
+      "symptoms": [
+        "slow-prefill",
+        "dequantization-overhead",
+        "fusion-regression",
+        "missing-acceleration"
+      ],
+      "confidence": "documented",
+      "sources": [
+        "apple-m5-ml",
+        "apple-mpp-guide",
+        "apple-wwdc26-tensors"
+      ],
+      "summary": "按版本核查 TensorOps，提出缓存分块、量化和融合候选，并保留边界、布局与数值验证。"
+    },
+    {
+      "id": "mlx-deployment",
+      "title": "MLX 部署：按 prefill、decode 和内存分别选择候选",
+      "path": "wiki/mlx-deployment.md",
+      "type": "deployment",
+      "engines": [
+        "mlx"
+      ],
+      "tags": [
+        "apple-silicon",
+        "prefill",
+        "decode",
+        "quantization",
+        "memory",
+        "benchmark"
+      ],
+      "symptoms": [
+        "high-ttft",
+        "slow-decode",
+        "memory-pressure",
+        "long-prompt"
+      ],
+      "confidence": "documented",
+      "sources": [
+        "mlx-benchmark",
+        "mlx-quantize",
+        "mlx-quantized-layers",
+        "mlx-lm-readme"
+      ],
+      "summary": "分别测量 prefill、decode、内存和质量，以量化配置和 prefill 步长形成可比较的部署候选。"
+    },
+    {
+      "id": "mlx-execution",
+      "title": "MLX 执行：惰性计时、编译融合与 custom Metal",
+      "path": "wiki/mlx-execution.md",
+      "type": "technique",
+      "engines": [
+        "mlx"
+      ],
+      "tags": [
+        "lazy-evaluation",
+        "timing",
+        "compilation",
+        "fusion",
+        "attention",
+        "metal-kernel"
+      ],
+      "symptoms": [
+        "misleading-timing",
+        "dispatch-overhead",
+        "extra-copies",
+        "recompilation",
+        "slow-attention"
+      ],
+      "confidence": "documented",
+      "sources": [
+        "mlx-lazy-evaluation",
+        "mlx-eval-api",
+        "mlx-synchronize-api",
+        "mlx-sdpa-api",
+        "mlx-compilation",
+        "mlx-custom-metal",
+        "local-mlx-m4-r1"
+      ],
+      "summary": "完成惰性求值再计时，优先采用 fast 原语与稳定子图编译，最后依据 profile 编写 custom Metal。"
+    },
+    {
+      "id": "mlx-kv-cache",
+      "title": "MLX KV cache：前缀复用、容量和量化是不同决策",
+      "path": "wiki/mlx-kv-cache.md",
+      "type": "technique",
+      "engines": [
+        "mlx"
+      ],
+      "tags": [
+        "kv-cache",
+        "prefix-cache",
+        "quantization",
+        "rotating-cache",
+        "allocation"
+      ],
+      "symptoms": [
+        "memory-pressure",
+        "long-context",
+        "repeated-prefill",
+        "gpu-idle",
+        "cache-growth"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "mlx-cache-code",
+        "mlx-lm-readme",
+        "mlx-generate-code",
+        "mlx-fast-kv-cache",
+        "local-mlx-m4-r1"
+      ],
+      "summary": "核对实际 cache 类型后，分别验证前缀复用、容量截断、KV 量化及追加分配策略。"
+    },
+    {
+      "id": "mlx-serving",
+      "title": "MLX Serving：先检查 batch 路径，再搜索并发",
+      "path": "wiki/mlx-serving.md",
+      "type": "deployment",
+      "engines": [
+        "mlx"
+      ],
+      "tags": [
+        "serving",
+        "batching",
+        "concurrency",
+        "speculative-decoding",
+        "latency"
+      ],
+      "symptoms": [
+        "low-throughput",
+        "high-p95-latency",
+        "queueing",
+        "sequential-fallback"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "mlx-server-code",
+        "mlx-generate-code"
+      ],
+      "summary": "检查请求是否进入 batch，围绕延迟目标搜索并发，并将 speculative decoding 作为独立候选。"
+    },
+    {
+      "id": "quantization",
+      "title": "权重、KV 与低位宽：压缩和加速分开验证",
+      "path": "wiki/quantization.md",
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx",
+        "llama.cpp"
+      ],
+      "tags": [
+        "quantization",
+        "kv-cache",
+        "unified-memory",
+        "quality"
+      ],
+      "symptoms": [
+        "memory-pressure",
+        "slow-decode",
+        "dequantization-overhead"
+      ],
+      "confidence": "inferred",
+      "sources": [
+        "mlx-quantize",
+        "mlx-quantized-matmul-api",
+        "mlx-cache-code",
+        "llama-context",
+        "apple-m5-ml"
+      ],
+      "summary": "按权重、KV、激活分别评估容量、格式兼容和质量，避免将更小文件等同更低延迟。"
+    },
+    {
+      "id": "runtime-measurement",
+      "title": "有限工具环境：运行时验证与 GPU 计时",
+      "path": "wiki/runtime-measurement.md",
+      "type": "profiling",
+      "engines": [
+        "metal",
+        "mlx",
+        "llama.cpp"
+      ],
+      "tags": [
+        "runtime-compilation",
+        "toolchain",
+        "gpu-timing",
+        "counter-sampling",
+        "capture",
+        "bounded-validation"
+      ],
+      "symptoms": [
+        "missing-compiler",
+        "partial-toolchain",
+        "invalid-timing",
+        "missing-counters",
+        "capture-unavailable"
+      ],
+      "confidence": "documented",
+      "sources": [
+        "apple-metal-libraries",
+        "apple-metal-offline-compilation",
+        "apple-commandbuffer-gpu-time",
+        "apple-commandbuffer-debugging",
+        "apple-counter-sampling-boundaries",
+        "apple-counter-resolution",
+        "apple-counter-clock-conversion",
+        "apple-programmatic-capture"
+      ],
+      "summary": "分开验证离线和运行时路线，正确区分秒与原始时间戳，以有界探针记录计时、捕获及分析各自的证据范围。"
+    },
+    {
+      "id": "local-mlx-m4",
+      "title": "M4 本地观测：attention、量化 matmul 与 capture",
+      "path": "wiki/local-mlx-m4.md",
+      "type": "workflow",
+      "engines": [
+        "mlx",
+        "metal"
+      ],
+      "tags": [
+        "local-validation",
+        "gqa",
+        "quantization",
+        "batch-invariance",
+        "capture",
+        "version-compatibility"
+      ],
+      "symptoms": [
+        "numerical-drift",
+        "invalid-timing",
+        "missing-compiler",
+        "version-mismatch"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "local-mlx-m4-r1",
+        "local-mlx-m4-capture-r1"
+      ],
+      "summary": "M4/MLX0.31.2 的16项attention oracle、8项调用计时、18项QMM数值观察与独立capture导出；无模型或profiler分析结论。"
+    },
+    {
+      "id": "quantized-matmul-validation",
+      "title": "量化矩阵乘的数值与性能路径",
+      "path": "wiki/quantized-matmul-validation.md",
+      "type": "technique",
+      "engines": [
+        "mlx",
+        "metal"
+      ],
+      "tags": [
+        "quantization",
+        "split-k",
+        "batch-invariance",
+        "prefill",
+        "dequantization"
+      ],
+      "symptoms": [
+        "numerical-drift",
+        "prefill-slow",
+        "memory-pressure"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "mlx-splitk-precision-4613",
+        "mlx-prefill-dequant-4621",
+        "local-mlx-m4-r1"
+      ],
+      "summary": "固定packed权重分离量化与kernel误差，检查batch边界，再公平比较packed、逐次解码与常驻dense三条性能路径。"
+    },
+    {
+      "id": "llamacpp-validation",
+      "title": "llama.cpp Metal 验证：防止空跑，定位数值差异",
+      "path": "wiki/llamacpp-validation.md",
+      "type": "workflow",
+      "engines": [
+        "llama.cpp"
+      ],
+      "tags": [
+        "correctness",
+        "benchmark",
+        "rmsnorm",
+        "numerical-error",
+        "provenance",
+        "metal"
+      ],
+      "symptoms": [
+        "empty-tests",
+        "numerical-mismatch",
+        "benchmark-mismatch",
+        "unknown-build"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "llama-backend-tests",
+        "llama-backend-comparison",
+        "llama-debugging-tests",
+        "llama-build-info"
+      ],
+      "summary": "以设备与实际用例行防止空跑，按算子语义、误差指标和图计时范围归因，并明确未运行源码观察与未知构建来源的证据边界。"
+    },
+    {
+      "id": "mlx-regression-probes",
+      "title": "MLX 待验证边界：异步依赖、singleton GQA、多行 qvm 与缓存生命周期",
+      "path": "wiki/mlx-regression-probes.md",
+      "type": "technique",
+      "engines": [
+        "mlx"
+      ],
+      "tags": [
+        "regression",
+        "async-eval",
+        "timing",
+        "singleton",
+        "gqa",
+        "qvm",
+        "quantization",
+        "kv-cache",
+        "batching",
+        "correctness"
+      ],
+      "symptoms": [
+        "numerical-drift",
+        "batch-dependent-output",
+        "timing-ambiguity",
+        "cache-policy-loss"
+      ],
+      "confidence": "experimental",
+      "sources": [
+        "mlx-async-eval-api",
+        "mlx-queue-batched-timing-issue",
+        "mlx-singleton-gqa-issue",
+        "mlx-qvm-multirow-fix",
+        "mlx-qvm-multirow-test",
+        "mlx-rotating-keep-lifecycle-issue"
+      ],
+      "summary": "尚未执行的四项探针分别检查 async_eval 数据依赖、singleton GQA 精确关系、多行 qvm 历史回归和 rotating keep 生命周期，并明确 r1 未覆盖这些边界。"
+    }
+  ],
+  "sources": [
+    {
+      "id": "apple-capabilities",
+      "title": "Metal Feature Set Tables",
+      "url": "https://developer.apple.com/metal/capabilities/",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "2026-05-21 publication; live URL",
+      "mutable": true,
+      "note": "查阅版本含 Apple7-10 和 Metal 4 tensor 能力；能力起点不等于专用加速器起点。"
+    },
+    {
+      "id": "apple-command-buffers",
+      "title": "Metal Best Practices Guide: Command Buffers",
+      "url": "https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/CommandBuffers.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "2017-03-27 archived guide",
+      "mutable": true,
+      "note": "减少提交与避免 GPU starvation 的权衡；frame 建议不等于 LLM 固定参数。"
+    },
+    {
+      "id": "apple-cpu-gpu-sync",
+      "title": "Synchronizing CPU and GPU work",
+      "url": "https://developer.apple.com/documentation/metal/synchronizing-cpu-and-gpu-work",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "多资源实例用于独立工作重叠；不能照搬至逐 token 依赖链。"
+    },
+    {
+      "id": "apple-feature-detection",
+      "title": "Detecting GPU features and Metal software versions",
+      "url": "https://developer.apple.com/documentation/metal/detecting-gpu-features-and-metal-software-versions",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "硬件 family、OS availability 与单项 feature property 需要分别检查。"
+    },
+    {
+      "id": "apple-gpu-counters",
+      "title": "GPU counters and counter sample buffers",
+      "url": "https://developer.apple.com/documentation/metal/gpu-counters-and-counter-sample-buffers",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "查询 counter 支持、采样与解析，必要时对齐 CPU/GPU 时钟。"
+    },
+    {
+      "id": "apple-llama-metal-api",
+      "title": "llama.cpp Metal public backend interface",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/ggml/include/ggml-metal.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "mutable master viewed 2026-10-07",
+      "mutable": true,
+      "note": "能力查询和 GPU capture 接口；具体部署须回到安装版本。"
+    },
+    {
+      "id": "apple-m3-profiling",
+      "title": "Discover new Metal profiling tools for M3 and A17 Pro",
+      "url": "https://developer.apple.com/videos/play/tech-talks/111374/",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "Apple Tech Talk 111374; mutable transcript",
+      "mutable": true,
+      "note": "Apple9 occupancy、launch limiter、L1/LLC/MMU 诊断；counter 可用性与目标有关。"
+    },
+    {
+      "id": "apple-m5-ml",
+      "title": "Accelerate your machine learning workloads with the M5 and A19 GPUs",
+      "url": "https://developer.apple.com/videos/play/tech-talks/111432/",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "Apple Tech Talk 111432; mutable transcript",
+      "mutable": true,
+      "note": "区分 GPU Neural Accelerators 与 ANE；记录 26.1/26.3/26.4 tensor 更新，不复用宣传速度数字。"
+    },
+    {
+      "id": "apple-m5-profiling",
+      "title": "Boost your graphics performance with the M5 and A19 GPUs",
+      "url": "https://developer.apple.com/videos/play/tech-talks/111431/",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "Apple Tech Talk 111431; mutable transcript",
+      "mutable": true,
+      "note": "M5 occupancy influence、live registers 和 stack spill 诊断；不假设旧工具可用。"
+    },
+    {
+      "id": "apple-metal-tools",
+      "title": "Metal developer tools",
+      "url": "https://developer.apple.com/metal/tools/",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs viewed 2026-10-07",
+      "mutable": true,
+      "note": "Instruments/Xcode 与 gpucapture、gpudebug、metalperftrace；本机可用性未验证。"
+    },
+    {
+      "id": "apple-metal4-core",
+      "title": "Understanding the Metal 4 core API",
+      "url": "https://developer.apple.com/documentation/metal/understanding-the-metal-4-core-api",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "Metal 4 queue/command 模型；需查询 OS 与硬件支持。"
+    },
+    {
+      "id": "apple-mlx-m5-research",
+      "title": "Exploring LLMs with MLX and the Neural Accelerators in the M5 GPU",
+      "url": "https://machinelearning.apple.com/research/exploring-llms-mlx-m5",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "Published 2025-11-19; live article",
+      "mutable": true,
+      "note": "Specific M4/M5 study distinguishes TTFT and decode; no local reproduction or universal speed claim."
+    },
+    {
+      "id": "apple-mlx-nax-pr",
+      "title": "MLX #2772 Add Neural Accelerator Support",
+      "url": "https://github.com/ml-explore/mlx/pull/2772",
+      "kind": "merged-pr",
+      "checked": "2026-10-07",
+      "revision": "merged 2025-11-19, merge commit 54f1cc6",
+      "mutable": true,
+      "note": "实现历史入口；不证明安装版本或任意 workload 的选路。"
+    },
+    {
+      "id": "apple-mpp-guide",
+      "title": "Metal Performance Primitives Programming Guide",
+      "url": "https://developer.apple.com/download/files/Metal-Performance-Primitives-Programming-Guide.pdf",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "Version 1, 2026-03-16; live URL",
+      "mutable": true,
+      "note": "GEMM cache、tile、静态 extent、参与作用域与融合；M5 调参提示不跨代固化。"
+    },
+    {
+      "id": "apple-resource-sync",
+      "title": "Resource synchronization",
+      "url": "https://developer.apple.com/documentation/metal/resource-synchronization",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "Metal 4 资源访问冲突需要正确显式同步。"
+    },
+    {
+      "id": "apple-shared-storage",
+      "title": "MTLStorageMode.shared",
+      "url": "https://developer.apple.com/documentation/metal/mtlstoragemode/shared",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "CPU/GPU 访问 shared 资源前须确保对方的相关修改完成。"
+    },
+    {
+      "id": "apple-silicon-porting",
+      "title": "Porting your Metal code to Apple silicon",
+      "url": "https://developer.apple.com/documentation/apple-silicon/porting-your-metal-code-to-apple-silicon",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "禁止假设通用 SIMD 宽度；相关内存访问即使单 SIMD group 仍需适当同步。"
+    },
+    {
+      "id": "apple-storage-modes",
+      "title": "Choosing a resource storage mode for Apple GPUs",
+      "url": "https://developer.apple.com/documentation/metal/choosing-a-resource-storage-mode-for-apple-gpus",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "Apple GPU shared/private/memoryless 的访问与资源边界。"
+    },
+    {
+      "id": "apple-threadgroup-sizing",
+      "title": "Calculating threadgroup and grid sizes",
+      "url": "https://developer.apple.com/documentation/metal/calculating-threadgroup-and-grid-sizes",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "pipeline execution width、最大线程组及非整除网格；最大合法值不是速度承诺。"
+    },
+    {
+      "id": "apple-wwdc26-tensors",
+      "title": "Optimize custom machine learning operations with Metal tensors",
+      "url": "https://developer.apple.com/videos/play/wwdc2026/330/",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "WWDC26 session 330; mutable transcript",
+      "mutable": true,
+      "note": "27 量化格式、scale plane、归约与复用示例；与 26.3 cooperative 输入的边界须按 symbol 检查。"
+    },
+    {
+      "id": "llama-args",
+      "title": "Common CLI definitions",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/common/arg.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "Current parser defines load-mode and device/offload options; check installed executable help."
+    },
+    {
+      "id": "llama-batched-bench",
+      "title": "Batched decoding benchmark",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/batched-bench/README.md",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "Shared versus independent prompts have different KV token capacity requirements; not an HTTP latency benchmark."
+    },
+    {
+      "id": "llama-bench",
+      "title": "llama-bench",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/llama-bench/README.md",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "PP, TG, PG, context depth and JSON repetitions; excludes tokenization and sampling."
+    },
+    {
+      "id": "llama-build",
+      "title": "Build llama.cpp locally",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "macOS defaults to Metal; explicit CMake backend and CPU control. Current guide is mutable."
+    },
+    {
+      "id": "llama-context",
+      "title": "llama_context initialization",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/src/llama-context.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "Quantized V requires Flash Attention after backend scheduling; model/backend support still matters."
+    },
+    {
+      "id": "llama-contributing",
+      "title": "llama.cpp contributing guidance",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/CONTRIBUTING.md",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "Backend-op consistency, perplexity and benchmark regression checks; does not substitute target-application acceptance."
+    },
+    {
+      "id": "llama-fa-discussion",
+      "title": "FA kernel tuning across M chips #27668",
+      "url": "https://github.com/ggml-org/llama.cpp/discussions/27668",
+      "kind": "discussion",
+      "checked": "2026-10-07",
+      "revision": "discussion #27668 (mutable)",
+      "mutable": true,
+      "note": "First-party discussion of device versus GPU-family calibration; reported timings are setup-specific."
+    },
+    {
+      "id": "llama-fa-tuning-pr",
+      "title": "Metal per-device FA-vec tuning #26570",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/26570/files",
+      "kind": "merged-pr",
+      "checked": "2026-10-07",
+      "revision": "PR #26570, merged 2026-08-24; historical commit efeda76b948f59ee52ea20db640bc4cf3dfe8ac1",
+      "mutable": true,
+      "note": "Merged 2026-08-24. Historical PR commit efeda76b948f59ee52ea20db640bc4cf3dfe8ac1 is visible; not current master."
+    },
+    {
+      "id": "llama-metal-device",
+      "title": "Metal device capability and memory handling",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/ggml/src/ggml-metal/ggml-metal-device.m",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "Capability probes, tensor-library loading, working-set diagnostics; implementation details change."
+    },
+    {
+      "id": "llama-prompt-cache-pr",
+      "title": "Host-memory prompt caching #16391",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/16391",
+      "kind": "merged-pr",
+      "checked": "2026-10-07",
+      "revision": "PR #16391, merged 2025-10-09",
+      "mutable": true,
+      "note": "Merged 2025-10-09; historical mechanism and memory limits, not a promise about current defaults or speed."
+    },
+    {
+      "id": "llama-server",
+      "title": "llama-server options and endpoints",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "Slots, continuous batching, KV/prompt cache behavior; defaults and capacity semantics vary by version."
+    },
+    {
+      "id": "llama-spec-code",
+      "title": "Speculative decoding implementation",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/common/speculative.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "Draft/target vocabulary compatibility and sequence-count checks; supported paths remain model-specific."
+    },
+    {
+      "id": "llama-speculative",
+      "title": "Speculative decoding",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/docs/speculative.md",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "Current speculation types and flags; synthetic acceptance produces invalid model output."
+    },
+    {
+      "id": "llama-speed-bench",
+      "title": "SPEED-Bench server benchmark",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/server/bench/speed-bench/README.md",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "Matched baseline/spec runs, per-category metrics and JSON samples; does not itself prove output quality."
+    },
+    {
+      "id": "llama-tuning",
+      "title": "ggml-metal-tuning documentation",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/tuning/README.md",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "Family-keyed FA-vec tuning, thermal anchors, no-harm rule, and limited numerical coverage; current mutable docs."
+    },
+    {
+      "id": "mlx-benchmark",
+      "title": "MLX-LM benchmark.py",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/benchmark.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "main (mutable)",
+      "mutable": true,
+      "note": "分开 prompt/generation 吞吐、预热、随机 token 与禁用 EOS；性能脚本不提供质量验收。"
+    },
+    {
+      "id": "mlx-cache-code",
+      "title": "MLX-LM cache.py",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/models/cache.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "main (mutable)",
+      "mutable": true,
+      "note": "模型 make_cache 优先、默认 rotating keep=4、所见 rotating KV 量化未实现；不得假定参数普遍适用。"
+    },
+    {
+      "id": "mlx-command-buffer-issue",
+      "title": "Metal command-buffer overhead report #4521",
+      "url": "https://github.com/ml-explore/mlx/issues/4521",
+      "kind": "issue",
+      "checked": "2026-10-07",
+      "revision": "Issue opened 2026-09-16; status mutable",
+      "mutable": true,
+      "note": "Source-reported launch-heavy decode overhead; diagnostic lead, not a merged change or universal tuning value."
+    },
+    {
+      "id": "mlx-compilation",
+      "title": "MLX: Compilation",
+      "url": "https://ml-explore.github.io/mlx/build/html/usage/compile.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation",
+      "mutable": true,
+      "note": "融合、重编译、shapeless 和状态捕获约束；文档示例收益不外推为整模型速度。"
+    },
+    {
+      "id": "mlx-custom-metal",
+      "title": "MLX: Custom Metal Kernels",
+      "url": "https://ml-explore.github.io/mlx/build/html/dev/custom_metal_kernels.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation",
+      "mutable": true,
+      "note": "Kernel 对象复用、隐式 contiguous 复制、strides 与 safe math；需核对安装 API 和输入边界。"
+    },
+    {
+      "id": "mlx-eval-api",
+      "title": "MLX eval API",
+      "url": "https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.eval.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation",
+      "mutable": true,
+      "note": "对数组或数组树显式求值；计时必须覆盖需要的输出。"
+    },
+    {
+      "id": "mlx-fast-kv-cache",
+      "title": "MLX: Writing a Fast KV Cache",
+      "url": "https://ml-explore.github.io/mlx/build/html/usage/kv_cache.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation",
+      "mutable": true,
+      "note": "分块预分配避免反复拼接复制与分配；256 倍数触发 cuDNN 的段落专指 CUDA。"
+    },
+    {
+      "id": "mlx-gather-qmm-api",
+      "title": "MLX gather_qmm API",
+      "url": "https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.gather_qmm.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation",
+      "mutable": true,
+      "note": "Batch-matrix indices and sorted_indices contract; index hint does not sort data."
+    },
+    {
+      "id": "mlx-gather-tail-issue",
+      "title": "gather_qmm sorted tail correctness report #4632",
+      "url": "https://github.com/ml-explore/mlx/issues/4632",
+      "kind": "issue",
+      "checked": "2026-10-07",
+      "revision": "Issue opened 2026-10-05; status mutable",
+      "mutable": true,
+      "note": "Reporter describes M5 Max/macOS 27 and large non-tile row counts. Not locally reproduced; check current status before relying on it."
+    },
+    {
+      "id": "mlx-gather-tiling-pr",
+      "title": "Metal gather_qmm improvement #4572",
+      "url": "https://github.com/ml-explore/mlx/pull/4572",
+      "kind": "merged-pr",
+      "checked": "2026-10-07",
+      "revision": "PR #4572 merged 2026-09-28; merge commit 9008944",
+      "mutable": true,
+      "note": "Concrete MoE optimization lead; table alone lacks sufficient environment detail for portable performance comparison."
+    },
+    {
+      "id": "mlx-generate-code",
+      "title": "MLX-LM generate.py",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/generate.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "main (mutable)",
+      "mutable": true,
+      "note": "KV 量化起点与 cache 转换、speculative decoding 的 trimmable cache 条件；功能存在不代表组合可用或提速。"
+    },
+    {
+      "id": "mlx-lazy-evaluation",
+      "title": "MLX: Lazy Evaluation",
+      "url": "https://ml-explore.github.io/mlx/build/html/usage/lazy_evaluation.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation",
+      "mutable": true,
+      "note": "构图与求值区分及隐式求值点；页面关于编译尚未实现的旧措辞不被本 skill 采用，以专门编译文档为准。"
+    },
+    {
+      "id": "mlx-lm-readme",
+      "title": "MLX-LM README: Long Prompts and Generations",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/main/README.md#long-prompts-and-generations",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "main (mutable)",
+      "mutable": true,
+      "note": "Prefill 分块、prompt cache 与旋转 KV 的用途和内存/质量折中；默认值需核对安装版本。"
+    },
+    {
+      "id": "mlx-quantize",
+      "title": "MLX quantize API",
+      "url": "https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.quantize.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation",
+      "mutable": true,
+      "note": "量化模式、位宽、分组及形状约束；格式支持不能证明 Apple GPU 原生指令加速。"
+    },
+    {
+      "id": "mlx-quantized-layers",
+      "title": "MLX quantized neural-network layers",
+      "url": "https://github.com/ml-explore/mlx/blob/main/python/mlx/nn/layers/quantized.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "main (mutable)",
+      "mutable": true,
+      "note": "量化线性层使用 quantized_matmul；不能外推具体模型的速度或质量。"
+    },
+    {
+      "id": "mlx-quantized-matmul-api",
+      "title": "MLX quantized_matmul API",
+      "url": "https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.quantized_matmul.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation",
+      "mutable": true,
+      "note": "Packed weights, scales, bias, transpose and quantization mode contract; not a latency guarantee."
+    },
+    {
+      "id": "mlx-sdpa-api",
+      "title": "MLX fast scaled_dot_product_attention API",
+      "url": "https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.fast.scaled_dot_product_attention.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation",
+      "mutable": true,
+      "note": "GQA/MQA 不预复制 KV、float32 softmax、causal 右下对齐；force_fused 可能更慢。"
+    },
+    {
+      "id": "mlx-server-code",
+      "title": "MLX-LM server.py",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/server.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "main (mutable)",
+      "mutable": true,
+      "note": "Prompt/decode 并发映射、batch 资格检查与缓存预算；所见 seed 或 kv_bits 设置会阻止 batch。"
+    },
+    {
+      "id": "mlx-splitk-pr",
+      "title": "NAX Split-K GEMM #3018",
+      "url": "https://github.com/ml-explore/mlx/pull/3018",
+      "kind": "merged-pr",
+      "checked": "2026-10-07",
+      "revision": "PR #3018 merged 2026-01-26",
+      "mutable": true,
+      "note": "Large-K partitioning and combine; review removed experimental environment switch. Historical setup-specific evidence."
+    },
+    {
+      "id": "mlx-synchronize-api",
+      "title": "MLX synchronize API",
+      "url": "https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.synchronize.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation",
+      "mutable": true,
+      "note": "同步指定流；无参数默认流，不能描述为所有流屏障。"
+    },
+    {
+      "id": "apple-metal-libraries",
+      "title": "Metal libraries",
+      "url": "https://developer.apple.com/documentation/metal/metal-libraries",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "运行时 source→IR→GPU code 与预编译路径；缺少离线工具不推出运行时结果。"
+    },
+    {
+      "id": "apple-metal-offline-compilation",
+      "title": "Building a shader library by precompiling source files",
+      "url": "https://developer.apple.com/documentation/metal/building-a-shader-library-by-precompiling-source-files",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "离线 metal 工具流程；不说明本机当前工具链可用。"
+    },
+    {
+      "id": "apple-commandbuffer-gpu-time",
+      "title": "gpuEndTime",
+      "url": "https://developer.apple.com/documentation/metal/mtlcommandbuffer/gpuendtime",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "完成后读取 GPU 起止时间，单位秒、区间为 command buffer。"
+    },
+    {
+      "id": "apple-commandbuffer-debugging",
+      "title": "Command buffer debugging",
+      "url": "https://developer.apple.com/documentation/metal/command-buffer-debugging",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "区分 CPU kernel scheduling 时间、GPU 时间与 runtime 错误。"
+    },
+    {
+      "id": "apple-counter-sampling-boundaries",
+      "title": "Sampling GPU data into counter sample buffers",
+      "url": "https://developer.apple.com/documentation/metal/sampling-gpu-data-into-counter-sample-buffers",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "先查询 counter 和 stage/dispatch 等采样边界，不能假设目标支持。"
+    },
+    {
+      "id": "apple-counter-resolution",
+      "title": "Converting a GPU’s counter data into a readable format",
+      "url": "https://developer.apple.com/documentation/metal/converting-a-gpus-counter-data-into-a-readable-format",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "resolve 后检查零值和 MTLCounterErrorValue；原始时间戳未必为纳秒。"
+    },
+    {
+      "id": "apple-counter-clock-conversion",
+      "title": "Converting GPU timestamps into CPU time",
+      "url": "https://developer.apple.com/documentation/metal/converting-gpu-timestamps-into-cpu-time",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "sampleTimestamps 前后校准并换算 CPU 纳秒；采样可能影响运行开销。"
+    },
+    {
+      "id": "apple-programmatic-capture",
+      "title": "Capturing a Metal workload programmatically",
+      "url": "https://developer.apple.com/documentation/xcode/capturing-a-metal-workload-programmatically",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "mutable docs",
+      "mutable": true,
+      "note": "macOS14+ MTL_CAPTURE_ENABLED、destination 支持、捕获边界与导出；不保证部分安装的 replay 能力。"
+    },
+    {
+      "id": "local-mlx-m4-r1",
+      "title": "M4 MLX primitive validation r1",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "MLX0.31.2 mlx-lm0.31.3 macOS27.0(26A428), probe.py retained",
+      "mutable": false,
+      "note": "Exploratory seeded primitive checks and synchronous-call timing; no model acceptance, no decoded profiler, no continuous custody qualification. Raw records are retained externally and are not included in this public repository.",
+      "artifact_ref": "2026-10-07-mlx-m4-r1/validation/results.json"
+    },
+    {
+      "id": "local-mlx-m4-capture-r1",
+      "title": "M4 MLX attention capture r1",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "MLX0.31.2 macOS27.0(26A428), separate capture-only process",
+      "mutable": false,
+      "note": "Trace exported, exists=true parsed=false. No correctness/performance/counter interpretation in this capture process. Raw records are retained externally and are not included in this public repository.",
+      "artifact_ref": "2026-10-07-mlx-m4-r1/capture/results.json"
+    },
+    {
+      "id": "mlx-splitk-precision-4613",
+      "title": "Split-K quantized_matmul rounds partial sums to the input dtype",
+      "url": "https://github.com/ml-explore/mlx/issues/4613",
+      "kind": "issue",
+      "checked": "2026-10-07",
+      "revision": "issue4613 open; report MLX0.32.3 M4 Max",
+      "mutable": true,
+      "note": "Source-reported precision/root-cause claim; M4 local batch sensitivity does not prove the same cause."
+    },
+    {
+      "id": "mlx-prefill-dequant-4621",
+      "title": "Quantized matmul versus per-call dequantize at prefill sizes",
+      "url": "https://github.com/ml-explore/mlx/issues/4621",
+      "kind": "issue",
+      "checked": "2026-10-07",
+      "revision": "issue4621 open; report MLX0.32.3 M2 Max64GB",
+      "mutable": true,
+      "note": "Source-reported shape-dependent performance; candidate only, no portable 512-token threshold."
+    },
+    {
+      "id": "llama-backend-tests",
+      "title": "llama.cpp backend operator test selection, comparison, and perf runner",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/tests/test-backend-ops.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "测试设备过滤、结果汇总、RMSNorm 语义及误差回调；当前上游含额外 FA vec slice，与本地未知版本并非同一份源码。仅源码研究，未运行 GPU，不证明现有二进制行为。"
+    },
+    {
+      "id": "llama-backend-comparison",
+      "title": "ggml synchronous graph execution and backend comparison",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/ggml/src/ggml-backend.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "ggml_backend_graph_compute 同步边界，以及逐节点与指定整图输出两种比较路径；函数存在不能证明某次运行选择了该路径或完成模型验证。"
+    },
+    {
+      "id": "llama-debugging-tests",
+      "title": "llama.cpp debugging tests guide",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/docs/development/debugging-tests.md",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "ctest -V -N 只展示命令；debug-test.sh 会构建执行。文档中的旧 CUDA 构建例子不是 Metal 配置建议。"
+    },
+    {
+      "id": "llama-build-info",
+      "title": "llama.cpp CMake build provenance defaults",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/master/cmake/build-info.cmake",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "master (mutable)",
+      "mutable": true,
+      "note": "构建号与 commit 默认 0/unknown，Git 查询成功后更新；默认值不能建立本机源码与二进制映射，构建记录不等于运行时测量。"
+    },
+    {
+      "id": "mlx-async-eval-api",
+      "title": "MLX async_eval API",
+      "url": "https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.async_eval.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation",
+      "mutable": true,
+      "note": "异步求值数组或数组树；文档标记 experimental。调用返回不能代替工作完成计时。"
+    },
+    {
+      "id": "mlx-queue-batched-timing-issue",
+      "title": "MLX #4265: small-M measurement with queue-batched evaluation",
+      "url": "https://github.com/ml-explore/mlx/issues/4265",
+      "kind": "issue",
+      "checked": "2026-10-07",
+      "revision": "Issue #4265 opened 2026-08-15; Closed when checked; mutable",
+      "mutable": true,
+      "note": "作者在 M3 Ultra、MLX 0.31.2/0.32.0 对独立算子统一 eval；仅作为计时范围案例，不证明依赖链或本机加速。"
+    },
+    {
+      "id": "mlx-singleton-gqa-issue",
+      "title": "MLX #3953: broadcast matmul and singleton SDPA precision report",
+      "url": "https://github.com/ml-explore/mlx/issues/3953",
+      "kind": "issue",
+      "checked": "2026-10-07",
+      "revision": "Issue #3953 opened 2026-07-31; Closed when checked; fix commit unverified",
+      "mutable": true,
+      "note": "作者报告 MLX 0.32.0/M5 Max 上 singleton、D=512 的 broadcast/SDPA 精度现象；用于回归输入设计，不能宣称当前版本仍有故障。"
+    },
+    {
+      "id": "mlx-qvm-multirow-fix",
+      "title": "MLX #3497: fix qvm_split_k batch row stride",
+      "url": "https://github.com/ml-explore/mlx/pull/3497/commits/1ea24e11f068af5949cda98e5d3eb0ca5f86ea68",
+      "kind": "merged-pr",
+      "checked": "2026-10-07",
+      "revision": "Commit 1ea24e11f068af5949cda98e5d3eb0ca5f86ea68; PR #3497 merged 2026-05-11",
+      "mutable": false,
+      "note": "固定历史修复更正 qvm 多行输入 stride；PR 合入不证明用户安装包包含该修复。"
+    },
+    {
+      "id": "mlx-qvm-multirow-test",
+      "title": "MLX #3497: fixed regression test for multi-row qvm",
+      "url": "https://github.com/ml-explore/mlx/pull/3497/commits/2ecf184f9150b85b0aa139f7d827751011874d35",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "Commit 2ecf184f9150b85b0aa139f7d827751011874d35",
+      "mutable": false,
+      "note": "测试 M=2/3,K=2048/4096,N=128,bits=4/8,group=32/64,transpose=False；同一反量化权重 dense 参考 max_abs<2e-3，不覆盖完整 GQA 或模型。"
+    },
+    {
+      "id": "mlx-rotating-keep-lifecycle-issue",
+      "title": "MLX-LM #1631: supplied rotating-cache sink policy across merge/extract",
+      "url": "https://github.com/ml-explore/mlx-lm/issues/1631",
+      "kind": "issue",
+      "checked": "2026-10-07",
+      "revision": "Issue #1631 opened 2026-07-28; description corrected 2026-08-01; Open when checked",
+      "mutable": true,
+      "note": "作者报告 supplied cache 的 merge/extract 可能丢失 keep；提出跨容量旋转及 mixed-policy 测试。未在本机验证，改 keep=0 不构成等价修复。"
+    }
+  ]
+}

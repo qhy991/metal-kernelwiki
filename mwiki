@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+"""CPU-only command entry for Metal KernelWiki."""
+from pathlib import Path
+import subprocess
+import sys
+
+sys.dont_write_bytecode = True
+
+def main():
+    commands = {'query': 'query.py', 'get': 'get_page.py', 'validate': 'validate.py'}
+    args = sys.argv[1:]
+    if not args or args[0] in ('help', '-h', '--help'):
+        print('Usage: ./mwiki query WORDS [filters] | get PAGE_OR_SOURCE_ID | validate')
+        return 0
+    if args[0] not in commands:
+        print('Unknown command: ' + args[0], file=sys.stderr)
+        return 2
+    script = Path(__file__).resolve().parent / 'scripts' / commands[args[0]]
+    return subprocess.call([sys.executable, str(script), *args[1:]])
+
+if __name__ == '__main__':
+    raise SystemExit(main())

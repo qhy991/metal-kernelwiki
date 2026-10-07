@@ -1,0 +1,3 @@
+interface:
+  display_name: "Metal KernelWiki"
+  short_description: "Metal LLM 部署、内核优化与证据检索知识库"
