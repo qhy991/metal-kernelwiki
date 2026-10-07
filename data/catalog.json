@@ -297,6 +297,23 @@
       "左填充",
       "左侧填充",
       "不等长请求"
+    ],
+    "cache-persistence": [
+      "cache persistence",
+      "save load",
+      "保存恢复",
+      "保存与恢复",
+      "缓存恢复",
+      "缓存序列化",
+      "roundtrip",
+      "round-trip"
+    ],
+    "restore-failure": [
+      "restore failure",
+      "load cache error",
+      "恢复失败",
+      "读回失败",
+      "加载后报错"
     ]
   },
   "pages": [
@@ -1168,6 +1185,38 @@
         "local-mlx-cache-mask-20261007"
       ],
       "summary": "M4/MLX-LM0.31.3的90项窗口检查中4项失败：不等长旋转缓存切回3-token追加时mask屏蔽有效token，attention误差0.03125；K/V、offset、参考mask对照通过，无模型或性能结论。"
+    },
+    {
+      "id": "mlx-cache-persistence",
+      "title": "缓存保存与恢复：读回张量不等于能够续写",
+      "path": "wiki/mlx-cache-persistence.md",
+      "type": "technique",
+      "engines": [
+        "mlx",
+        "metal"
+      ],
+      "tags": [
+        "kv-cache",
+        "prefix-cache",
+        "cache-persistence",
+        "rotating-cache",
+        "version-compatibility",
+        "local-validation"
+      ],
+      "symptoms": [
+        "restore-failure",
+        "wrong-output",
+        "missing-cache-state"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-lm-cache-0313",
+        "mlx-cache-rotated-1250",
+        "mlx-cache-full-state-1778",
+        "mlx-cache-full-state-ee19be4",
+        "local-mlx-cache-roundtrip-20261007"
+      ],
+      "summary": "M4/MLX-LM0.31.3的12份缓存文件均读回且张量一致，2份rotated标志错误；BatchRotating恢复后6次续写缺_lengths异常，其他指定对照通过。区分状态、接续与跨版格式。"
     }
   ],
   "sources": [
@@ -2100,6 +2149,46 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-mlx-cache-mask/derived/summary.json",
       "note": "90 window checks across six trajectories; native mask/attention 86 pass, 4 fail at N3/W8 after rotation for shorter request. 8 false-negative mask bits and query rows, max_abs0.03125. All K/V/coverage/offset and CPU-mask attention checks pass. No model, serving, nonzero Q or timing; raw records external, unpublished."
+    },
+    {
+      "id": "mlx-cache-rotated-1250",
+      "title": "MLX-LM #1250: rotated False reloads as True",
+      "url": "https://github.com/ml-explore/mlx-lm/issues/1250",
+      "kind": "issue",
+      "checked": "2026-10-07",
+      "revision": "Issue #1250 opened 2026-05-06; Closed via #1778 when checked",
+      "mutable": true,
+      "note": "作者指出bool(\"False\")恢复错误；本机0.31.3另有实际复现。关闭状态不证明安装版已修复，也不证明所有接续字段完整。"
+    },
+    {
+      "id": "mlx-cache-full-state-1778",
+      "title": "MLX-LM #1778: full cache state serialization",
+      "url": "https://github.com/ml-explore/mlx-lm/pull/1778",
+      "kind": "merged-pr",
+      "checked": "2026-10-07",
+      "revision": "Merged 2026-09-09 as ee19be43625b9385f979de6133938f683aba6e8e",
+      "mutable": true,
+      "note": "PR把标量纳入state、按类型保存并替换meta_state，声明关闭1250；保留padding以支持优化SDPA的动机不是本机性能结果。"
+    },
+    {
+      "id": "mlx-cache-full-state-ee19be4",
+      "title": "MLX-LM fixed full-state cache implementation at ee19be4",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/ee19be43625b9385f979de6133938f683aba6e8e/mlx_lm/models/cache.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "Commit ee19be43625b9385f979de6133938f683aba6e8e",
+      "mutable": false,
+      "note": "通过GitHub connector读取固定源码。metadata布局改变且未见legacy识别/转换分支；BatchRotating恢复setter仍不初始化_lengths。仅源码检查，未执行新版本或跨版本加载。"
+    },
+    {
+      "id": "local-mlx-cache-roundtrip-20261007",
+      "title": "M4 cache save/load and continuation probe",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "M4 MLX0.31.2 mlx-lm0.31.3 macOS27.0(26A428); one process, exit2",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-mlx-cache-roundtrip/derived/summary.json",
+      "note": "12 snapshots load with exact public tensors/user metadata, 2 fail rotated equality; 48 live/load continuations, 42 pass and 6 restored BatchRotating errors for missing _lengths. 84 completed window checks pass. No SDPA/models/timing/process-restart/cross-version execution. Raw snapshots and arrays remain external, unpublished."
     }
   ]
 }

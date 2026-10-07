@@ -12,6 +12,8 @@
 
 验证模型权重、tokenizer、模板、位置与 token 前缀一致；文本相似不是可复用条件。分别测全命中、部分命中、未命中，记录实际跳过的 token、TTFT、缓存内存和读取成本。多轮生成会推进状态；保留可复用基准前缀，避免把已被某条分支更新的缓存误用于另一条分支。
 
+文件读回还需验证恢复后能否续写。本机 MLX-LM 0.31.3 的批量旋转缓存可读回相同 K/V，却存在旋转标志错误和缺字段续写异常；其他三类缓存的指定对照通过。完整版本、上游格式变化与边界见 [缓存保存恢复](mlx-cache-persistence.md)，不能将一次加载成功或 PR 合入当作完整兼容证明。
+
 ## 内存不足：分别评估旋转和量化
 
 `max_kv_size` 通过丢弃较早信息限制默认旋转缓存；小容量会牺牲长上下文质量。所见默认路径保留最初 4 个 token，且 `RotatingKVCache.to_quantized` 仍拒绝执行；不能假定旋转缓存与 KV 量化可组合。[容量说明](https://github.com/ml-explore/mlx-lm/blob/main/README.md#long-prompts-and-generations)、[缓存实现](https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/models/cache.py)

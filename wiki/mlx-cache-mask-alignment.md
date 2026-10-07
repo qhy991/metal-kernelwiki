@@ -42,4 +42,6 @@ Apple M4/16GB、macOS 27.0（26A428）、Python 3.14.3、NumPy 2.4.3；默认 Me
 
 原运行以 `completed_with_failed_gates`、exit 2 结束；90 项数组、执行脚本、安装源码快照和日志在仓库外保留。来源 `local-mlx-cache-mask-20261007`，逻辑引用 `2026-10-07-mlx-cache-mask/derived/summary.json`。原始记录未随公开仓库提供，外部读者不能据本页独立复验该运行。
 
+后续独立 [保存恢复探针](mlx-cache-persistence.md) 在等长请求上观察到控制字段往返错误与续写异常；没有执行恢复后 attention，也未修复本页的 mask 失败。
+
 相关：[KV cache 部署](mlx-kv-cache.md)、[缓存策略生命周期](mlx-cache-lifecycle.md)、[探针进度](mlx-regression-probes.md)。

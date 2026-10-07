@@ -46,6 +46,7 @@ python3 scripts/validate.py
 | 多行 qvm 行错误、batch 前缀一致却算错 | [量化数值验证](../wiki/quantized-matmul-validation.md) |
 | rotating keep、合并后丢失前缀 | [缓存生命周期](../wiki/mlx-cache-lifecycle.md) |
 | 左填充、旋转后 chunk 续写、mask 错位 | [mask 与返回槽位对齐](../wiki/mlx-cache-mask-alignment.md) |
+| 保存缓存、加载后报错、升级后的文件兼容 | [保存恢复与续写](../wiki/mlx-cache-persistence.md) |
 | 边界探针已测与未测范围 | [探针进度](../wiki/mlx-regression-probes.md) |
 | llama.cpp 测试空跑、数值或计时范围不明 | [验证流程](../wiki/llamacpp-validation.md) |
 
