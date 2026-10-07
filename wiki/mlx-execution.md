@@ -16,6 +16,8 @@ MLX 操作先记录图；仅计 Python 函数返回时间可能没有计入 GPU 
 
 float32 输入输出并不充分说明内部计算精度。按安装版本和硬件确认数值契约，保留原任务容差；诊断构造和本机范围见 [Float32 精度边界](mlx-float32-precision.md)。
 
+fast RoPE 的调用次数同样不能代表总成本。[Q/K 合并探针](mlx-rope-qk.md)保留了 720 项路径检查的 234 项失败，以及拆分后 batch stride 的实际变化；参数相同还需检查 batch/位置/布局和模型前处理。该轮没有性能结论。
+
 ## 编译稳定子图
 
 profile 若显示 elementwise 中间读写或许多小 dispatch，可比较 `mx.compile`。在循环外建立 compiled function；shape、dtype、输入数变化会重编译。可变状态须显式传入/返回或声明 inputs/outputs。`shapeless=True` 不能修复依赖首个 shape 的 Python 分支或 reshape 常量。[Compilation](https://ml-explore.github.io/mlx/build/html/usage/compile.html) 从纯子图开始验证多 shape 和状态更新，避免盲目包住整个生成循环。

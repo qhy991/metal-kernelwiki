@@ -12,6 +12,8 @@
 
 后续[自定义 Metal 双输出比较](mlx-custom-rms.md)同时保留归一化 y 和 residual s。M512 隔列输入时，默认连续化 custom 比原生路径更慢，显式 stride 路径较快；BF16 差异很小，小尺寸没有统一赢家。布局处理属于完整路径成本；此结果没有证明复制占比、实际 dispatch 数或整模型收益。
 
+[RoPE 合并 Q/K 的 M4 检查](mlx-rope-qk.md)进一步表明：数学上等价的 head 拼接会改变布局和路径，360 个配置中 12 个出现分开通过、合并失败；另有两路共同的长 offset 精度失败。该轮未进入计时。concat 复制、split 后 batch stride 与下游消费成本都应计入候选，而不能从少一次 fast API 调用推导收益。
+
 ## MLX custom Metal 的隐藏成本
 
 默认 row-contiguous 保障可能生成输入拷贝；关闭后必须按真实 strides 寻址。把这种转换计入 end-to-end 路径。先对照普通 MLX 运算和 fast primitive，再用小范围自定义内核处理已知热点。[Custom Metal 文档](https://ml-explore.github.io/mlx/build/html/dev/custom_metal_kernels.html)

@@ -2,7 +2,7 @@
 
 面向 Apple Silicon、Metal、MLX/MLX-LM 和 llama.cpp 的 LLM 部署与 kernel 优化知识库。以优化机制、适用条件、代价交换与有范围的观测组织内容，并保留一手来源。
 
-截至 2026-10-07：**30 个主题页、107 个来源条目**，其中 10 项为本地实验记录。M4 原语验证不代表整模型加速；捕获已导出不代表 profiler 已解析。详细范围见 [本地观测](wiki/local-mlx-m4.md)。
+截至 2026-10-07：**31 个主题页、118 个来源条目**，其中 11 项为本地实验记录。M4 原语验证不代表整模型加速；捕获已导出不代表 profiler 已解析。详细范围见 [本地观测](wiki/local-mlx-m4.md)。
 
 ## 从哪里开始
 
@@ -17,6 +17,7 @@
 - [旋转缓存 mask 对齐](wiki/mlx-cache-mask-alignment.md)、[缓存保存恢复与续写](wiki/mlx-cache-persistence.md)。
 - [残差 RMSNorm：编译与 fast 比较](wiki/mlx-residual-rms.md)、[自定义 Metal：双输出与非连续输入](wiki/mlx-custom-rms.md)。
 - [量化 KV attention：量化失真与执行错误](wiki/mlx-quantized-attention.md)。
+- [RoPE 合并 Q/K：批量、位置与布局](wiki/mlx-rope-qk.md)。
 - [边界探针进度](wiki/mlx-regression-probes.md)、[完整目录](data/catalog.json)。
 
 ## 检索

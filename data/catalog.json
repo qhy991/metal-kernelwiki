@@ -357,6 +357,24 @@
       "multi token",
       "多步续写",
       "chunk续写"
+    ],
+    "rope": [
+      "rotary",
+      "旋转位置编码",
+      "旋转编码",
+      "qk合并",
+      "q/k合并",
+      "qk rope",
+      "q/k rope"
+    ],
+    "position-offset": [
+      "offset",
+      "位置偏移",
+      "位置编码",
+      "长位置",
+      "scalar offset",
+      "标量offset",
+      "向量offset"
     ]
   },
   "pages": [
@@ -391,7 +409,8 @@
         "llama-tuning",
         "mlx-custom-metal",
         "local-mlx-m4-r1",
-        "local-mlx-boundaries-20261007"
+        "local-mlx-boundaries-20261007",
+        "local-mlx-rope-qk-20261007"
       ],
       "summary": "保持 mask 和 GQA 语义，按查询与 KV 形状选择融合或分块路径，并验证极值与尾部。"
     },
@@ -427,7 +446,8 @@
         "mlx-command-buffer-issue",
         "mlx-compile-fusion-0312",
         "local-mlx-residual-rms-20261007",
-        "local-mlx-custom-rms-20261007"
+        "local-mlx-custom-rms-20261007",
+        "local-mlx-rope-qk-20261007"
       ],
       "summary": "用 trace 区分表达式、kernel 和提交开销，比较融合收益与寄存器、复制、同步代价。"
     },
@@ -800,7 +820,8 @@
         "mlx-compile-fusion-0312",
         "local-mlx-residual-rms-20261007",
         "local-mlx-custom-rms-20261007",
-        "mlx-custom-metal-impl-0312"
+        "mlx-custom-metal-impl-0312",
+        "local-mlx-rope-qk-20261007"
       ],
       "summary": "完成惰性求值再计时，优先采用 fast 原语与稳定子图编译，最后依据 profile 编写 custom Metal。"
     },
@@ -1370,9 +1391,49 @@
         "mlx-qvm-kernel-0312",
         "mlx-qvm-multirow-fix",
         "mlx-qvm-multirow-test",
-        "local-mlx-quantized-attention-20261007"
+        "local-mlx-quantized-attention-20261007",
+        "mlx-release-0320"
       ],
       "summary": "M4/MLX0.31.2及MLX-LM0.31.3量化KV helper，128个F32 GQA配置中48个多token PV失败；QK/softmax/dense全部通过。分开量化失真、packed存储与执行正确性，无模型或性能结论。"
+    },
+    {
+      "id": "mlx-rope-qk",
+      "title": "RoPE 合并 Q/K：位置、布局与批量解码先过数值门",
+      "path": "wiki/mlx-rope-qk.md",
+      "type": "technique",
+      "engines": [
+        "mlx",
+        "metal"
+      ],
+      "tags": [
+        "rope",
+        "position-offset",
+        "fusion",
+        "batching",
+        "noncontiguous",
+        "correctness",
+        "local-validation"
+      ],
+      "symptoms": [
+        "numerical-drift",
+        "long-context"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-rms-fast-0312",
+        "mlx-rope-api",
+        "mlx-rope-metal-0312",
+        "mlx-rope-kernel-0312",
+        "mlx-concat-metal-0312",
+        "mlx-split-views-0312",
+        "mlx-rope-batch-fix",
+        "mlx-rope-batch-test",
+        "mlx-release-0320",
+        "mlx-lm-llama-rope-0313",
+        "mlx-lm-qwen3-rope-0313",
+        "local-mlx-rope-qk-20261007"
+      ],
+      "summary": "M4/MLX0.31.2的RoPE Q/K合并：720项486过234败；12配置分开过而concat失败。区分B2单token标量offset、布局变化与长位置共同误差，无性能/模型结论。"
     }
   ],
   "sources": [
@@ -2348,13 +2409,13 @@
     },
     {
       "id": "mlx-rms-fast-0312",
-      "title": "MLX v0.31.2 fast RMSNorm dtype and fallback semantics",
+      "title": "MLX v0.31.2 fast primitives: RMSNorm semantics and RoPE validation",
       "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/fast.cpp",
       "kind": "upstream-code",
       "checked": "2026-10-07",
       "revision": "v0.31.2 tag; actual binary dispatch not verified",
       "mutable": true,
-      "note": "RMSNorm输出类型取x/weight共同类型；fallback float32归一化后cast再乘weight，用于固定比较表达式与低精度舍入边界。"
+      "note": "RMSNorm输出类型取x/weight共同类型；fallback float32归一化后cast再乘weight，用于固定比较表达式与低精度舍入边界。 另核查RoPE的维度/offset/base/freqs校验与传统/半段配对；RoPE本地记录单独保存。"
     },
     {
       "id": "mlx-rms-metal-0312",
@@ -2445,6 +2506,116 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-mlx-quantized-attention/derived/summary.json",
       "note": "128 F32 GQA/cache/helper cases, 80 pass and 48 PV failures at tested Tk1024/2048/4096 Lq2/3, both bits4/8. QK/softmax/dense controls pass, actual packed decoding exact. Posthoc wrong-stride diagnosis does not change gates. No timing, profiler, model or repaired-version validation; raw arrays external/unpublished."
+    },
+    {
+      "id": "mlx-rope-api",
+      "title": "MLX fast RoPE API",
+      "url": "https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.fast.rope.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "Documentation displayed MLX0.32.3",
+      "mutable": true,
+      "note": "输入B/*/T/D、partial dims、配对、offset和base/freqs接口；具体安装版本另核对。"
+    },
+    {
+      "id": "mlx-rope-metal-0312",
+      "title": "MLX v0.31.2 RoPE Metal dispatch and layout",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/rope.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag; binary dispatch not profiled",
+      "mutable": true,
+      "note": "single路径网格N与general路径B的区别；复制/donation/stride条件为源码推断，不是本机dispatch证明。"
+    },
+    {
+      "id": "mlx-rope-kernel-0312",
+      "title": "MLX v0.31.2 RoPE Metal angle and rotation",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/rope.metal",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "float32位置/角度、base exp2或freqs倒数、fast sin/cos与dtype转换；不确定实际误差来源占比。"
+    },
+    {
+      "id": "mlx-concat-metal-0312",
+      "title": "MLX v0.31.2 Metal concatenate allocation and copies",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/slicing.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "concat分配合并输出并逐输入copy_gpu_inplace；源级成本，不作profiler或速度声明。"
+    },
+    {
+      "id": "mlx-split-views-0312",
+      "title": "MLX v0.31.2 split shared-buffer views",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/common/common.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "Split继承strides、建立shared buffer视图并重算flags；B>1按head拆分后batch stride可能保留合并跨度。"
+    },
+    {
+      "id": "mlx-rope-batch-fix",
+      "title": "MLX #3498 fixed single-token multi-batch RoPE",
+      "url": "https://github.com/ml-explore/mlx/pull/3498/commits/b545a35b9baa8f471a134718a930d97ef46cf504",
+      "kind": "merged-pr",
+      "checked": "2026-10-07",
+      "revision": "Commit b545a35b9baa8f471a134718a930d97ef46cf504; PR merged 2026-05-11",
+      "mutable": false,
+      "note": "single grid/group第二维从N改为B*N；历史修复不证明当前安装已包含或通过目标验收。"
+    },
+    {
+      "id": "mlx-rope-batch-test",
+      "title": "MLX #3498 fixed batch RoPE regression test",
+      "url": "https://github.com/ml-explore/mlx/pull/3498/commits/bf6421bfb05d9e39d182432611b99ee9a3dca933",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "Commit bf6421bfb05d9e39d182432611b99ee9a3dca933",
+      "mutable": false,
+      "note": "36组合：B2/4/8,H1/4/7,T1,D=dims64/128,两配对,offset5；与普通MLX参考maxabs<1e-5。未覆盖本轮BF16/partial/concat/长offset。"
+    },
+    {
+      "id": "mlx-release-0320",
+      "title": "MLX v0.32.0 release notes",
+      "url": "https://github.com/ml-explore/mlx/releases/tag/v0.32.0",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "v0.32.0 release published 2026-07-07",
+      "mutable": true,
+      "note": "发布说明列出RoPE #3498与QVM #3497；是上游版本记录，不是本机升级或回归验证。"
+    },
+    {
+      "id": "mlx-lm-llama-rope-0313",
+      "title": "MLX-LM v0.31.3 Llama RoPE and cache order",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/v0.31.3/mlx_lm/models/llama.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.3 tag",
+      "mutable": true,
+      "note": "新Q/K先以同一cache.offset做RoPE，再cache.update_and_fetch；仅源码核查，未运行模型。"
+    },
+    {
+      "id": "mlx-lm-qwen3-rope-0313",
+      "title": "MLX-LM v0.31.3 Qwen3 Q/K norm and RoPE order",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/v0.31.3/mlx_lm/models/qwen3.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.3 tag",
+      "mutable": true,
+      "note": "Q/K各自norm后transpose/RoPE，再写cache；不能省去不同权重的前处理，未运行模型。"
+    },
+    {
+      "id": "local-mlx-rope-qk-20261007",
+      "title": "M4 RoPE Q/K composition, batch offset and positional precision",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "M4 MLX0.31.2 macOS27.0(26A428); one model-free process, exit2",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-mlx-rope-qk/derived/summary.json",
+      "note": "360 F32/BF16 configurations, 720 route checks:486 pass/234 fail. B2T1 scalar layout-sensitive failures and common long-offset ideal-reference drift; 12 configs separate passes/concat fails. All output arrays retained, CPU complex audit preserves gates. No timing/profiler/model/fixed-version validation; raw records external/unpublished."
     }
   ]
 }
