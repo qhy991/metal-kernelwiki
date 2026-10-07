@@ -10,3 +10,4 @@ __pycache__/
 artifacts/
 evidence/
 skill/*/knowledge
+skill/*/repository.json

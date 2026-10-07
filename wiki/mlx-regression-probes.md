@@ -1,10 +1,12 @@
-# MLX 待验证边界：异步依赖、singleton GQA、多行 qvm 与缓存生命周期
+# MLX 边界探针：异步依赖、singleton GQA、多行 qvm 与缓存生命周期
 
-检查日期：2026-10-07。**以下四项均尚未执行**；来源是官方 API、历史修复和作者报告，输入方案是待验证设计。执行前固定芯片、OS、安装版本、seed、dtype、shape、容差与求值范围，按项目授权和 gate 运行，失败保留原始记录。
+检查日期：2026-10-07。**第 1、2 项已在 M4/MLX 0.31.2 做限定验证；第 3、4 项尚未执行**。保留原始设计与后续观测的区别。执行新配置前固定芯片、OS、安装版本、seed、dtype、shape、容差与求值范围，按项目授权和 gate 运行，失败保留原始记录。
 
-本地 r1 只检查了同步 SDPA 的 `D=64`、四组非 singleton 长度，以及另一组 `transpose=True/M>=16` 量化乘法和缓存 API 行为；其结果见 [M4 本地观测](local-mlx-m4.md)，相关方法见 [量化乘法验证](quantized-matmul-validation.md)。这些结果**不覆盖下面任何一项**，独立 capture 导出也没有解析执行路径。
+本地 r1 只检查了同步 SDPA 的 `D=64`、四组非 singleton 长度，以及另一组 `transpose=True/M>=16` 量化乘法和缓存 API 行为；其结果见 [M4 本地观测](local-mlx-m4.md)，相关方法见 [量化乘法验证](quantized-matmul-validation.md)。r1 结果不覆盖下面四项，独立 capture 导出也没有解析执行路径。后续运行 `2026-10-07-mlx-boundaries` 单独保留了第 1、2 项结果，没有改变 r1 的证据范围。
 
-## 1. async_eval：提交完成与数据依赖分开测（尚未执行）
+## 1. async_eval：提交完成与数据依赖分开测（已做限定验证）
+
+三个进程完成以下小输入验证，并增加同一依赖链仅尾部 eval 的 D 路径。四种路径均通过预设 CPU oracle；计时为主机完成区间，存在明显波动，详见 [求值边界观测](mlx-async-evaluation.md)。未测真实生成循环、多流或 GPU 内核时间。
 
 [官方 API](https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.async_eval.html) 仍标为 experimental。[上游 #4265](https://github.com/ml-explore/mlx/issues/4265) 使用独立调用统一求值，说明需要区分计时范围；其 M3 Ultra 观察不是依赖链加速证据。
 
@@ -12,11 +14,14 @@
 
 - A：连续 `x=f(x); mx.eval(x)`，测串行依赖链及每步等待。
 - B：预先准备并求值 32 个不同的 `X_i=X+i/1024`，独立计算 `f(X_i)`，最后一次 `mx.eval(outputs)`；它测独立工作完成时间。
-- C：连续 `x=f(x); mx.async_eval(x)`，最后 `mx.eval(x)`。分别保存提交耗时和包含尾部等待的完成耗时。
+- C：连续 `x=f(x); mx.async_eval(x)`，最后 `mx.eval(x)`。分别保存尾部 eval 前区间和包含尾部等待的完成区间；前者也可能含内部等待。
+- D：连续构建 `x=f(x)` 的依赖链，最后一次 `mx.eval(x)`。
 
-判据：从实际 float32 输入建立 CPU float64 参考，A/C 对照 32 步，B 各自对照一步；预设 `atol=1e-5, rtol=1e-4` 并保留最大误差与非有限值。先确认正确性，再报告重复分布。不能复用已求值输出计时，也不能把 B 的耗时除以 32 称为逐 token decode 延迟。
+判据：从实际 float32 输入建立 CPU float64 参考，A/C/D 对照 32 步，B 各自对照一步；预设 `atol=1e-5, rtol=1e-4` 并保留最大误差与非有限值。先确认正确性，再报告重复分布。不能复用已求值输出计时，也不能把 B 的耗时除以 32 称为逐 token decode 延迟。
 
-## 2. singleton GQA：一个 key 的输出应等于 V（尚未执行）
+## 2. singleton GQA：一个 key 的输出应等于 V（已做限定验证）
+
+在原设计上增加 float16、三类 V、四种调用对照，共 48 个不同配置；三个进程每次均精确等于实际存储 V。详见 [Float32 精度边界](mlx-float32-precision.md)。相同输入的重复不是新增测试条件，M4 通过不证明 M5 历史 issue 已修复。
 
 [历史报告 #3953](https://github.com/ml-explore/mlx/issues/3953) 描述 MLX 0.32.0/M5 Max 的 broadcast 精度现象；状态为 Closed，尚未核实修复 commit，不宣称当前版本仍有故障。
 

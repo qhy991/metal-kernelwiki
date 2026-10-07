@@ -5,9 +5,11 @@ description: Retrieve and maintain evidence-backed Metal LLM deployment and kern
 
 # Metal KernelWiki
 
-The `knowledge` link points to the canonical dedicated repository. Begin with
-its `README.md` and `references/optimization-workflow.md`, then retrieve the
-relevant mechanism pages and their registered sources.
+The installed `knowledge/` directory exposes linked documents from the canonical
+repository; `repository.json` locates its command entry. Begin with
+`knowledge/README.md` and `knowledge/references/optimization-workflow.md`, then
+retrieve the relevant mechanism pages and their registered sources. When using
+the repository template directly, these documents live at the repository root.
 
 ```bash
 python3 scripts/wiki.py query "MLX 长上下文 decode 慢" --limit 5

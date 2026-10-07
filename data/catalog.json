@@ -229,6 +229,25 @@
       "边界测试",
       "回归探针",
       "待验证"
+    ],
+    "float32-precision": [
+      "precision",
+      "float32",
+      "fp32",
+      "float32精度",
+      "浮点精度",
+      "内部精度"
+    ],
+    "async-eval": [
+      "async_eval",
+      "async",
+      "异步求值",
+      "异步执行"
+    ],
+    "data-dependency": [
+      "dependency",
+      "数据依赖",
+      "依赖链"
     ]
   },
   "pages": [
@@ -262,7 +281,8 @@
         "mlx-sdpa-api",
         "llama-tuning",
         "mlx-custom-metal",
-        "local-mlx-m4-r1"
+        "local-mlx-m4-r1",
+        "local-mlx-boundaries-20261007"
       ],
       "summary": "保持 mask 和 GQA 语义，按查询与 KV 形状选择融合或分块路径，并验证极值与尾部。"
     },
@@ -663,7 +683,8 @@
         "mlx-sdpa-api",
         "mlx-compilation",
         "mlx-custom-metal",
-        "local-mlx-m4-r1"
+        "local-mlx-m4-r1",
+        "local-mlx-boundaries-20261007"
       ],
       "summary": "完成惰性求值再计时，优先采用 fast 原语与稳定子图编译，最后依据 profile 编写 custom Metal。"
     },
@@ -888,7 +909,7 @@
     },
     {
       "id": "mlx-regression-probes",
-      "title": "MLX 待验证边界：异步依赖、singleton GQA、多行 qvm 与缓存生命周期",
+      "title": "MLX 边界探针：异步依赖、singleton GQA、多行 qvm 与缓存生命周期",
       "path": "wiki/mlx-regression-probes.md",
       "type": "technique",
       "engines": [
@@ -919,9 +940,73 @@
         "mlx-singleton-gqa-issue",
         "mlx-qvm-multirow-fix",
         "mlx-qvm-multirow-test",
-        "mlx-rotating-keep-lifecycle-issue"
+        "mlx-rotating-keep-lifecycle-issue",
+        "local-mlx-boundaries-20261007"
       ],
-      "summary": "尚未执行的四项探针分别检查 async_eval 数据依赖、singleton GQA 精确关系、多行 qvm 历史回归和 rotating keep 生命周期，并明确 r1 未覆盖这些边界。"
+      "summary": "异步依赖与 singleton GQA 已有 M4 限定观测；多行 qvm 历史回归和 rotating keep 生命周期仍待验证，保留各轮证据范围。"
+    },
+    {
+      "id": "mlx-async-evaluation",
+      "title": "MLX 求值边界：依赖链延迟与独立任务吞吐",
+      "path": "wiki/mlx-async-evaluation.md",
+      "type": "technique",
+      "engines": [
+        "mlx",
+        "metal"
+      ],
+      "tags": [
+        "async-eval",
+        "lazy-evaluation",
+        "data-dependency",
+        "launch-overhead",
+        "timing",
+        "local-validation"
+      ],
+      "symptoms": [
+        "misleading-timing",
+        "launch-overhead",
+        "gpu-idle"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-eval-api",
+        "mlx-async-eval-api",
+        "mlx-synchronize-api",
+        "mlx-eval-implementation-0312",
+        "local-mlx-boundaries-20261007"
+      ],
+      "summary": "M4/MLX0.31.2 比较三种32步依赖链求值边界与独立任务；三进程均过CPU oracle，保留主机完成区间的分布和环境干扰，不推导decode加速。"
+    },
+    {
+      "id": "mlx-float32-precision",
+      "title": "Float32 精度边界：singleton attention 恒等诊断",
+      "path": "wiki/mlx-float32-precision.md",
+      "type": "technique",
+      "engines": [
+        "mlx",
+        "metal"
+      ],
+      "tags": [
+        "float32-precision",
+        "correctness",
+        "numerical-drift",
+        "singleton",
+        "gqa",
+        "broadcast",
+        "local-validation"
+      ],
+      "symptoms": [
+        "numerical-drift",
+        "batch-dependent-output"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-numerical-precision",
+        "mlx-singleton-gqa-issue",
+        "mlx-sdpa-api",
+        "local-mlx-boundaries-20261007"
+      ],
+      "summary": "区分存储dtype、内部精度与任务容差；M4/MLX0.31.2的48组singleton/broadcast配置三次精确等于存储V，不能证明M5历史问题修复或多key路径精度。"
     }
   ],
   "sources": [
@@ -1694,6 +1779,36 @@
       "revision": "Issue #1631 opened 2026-07-28; description corrected 2026-08-01; Open when checked",
       "mutable": true,
       "note": "作者报告 supplied cache 的 merge/extract 可能丢失 keep；提出跨容量旋转及 mixed-policy 测试。未在本机验证，改 keep=0 不构成等价修复。"
+    },
+    {
+      "id": "mlx-numerical-precision",
+      "title": "MLX Numerical Precision",
+      "url": "https://ml-explore.github.io/mlx/build/html/usage/precision.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation",
+      "mutable": true,
+      "note": "float32 输入输出可对应降精度矩阵运算；依后端和硬件而变。新版精度开关说明未在本机0.31.2验证，不能追认其完整契约。"
+    },
+    {
+      "id": "mlx-eval-implementation-0312",
+      "title": "MLX v0.31.2 evaluation scheduling and waits",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/transforms.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag; installed binary correspondence not verified",
+      "mutable": true,
+      "note": "eval 等待完成；async 路径可因活跃任务数或内存压力等待。源码机制不证明本机某次等待、dispatch或融合的根因。"
+    },
+    {
+      "id": "local-mlx-boundaries-20261007",
+      "title": "M4 MLX evaluation-boundary and singleton precision probes",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "M4 MLX0.31.2 macOS27.0(26A428); three processes with fixed seeds",
+      "mutable": false,
+      "note": "48 singleton configurations repeated in each process; four evaluation modes pass CPU oracle. Host completion intervals only, substantial variability and uncontrolled applications/thermal state; first run overlapped CPU installer tests. No model acceptance or profiler analysis. Raw records retained externally, not published.",
+      "artifact_ref": "2026-10-07-mlx-boundaries/summary.json"
     }
   ]
 }

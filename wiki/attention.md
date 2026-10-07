@@ -11,6 +11,8 @@ MLX 的 fast SDPA 支持 MHA/GQA/MQA；输入是 `[B,H,T,D]`，GQA/MQA 的 K/V �
 配方：`mx.fast.scaled_dot_product_attention(q, k, v, scale=D**-0.5, mask="causal")`。
 这是接口示意，未执行；`q/k/v` 必须来自已校验形状的模型。分离 attention sinks、滑动窗口、padding mask 和 positional offset；不要为方便而改变原模型 mask。
 
+单 key、无 sinks 的输出恒等于 V 可作为诊断关系。M4 的 48 组 singleton 对照见 [精度边界](mlx-float32-precision.md)；这不覆盖多 key 归约，也不证明任意 float32 内部计算路径。
+
 ## 结构不同的优化候选
 
 - Prefill：tile 化融合 softmax 与 value 聚合，避免写出完整 score/probability 矩阵。需要较多计算与复用，调 tile 时同时检查 threadgroup memory 和寄存器压力。

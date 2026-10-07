@@ -2,7 +2,7 @@
 
 面向 Apple Silicon、Metal、MLX/MLX-LM 和 llama.cpp 的 LLM 部署与 kernel 优化知识库。以优化机制、适用条件、代价交换与有范围的观测组织内容，并保留一手来源。
 
-截至 2026-10-07：**21 个主题页、77 个来源条目**，其中 2 项为本地实验记录。M4 原语验证不代表整模型加速；捕获已导出不代表 profiler 已解析。详细范围见 [本地观测](wiki/local-mlx-m4.md)。
+截至 2026-10-07：**23 个主题页、80 个来源条目**，其中 3 项为本地实验记录。M4 原语验证不代表整模型加速；捕获已导出不代表 profiler 已解析。详细范围见 [本地观测](wiki/local-mlx-m4.md)。
 
 ## 从哪里开始
 
@@ -12,7 +12,8 @@
 - [llama.cpp 部署](wiki/llamacpp-deployment.md)、[Metal 调优](wiki/llamacpp-metal-tuning.md)、[验证与空跑](wiki/llamacpp-validation.md)。
 - [Attention](wiki/attention.md)、[GEMM/MoE](wiki/gemm-moe.md)、[量化 matmul 验证](wiki/quantized-matmul-validation.md)。
 - [Metal 能力](wiki/metal-capabilities.md)、[内存与线程组](wiki/metal-memory-threadgroups.md)、[运行时测量](wiki/runtime-measurement.md)。
-- [M4 本地记录](wiki/local-mlx-m4.md)、[尚未执行的边界探针](wiki/mlx-regression-probes.md)、[完整目录](data/catalog.json)。
+- [M4 本地记录](wiki/local-mlx-m4.md)、[异步求值边界](wiki/mlx-async-evaluation.md)、[float32 精度诊断](wiki/mlx-float32-precision.md)。
+- [边界探针进度](wiki/mlx-regression-probes.md)、[完整目录](data/catalog.json)。
 
 ## 检索
 
@@ -40,7 +41,9 @@ python3 scripts/install_skill.py
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/metal-kernelwiki/scripts/wiki.py" query "首 token 慢"
 ```
 
-安装器默认使用 `CODEX_HOME/skills`（未设置时为 `~/.codex/skills`），也可用 `--dest /绝对路径/metal-kernelwiki` 指定技能目录。已存在的目标会被拒绝，不覆盖其他安装。它只复制 `skill/metal-kernelwiki/`，并创建 `knowledge` 链接指向当前 checkout；更新仓库后，知识内容自动可见，仓库移动后需要重新建立该链接。直接在 checkout 内运行模板入口也可使用：
+安装器默认使用 `CODEX_HOME/skills`（未设置时为 `~/.codex/skills`），也可用 `--dest /绝对路径/metal-kernelwiki` 指定技能目录。已存在的目标会被拒绝，不覆盖其他安装。它只复制 `skill/metal-kernelwiki/`，在真实目录 `knowledge/` 中链接 `data/`、`wiki/`、`references/` 及 README、MAINTENANCE、PROVENANCE，并用安装时生成的 `repository.json` 定位当前 checkout。正文不复制，仓库内容更新后自动可见；整个仓库和其中的 skill 模板不会出现在已安装技能的扫描树中。
+
+旧版 whole-repo `knowledge` 链接会让 Codex 发现两个同名 skill。升级安装入口或移动仓库时，先将旧技能目录移到所有技能扫描目录之外保留备份，再重新安装，让知识链接和仓库定位一起更新；只更新 checkout 不会迁移旧安装。不要将整份仓库链接进技能目录。[OpenAI 技能发现规则](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)说明扫描会跟随符号链接，且同名技能不会合并。直接在 checkout 内运行模板入口也可使用：
 
 ```bash
 python3 skill/metal-kernelwiki/scripts/wiki.py query "Metal profiling"
@@ -52,4 +55,4 @@ python3 skill/metal-kernelwiki/scripts/wiki.py query "Metal profiling"
 
 原实验、脚本、日志与 `.gputrace` 留在仓库外；这里保存派生解释和 `artifact_ref` 逻辑引用，真实路径映射由原记录持有者保管。本地记录未随公开仓库提供，外部读者不能据页面独立复验原运行。结构校验不会验证外部记录存在、测量真实性或历史 custody。不要把一次小型数值通过升级成普遍硬件保证。
 
-维护方式见 [MAINTENANCE.md](MAINTENANCE.md)，来源和复用范围见 [PROVENANCE.md](PROVENANCE.md)。提交前运行 `./mwiki validate`，并对变更主题执行实际检索；改动安装或入口时，验证一个临时安装从其他工作目录也能查询。无需重跑 GPU 来验证文字或打包修改。
+维护方式见 [MAINTENANCE.md](MAINTENANCE.md)，来源和复用范围见 [PROVENANCE.md](PROVENANCE.md)。提交前运行 `./mwiki validate`，并对变更主题执行实际检索；改动安装或入口时，运行 `python3 scripts/test_install_skill.py`，验证临时安装从其他工作目录能查询，且跟随链接遍历时仅有一个 `SKILL.md`。无需重跑 GPU 来验证文字或打包修改。

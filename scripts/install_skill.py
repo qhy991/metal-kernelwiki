@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Install a thin metal-kernelwiki skill pointing to this checkout; never overwrite."""
 import argparse
+import json
 import os
 from pathlib import Path
 import shutil
@@ -20,13 +21,24 @@ def main():
     if destination.name != 'metal-kernelwiki':
         parser.error('Destination directory must be named metal-kernelwiki')
     source = root / 'skill' / 'metal-kernelwiki'
-    if not (root / 'data/catalog.json').is_file() or not (source / 'SKILL.md').is_file():
+    knowledge_entries = ('data', 'wiki', 'references', 'README.md', 'MAINTENANCE.md', 'PROVENANCE.md')
+    if (not (root / 'mwiki').is_file()
+            or not (root / 'data/catalog.json').is_file()
+            or not (source / 'SKILL.md').is_file()
+            or any(not (root / name).exists() for name in knowledge_entries)):
         parser.error('Incomplete source repository')
     destination.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copytree(source, destination, ignore=shutil.ignore_patterns('knowledge','__pycache__','*.pyc'))
-    (destination / 'knowledge').symlink_to(root, target_is_directory=True)
+    shutil.copytree(source, destination, ignore=shutil.ignore_patterns('knowledge','repository.json','__pycache__','*.pyc'))
+    # Expose the knowledge, without exposing a second SKILL.md through repo/skill.
+    knowledge = destination / 'knowledge'
+    knowledge.mkdir()
+    for name in knowledge_entries:
+        target = root / name
+        (knowledge / name).symlink_to(target, target_is_directory=target.is_dir())
+    (destination / 'repository.json').write_text(
+        json.dumps({'repository': str(root)}, ensure_ascii=False) + '\n', encoding='utf-8')
     print(destination)
-    print('knowledge -> ' + str(root))
+    print('Knowledge links and repository.json point to ' + str(root))
     return 0
 
 if __name__ == '__main__':

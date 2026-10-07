@@ -40,7 +40,9 @@ python3 scripts/validate.py
 | M5、Metal 4、TensorOps | [能力检查](../wiki/metal-capabilities.md)、[Metal tensors](../wiki/metal-tensors.md) |
 | 工具链缺失、trace 导出与计时范围 | [运行时测量](../wiki/runtime-measurement.md)、[M4 本地记录](../wiki/local-mlx-m4.md) |
 | 量化 matmul 的 batch 精度、prefill 路径 | [数值与性能验证](../wiki/quantized-matmul-validation.md)、[M4 本地记录](../wiki/local-mlx-m4.md) |
-| async、singleton GQA、缓存生命周期边界 | [待验证探针](../wiki/mlx-regression-probes.md) |
+| async、等待与数据依赖 | [求值边界](../wiki/mlx-async-evaluation.md) |
+| float32、singleton GQA 精度 | [数值诊断](../wiki/mlx-float32-precision.md) |
+| 多行 qvm、缓存生命周期边界 | [探针进度与待验证项](../wiki/mlx-regression-probes.md) |
 | llama.cpp 测试空跑、数值或计时范围不明 | [验证流程](../wiki/llamacpp-validation.md) |
 
 ## 必须保留的判断边界

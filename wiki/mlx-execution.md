@@ -1,6 +1,6 @@
 # MLX 执行：惰性计时、编译融合与 custom Metal
 
-证据状态：官方文档；核查于 2026-10-07，页面显示 MLX 0.32.3。本页方法未经本机 GPU 验证；先 profile，再决定是否改 kernel。
+证据状态：官方文档；核查于 2026-10-07，页面显示 MLX 0.32.3。求值边界已有 [M4/MLX 0.31.2 限定观测](mlx-async-evaluation.md)；本页编译与 custom Metal 候选尚未经本机验证。先 profile，再决定是否改 kernel。
 
 ## 测的是计算还是构图
 
@@ -13,6 +13,8 @@ MLX 操作先记录图；仅计 Python 函数返回时间可能没有计入 GPU 
 手写 attention 优先与 `mx.fast.scaled_dot_product_attention` 比较。它支持 GQA/MQA，不应先将 K/V 复制到 query head 数；softmax 使用 float32。字符串 causal mask 采用右下对齐。`force_fused=True` 可能更慢，只是部分情况内存更小；无可用 fused kernel 时会报错。[SDPA API](https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.fast.scaled_dot_product_attention.html) 检查非方阵 attention、cache offset、mask、head 比例与精度。
 
 上述 `force_fused` 来自新版文档。本机 MLX 0.31.2 的 docstring 签名没有这个参数，未用调用验证其拒绝行为；先查看安装版本再生成代码。[M4 本地检查](local-mlx-m4.md) 仅验证了普通 SDPA 调用及限定形状的 oracle，没有确认后端融合或内部复制策略。
+
+float32 输入输出并不充分说明内部计算精度。按安装版本和硬件确认数值契约，保留原任务容差；诊断构造和本机范围见 [Float32 精度边界](mlx-float32-precision.md)。
 
 ## 编译稳定子图
 
