@@ -14,6 +14,8 @@
 
 [RoPE 合并 Q/K 的 M4 检查](mlx-rope-qk.md)进一步表明：数学上等价的 head 拼接会改变布局和路径，360 个配置中 12 个出现分开通过、合并失败；另有两路共同的长 offset 精度失败。该轮未进入计时。concat 复制、split 后 batch stride 与下游消费成本都应计入候选，而不能从少一次 fast API 调用推导收益。
 
+[SwiGLU 三路比较](mlx-swiglu.md)检查了一个已有 compiled helper 的激活：216 项预检查和 1512 个在线计时检查通过。M512 每组 dtype/layout 中 compiled 都有两轮快、一轮慢于普通表达式；自定义路径还改变 BF16 中间舍入。应保留已有优化作为基线，不能只取较快轮次或把不同算术路线的收益全归为融合。
+
 ## MLX custom Metal 的隐藏成本
 
 默认 row-contiguous 保障可能生成输入拷贝；关闭后必须按真实 strides 寻址。把这种转换计入 end-to-end 路径。先对照普通 MLX 运算和 fast primitive，再用小范围自定义内核处理已知热点。[Custom Metal 文档](https://ml-explore.github.io/mlx/build/html/dev/custom_metal_kernels.html)

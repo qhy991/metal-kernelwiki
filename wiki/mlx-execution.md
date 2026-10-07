@@ -22,6 +22,8 @@ fast RoPE 的调用次数同样不能代表总成本。[Q/K 合并探针](mlx-ro
 
 profile 若显示 elementwise 中间读写或许多小 dispatch，可比较 `mx.compile`。在循环外建立 compiled function；shape、dtype、输入数变化会重编译。可变状态须显式传入/返回或声明 inputs/outputs。`shapeless=True` 不能修复依赖首个 shape 的 Python 分支或 reshape 常量。[Compilation](https://ml-explore.github.io/mlx/build/html/usage/compile.html) 从纯子图开始验证多 shape 和状态更新，避免盲目包住整个生成循环。
 
+MLX-LM 0.31.3 的 SwiGLU 和 MLX 0.31.2 的 `nn.silu` 已带编译装饰。[限定三路比较](mlx-swiglu.md)使用直接 `mx.sigmoid` 表达式建立基线，验证实际 BF16 舍入并保留多进程排序反转；不要把库已有的融合重复算作新优化。
+
 ## 最后才写 custom Metal
 
 `mx.fast.metal_kernel` 创建可能触发 JIT，应复用对象。默认 `ensure_row_contiguous=True` 可能产生输入复制；若关闭，kernel 必须正确处理 shape/strides。当前文档默认 safe math；masked softmax 依赖 `exp(-inf)=0`，不能无条件改为 relaxed/fast。[Custom Metal Kernels](https://ml-explore.github.io/mlx/build/html/dev/custom_metal_kernels.html)

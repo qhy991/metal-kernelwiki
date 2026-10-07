@@ -375,6 +375,13 @@
       "scalar offset",
       "标量offset",
       "向量offset"
+    ],
+    "swiglu": [
+      "silu",
+      "swish gated linear unit",
+      "门控激活",
+      "激活融合",
+      "ffn激活"
     ]
   },
   "pages": [
@@ -447,7 +454,9 @@
         "mlx-compile-fusion-0312",
         "local-mlx-residual-rms-20261007",
         "local-mlx-custom-rms-20261007",
-        "local-mlx-rope-qk-20261007"
+        "local-mlx-rope-qk-20261007",
+        "local-mlx-swiglu-20261007",
+        "mlx-lm-swiglu-0313"
       ],
       "summary": "用 trace 区分表达式、kernel 和提交开销，比较融合收益与寄存器、复制、同步代价。"
     },
@@ -480,7 +489,9 @@
         "mlx-splitk-pr",
         "mlx-gather-tiling-pr",
         "mlx-gather-qmm-api",
-        "mlx-gather-tail-issue"
+        "mlx-gather-tail-issue",
+        "local-mlx-swiglu-20261007",
+        "mlx-lm-swiglu-0313"
       ],
       "summary": "从合入 PR 提取形状相关候选，检查索引、排序、归约和尾部，而非照搬历史阈值。"
     },
@@ -821,7 +832,9 @@
         "local-mlx-residual-rms-20261007",
         "local-mlx-custom-rms-20261007",
         "mlx-custom-metal-impl-0312",
-        "local-mlx-rope-qk-20261007"
+        "local-mlx-rope-qk-20261007",
+        "local-mlx-swiglu-20261007",
+        "mlx-lm-swiglu-0313"
       ],
       "summary": "完成惰性求值再计时，优先采用 fast 原语与稳定子图编译，最后依据 profile 编写 custom Metal。"
     },
@@ -1434,6 +1447,45 @@
         "local-mlx-rope-qk-20261007"
       ],
       "summary": "M4/MLX0.31.2的RoPE Q/K合并：720项486过234败；12配置分开过而concat失败。区分B2单token标量offset、布局变化与长位置共同误差，无性能/模型结论。"
+    },
+    {
+      "id": "mlx-swiglu",
+      "title": "SwiGLU：已有编译函数、显式表达式与自定义 Metal",
+      "path": "wiki/mlx-swiglu.md",
+      "type": "technique",
+      "engines": [
+        "mlx",
+        "metal"
+      ],
+      "tags": [
+        "swiglu",
+        "fusion",
+        "custom-metal",
+        "noncontiguous",
+        "correctness",
+        "benchmark",
+        "local-validation"
+      ],
+      "symptoms": [
+        "launch-overhead",
+        "timing-variance",
+        "numerical-drift"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-lm-swiglu-0313",
+        "mlx-silu-0312",
+        "mlx-compiled-metal-0312",
+        "mlx-compiled-layout-0312",
+        "mlx-sigmoid-metal-0312",
+        "mlx-bf16-math-0312",
+        "mlx-compile-guide-0312",
+        "mlx-compile-fusion-0312",
+        "mlx-custom-metal-guide-0312",
+        "mlx-custom-metal-impl-0312",
+        "local-mlx-swiglu-20261007"
+      ],
+      "summary": "M4/MLX0.31.2+MLX-LM0.31.3 SwiGLU 三路：216预检查与1512计时样本通过；库已compile，BF16 custom改变舍入，M512 compiled/expression轮次反转。无模型收益。"
     }
   ],
   "sources": [
@@ -2616,6 +2668,86 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-mlx-rope-qk/derived/summary.json",
       "note": "360 F32/BF16 configurations, 720 route checks:486 pass/234 fail. B2T1 scalar layout-sensitive failures and common long-offset ideal-reference drift; 12 configs separate passes/concat fails. All output arrays retained, CPU complex audit preserves gates. No timing/profiler/model/fixed-version validation; raw records external/unpublished."
+    },
+    {
+      "id": "mlx-lm-swiglu-0313",
+      "title": "MLX-LM v0.31.3 compiled SwiGLU helper",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/v0.31.3/mlx_lm/models/activations.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.3 tag",
+      "mutable": true,
+      "note": "swiglu(gate,x) 已用 shapeless compile；安装函数亦保留。"
+    },
+    {
+      "id": "mlx-silu-0312",
+      "title": "MLX v0.31.2 compiled SiLU",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/python/mlx/nn/layers/activations.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "nn.silu 本身已 compiled；显式未编译基线直接使用 mx.sigmoid。"
+    },
+    {
+      "id": "mlx-compiled-metal-0312",
+      "title": "MLX v0.31.2 Metal compiled code generation",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/compiled.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "每节点 dtype 临时变量，连续/stride 生成与分派；源码机制不能证明本轮 binary 的指令或实际 dispatch 数。"
+    },
+    {
+      "id": "mlx-compiled-layout-0312",
+      "title": "MLX v0.31.2 compiled layout and output allocation",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/common/compiled.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "共同连续条件、shape/stride 折叠与输出分配；配合 Metal 实现说明非连续直接寻址，不套用 custom 默认复制机制。"
+    },
+    {
+      "id": "mlx-sigmoid-metal-0312",
+      "title": "MLX v0.31.2 Metal Sigmoid arithmetic",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/unary_ops.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "Sigmoid 返回模板 T，以 exp(abs(x)) 和符号分支计算；不等于自定义全 F32 稳定式及最终 cast。"
+    },
+    {
+      "id": "mlx-bf16-math-0312",
+      "title": "MLX v0.31.2 BF16 Metal math overloads",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/bf16_math.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "BF16 math 转换影响中间舍入，不能将融合理解为自动删除全部 dtype 舍入。"
+    },
+    {
+      "id": "mlx-compile-guide-0312",
+      "title": "MLX v0.31.2 compilation guide",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/docs/src/usage/compile.rst",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "函数复用、形状与 dtype、shapeless 条件；首次完成不是纯编译时间。"
+    },
+    {
+      "id": "local-mlx-swiglu-20261007",
+      "title": "M4 SwiGLU expression, compiled and custom-strided comparison",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "2026-10-07 retained run; M4/macOS27.0/MLX0.31.2/MLX-LM0.31.3",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-mlx-swiglu/derived/summary.json",
+      "note": "216 prechecks and 1512 timed samples pass original gates. CPU audit covers 216 saved prechecks plus 108 first outputs. A/B exact on saved checks; custom changes rounding. M512 compiled/expression order reverses across processes; host completion only. Raw records unpublished."
     }
   ]
 }

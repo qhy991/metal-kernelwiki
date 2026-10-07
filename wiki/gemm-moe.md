@@ -26,3 +26,5 @@
 上游 [issue #4632](https://github.com/ml-explore/mlx/issues/4632) 报告了特定 M5 Max/macOS 27、较大非整 tile 行数的有序 gather 错误。这是未在本地复现的作者报告，不能视为所有版本的确定缺陷；使用相关优化前检查状态并覆盖尾部。Split-K 同样需要检查 partial dtype 与合并误差。
 
 验证覆盖小 M、不同 K、非 tile 倍数、重复/空 expert、非连续输入、量化分组和质量指标；测完整 gather→compute→scatter 路径。若一条优化仅适用部分形状，保留经过验证的 fallback，并测试 guard 重叠与遗漏。条件外的错误或慢实现应明确退回调优，不能藏在策略后。
+
+FFN 激活可另读 [SwiGLU 三路比较](mlx-swiglu.md)：库已有 compiled helper，custom 改变舍入，计时有进程排序反转。该运行只测两个已驻留输入的激活，不含 gate/up/down GEMM 或 expert 路由，不能当作 GEMM epilogue、完整 FFN 或 MoE 收益证据。

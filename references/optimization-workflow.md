@@ -51,6 +51,7 @@ python3 scripts/validate.py
 | 残差 RMSNorm、compile 与 fast 的精度及延迟 | [三路数值/计时比较](../wiki/mlx-residual-rms.md) |
 | 自定义 Metal、非连续输入复制、双输出 RMSNorm | [布局与融合的成本](../wiki/mlx-custom-rms.md) |
 | RoPE、Q/K 合并、批量单 token 或长 offset 精度 | [位置与布局验证](../wiki/mlx-rope-qk.md) |
+| SwiGLU、SiLU、FFN 激活、compiled 与手写 Metal | [已有融合与舍入/计时验证](../wiki/mlx-swiglu.md) |
 | 边界探针已测与未测范围 | [探针进度](../wiki/mlx-regression-probes.md) |
 | llama.cpp 测试空跑、数值或计时范围不明 | [验证流程](../wiki/llamacpp-validation.md) |
 
