@@ -402,6 +402,42 @@
       "稀疏mask",
       "sparse mask",
       "稀疏掩码"
+    ],
+    "msl": [
+      "metal shading language",
+      "MSL用法",
+      "MSL优化",
+      "Metal语言",
+      "shader programming"
+    ],
+    "address-spaces": [
+      "address space",
+      "地址空间",
+      "constant指针",
+      "device指针",
+      "generic pointer"
+    ],
+    "vector-layout": [
+      "packed_float4",
+      "float3",
+      "float4",
+      "packed",
+      "向量化",
+      "对齐",
+      "alignment"
+    ],
+    "simd-reduction": [
+      "simd_sum",
+      "SIMD归约",
+      "两级归约",
+      "simdgroup"
+    ],
+    "specialization": [
+      "function constant",
+      "function_constant",
+      "函数常量",
+      "template",
+      "模板特化"
     ]
   },
   "pages": [
@@ -1559,6 +1595,79 @@
         "local-llamacpp-fa-20261007"
       ],
       "summary": "固定36a7391的vec/regular/Tensor/sparse条件与F16 scratch预留；n_kv_max不得低报。另有unknown构建的45个M4/CPU对照记录，不能验证当前上游或模型性能。"
+    },
+    {
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx"
+      ],
+      "confidence": "source-reported",
+      "id": "msl-programming",
+      "title": "MSL 用法：地址空间、向量布局、同步与数值契约",
+      "path": "wiki/msl-programming.md",
+      "tags": [
+        "msl",
+        "address-spaces",
+        "vector-layout",
+        "synchronization",
+        "simd-reduction",
+        "strides",
+        "numerical-validation",
+        "local-validation"
+      ],
+      "symptoms": [
+        "numerical-drift",
+        "version-mismatch"
+      ],
+      "sources": [
+        "apple-msl-spec-41",
+        "apple-msl-generic-pointers",
+        "mlx-custom-metal-impl-0312",
+        "mlx-custom-metal-guide-0312",
+        "local-msl-usage-20261007"
+      ],
+      "summary": "MSL4.1版本规则与原创packed/归约示例；修正版170数值通过，但singleton stride元数据1项失败，首版constant/device编译错误保留。无性能承诺。"
+    },
+    {
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx"
+      ],
+      "confidence": "source-reported",
+      "id": "msl-optimization",
+      "title": "MSL 优化：从源码写法到待验证的性能机制",
+      "path": "wiki/msl-optimization.md",
+      "tags": [
+        "msl",
+        "specialization",
+        "register-pressure",
+        "simd-reduction",
+        "strides",
+        "vector-layout",
+        "fusion",
+        "threadgroups"
+      ],
+      "symptoms": [
+        "slow-kernel",
+        "slow-decode"
+      ],
+      "sources": [
+        "mlx-msl-unary-v0312",
+        "mlx-msl-utils-v0312",
+        "mlx-rms-metal-0312",
+        "mlx-normalization-0312",
+        "mlx-custom-metal-guide-0312",
+        "apple-msl-compute-tech10580",
+        "apple-msl-renderers-wwdc23-10127",
+        "apple-msl-function-constant-values",
+        "apple-msl-function-specialization",
+        "apple-threadgroup-sizing",
+        "apple-m3-profiling",
+        "apple-m5-profiling"
+      ],
+      "summary": "从MLX具体MSL写法解释每线程多元素、重读与寄存器保留、两级归约、function constant/template；区分源码机制与尚未测量的收益。"
     }
   ],
   "sources": [
@@ -2931,6 +3040,96 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-llamacpp-fa/derived/summary.json",
       "note": "45 exact MTL0/test/supported/pass records, independently audited for completeness. No saved inputs/oracle arrays, numerical recomputation, current-upstream binary mapping, performance or model evidence. Small finite additive-mask domain; raw records unpublished."
+    },
+    {
+      "id": "apple-msl-spec-41",
+      "title": "Metal Shading Language Specification 4.1",
+      "url": "https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf",
+      "kind": "official-doc",
+      "revision": "Version 4.1; 2026-06-04",
+      "checked": "2026-10-07",
+      "mutable": true,
+      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。"
+    },
+    {
+      "id": "apple-msl-generic-pointers",
+      "title": "Writing reusable GPU functions with generic pointers",
+      "url": "https://developer.apple.com/documentation/metal/writing-reusable-gpu-functions-with-generic-pointers",
+      "kind": "official-doc",
+      "revision": "mutable documentation; MSL4.1+",
+      "checked": "2026-10-07",
+      "mutable": true,
+      "note": "官方Markdown正文已读；generic覆盖thread/threadgroup/device、入口resource显式、动态分支/寄存器代价。未执行文中的fixit命令。"
+    },
+    {
+      "id": "apple-msl-function-constant-values",
+      "title": "MTLFunctionConstantValues",
+      "url": "https://developer.apple.com/documentation/metal/mtlfunctionconstantvalues",
+      "kind": "official-doc",
+      "revision": "mutable API documentation",
+      "checked": "2026-10-07",
+      "mutable": true,
+      "note": "Values are applied when specializing a function; later edits to the values object do not change an existing function."
+    },
+    {
+      "id": "apple-msl-function-specialization",
+      "title": "Using function specialization to build pipeline variants",
+      "url": "https://developer.apple.com/documentation/metal/using-function-specialization-to-build-pipeline-variants",
+      "kind": "official-doc",
+      "revision": "mutable documentation",
+      "checked": "2026-10-07",
+      "mutable": true,
+      "note": "Function constants support pipeline variants and branch elimination; compilation cost and variant reuse must be considered. No local performance result."
+    },
+    {
+      "id": "mlx-msl-unary-v0312",
+      "title": "MLX v0.31.2 unary Metal kernels",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/unary.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag; URL can move, not a verified binary-source mapping",
+      "mutable": true,
+      "note": "unary_v/unary_v2/unary_g: N elements per thread, tail handling and generic strides. Scalar loop source does not prove vector memory instructions. Tag URL is version-scoped but movable; not immutable commit evidence."
+    },
+    {
+      "id": "mlx-msl-utils-v0312",
+      "title": "MLX v0.31.2 Metal WorkPerThread and indexing utilities",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/utils.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag; URL can move, not a verified binary-source mapping",
+      "mutable": true,
+      "note": "WorkPerThread<U>::n=8/sizeof(U); elem_to_loc implements logical-to-strided offset conversion. These defaults are implementation policy, not hardware optimality guarantees. Tag URL is version-scoped but movable; not immutable commit evidence."
+    },
+    {
+      "id": "apple-msl-compute-tech10580",
+      "title": "Metal Compute on MacBook Pro",
+      "url": "https://developer.apple.com/videos/play/tech-talks/10580/",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "Apple Tech Talks session10580; M1 Pro/M1 Max-era examples; transcript checked 2026-10-07",
+      "mutable": true,
+      "note": "Signed-loop index vectorization caveat, occupancy/register/threadgroup constraints, dynamic local-array indexing and spill, profiler interpretation. Historical examples are not M4 LLM measurements."
+    },
+    {
+      "id": "apple-msl-renderers-wwdc23-10127",
+      "title": "Optimize GPU renderers with Metal",
+      "url": "https://developer.apple.com/videos/play/wwdc2023/10127/",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "WWDC2023 session10127; transcript checked 2026-10-07",
+      "mutable": true,
+      "note": "Function-constant branch elimination/constant folding, specialization compilation cost, per-device occupancy/compiler tuning. Rendering speed examples are not transferable LLM performance evidence."
+    },
+    {
+      "id": "local-msl-usage-20261007",
+      "title": "M4 MSL usage: address-space compile failure, 170 numerical checks and singleton-stride mismatch",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "2026-10-07; M4/MLX0.31.2; original compile failure retained; corrected run exits2",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-msl-usage/derived/summary.json",
+      "note": "50 affine and120 row sums pass original numeric gates, independently recomputed from all170 saved outputs. 1/30 metadata checks fails: singleton step2 reports stride1. Overall corrected run remains failed. No speed, instruction or MSL4.1 API runtime claim. Raw records unpublished."
     }
   ]
 }

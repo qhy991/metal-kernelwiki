@@ -2,6 +2,8 @@
 
 适用：GEMV、RMSNorm、RoPE、softmax、小矩阵乘，及频繁读回或分配导致的慢推理。**以下为文档支持的候选方法，尚未执行设备验证。**
 
+具体语言层面的地址空间、packed 对齐、barrier 参与及 MSL 4.1 版本条件见 [MSL 用法](msl-programming.md)；每线程工作量、寄存器与模板/函数常量见 [MSL 优化](msl-optimization.md)。这些新页的有限本地检查不会追溯性验证本页全部候选。
+
 ## 线程组从 pipeline 出发
 
 查询 `threadExecutionWidth`、`maxTotalThreadsPerThreadgroup` 和静态线程组内存。最大线程数与 kernel 使用的寄存器、内存有关，同一设备的两个 pipeline 也可能不同。候选搜索可比较若干 execution-width 倍数，同时改变每线程工作量；最大合法线程组不保证最快。[线程组与网格计算](https://developer.apple.com/documentation/metal/calculating-threadgroup-and-grid-sizes)

@@ -2,6 +2,8 @@
 
 证据状态：官方文档；核查于 2026-10-07，页面显示 MLX 0.32.3。求值边界已有 [M4/MLX 0.31.2 限定观测](mlx-async-evaluation.md)；残差 RMSNorm 的编译/fast 候选已有 [三路限定比较](mlx-residual-rms.md)；custom Metal 双输出 RMSNorm 也已有[连续/隔列输入限定比较](mlx-custom-rms.md)。先 profile，再决定是否改 kernel。
 
+自定义 MSL 先核对框架生成的入口签名与实际 strides；参见 [地址空间失败与归约示例](msl-programming.md)、[每线程工作量与特化](msl-optimization.md)。
+
 ## 测的是计算还是构图
 
 MLX 操作先记录图；仅计 Python 函数返回时间可能没有计入 GPU 工作。微基准应预热，并求值所需输出。`print`、`.item()`、NumPy 转换也会触发求值，可能破坏批量执行。[惰性执行](https://ml-explore.github.io/mlx/build/html/usage/lazy_evaluation.html)、[eval API](https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.eval.html)

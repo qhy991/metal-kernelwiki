@@ -1,6 +1,6 @@
 ---
 name: metal-kernelwiki
-description: Retrieve and maintain evidence-backed Metal LLM deployment and kernel optimization knowledge for Apple Silicon, MLX/MLX-LM and llama.cpp. Use for slow prefill/TTFT or decode, quantization, KV cache, batching, attention/GEMM/MoE, unified memory pressure and Metal profiling. Also matches Metal 优化、Mac 本地大模型部署、MLX 推理慢. Excludes generic graphics, CUDA-only work and ANE-only conversion.
+description: Retrieve and maintain evidence-backed Metal LLM deployment and kernel optimization knowledge for Apple Silicon, MLX/MLX-LM and llama.cpp. Use for slow prefill/TTFT or decode, quantization, KV cache, batching, attention/GEMM/MoE, MSL programming and optimization (address spaces, SIMD reductions, vector layout, specialization), unified memory pressure and Metal profiling. Also matches MSL 用法、MSL 优化、Metal 优化、Mac 本地大模型部署、MLX 推理慢. Excludes generic graphics, CUDA-only work and ANE-only conversion.
 ---
 
 # Metal KernelWiki
@@ -14,6 +14,8 @@ the repository template directly, these documents live at the repository root.
 ```bash
 python3 scripts/wiki.py query "MLX 长上下文 decode 慢" --limit 5
 python3 scripts/wiki.py query --engine llama.cpp --tag flash-attention
+python3 scripts/wiki.py query "MSL 地址空间 packed simd_sum" --limit 5
+python3 scripts/wiki.py get msl-optimization
 python3 scripts/wiki.py get measurement
 python3 scripts/wiki.py get quantized-matmul-validation --follow-sources
 python3 scripts/wiki.py get local-mlx-m4
@@ -35,6 +37,12 @@ M4 observations and M5 capabilities are not interchangeable.
 does not prove model quality or deployment speed. Trace export does not prove
 profiler analysis or a fused dispatch. External `artifact_ref` entries identify
 unpublished local records; preserve that limitation and do not claim replay.
+
+For MSL authoring, retrieve `msl-programming` for address-space, alignment and
+synchronization contracts, then `msl-optimization` for implementation patterns.
+Inspect framework-generated signatures and actual strides; source-level vectors,
+thread arrays and specialization do not prove vector instructions, register
+residency or a speedup. Match language-version rules to the installed toolchain.
 
 For maintenance, read `knowledge/MAINTENANCE.md`, retain source/version/scope,
 update the relevant page and catalog, then validate and exercise retrieval.
