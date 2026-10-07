@@ -23,6 +23,8 @@ MLX 的 fast SDPA 支持 MHA/GQA/MQA；输入是 `[B,H,T,D]`，GQA/MQA 的 K/V �
 
 这些是机制层面的候选。实际 llama.cpp FA-vec 已有 `(Q,NE)` 搜索与热漂移检查，可参考 [调优页](llamacpp-metal-tuning.md)；不要把别的 GPU family 调参表视为本机最优。
 
+llama.cpp 的 [固定快照路径与 scratch](llamacpp-fa-paths.md)显示：预反量化、普通 vec、Tensor 与稀疏 vec 有不同 gate。内部 `n_kv_max` 是每行有限 mask 项数的上界，低报会截断索引，不是可随意压小的性能参数。该页将源码结论与旧本机 binary 的45项有限对照分开记录。
+
 ## 正确性矩阵
 
 独立 reference 用高精度 score/softmax 与约定 tolerance；覆盖 Q 长度 1/多 token，K 长度小/大/尾部，GQA 比例，padding/causal/window/sinks，cache offset 与不同 dtype。核查 fully-masked row 的约定、`-inf` 和极端 logits。`fast/relaxed` math 不能默认保持 masked softmax 特殊值语义，见 [MLX custom Metal](https://ml-explore.github.io/mlx/build/html/dev/custom_metal_kernels.html)。

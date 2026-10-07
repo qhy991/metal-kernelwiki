@@ -22,6 +22,8 @@ MLX 的 quantized matmul 接受打包权重、group scales/biases 与模式；�
 
 总预算还包括 activation/scratch、logits、草稿模型、host cache 和系统余量。RSS 与 Metal 分配可能重叠，不要直接相加。先缩减超出用户需要的 context/concurrency，再比较精度候选。
 
+llama.cpp 的 [FA 临时分配示例](llamacpp-fa-paths.md)按固定源码推导：某单层形状的 Q4_0 逻辑 KV 为36 MiB，FA输出的F16 scratch项仍为128 MiB。该项即使未执行预转换也被计入分配需求；这是源码容量计算，不是本机峰值，也不能直接按层数相乘。
+
 ## 如何选择候选
 
 固定同一模型/tokenizer，保留较高精度参考；从一种权重量化开始。分别测 prefill 与 decode，避免 decode 字节减少掩盖 prefill 解码计算增加。之后单独加入 KV 量化，测内存、长文本检索、困惑度或任务准确率；再测组合。

@@ -53,6 +53,7 @@ python3 scripts/validate.py
 | RoPE、Q/K 合并、批量单 token 或长 offset 精度 | [位置与布局验证](../wiki/mlx-rope-qk.md) |
 | SwiGLU、SiLU、FFN 激活、compiled 与手写 Metal | [已有融合与舍入/计时验证](../wiki/mlx-swiglu.md) |
 | 边界探针已测与未测范围 | [探针进度](../wiki/mlx-regression-probes.md) |
+| llama.cpp FA 路径、量化 KV 后临时内存、sparse mask hint | [分派与分配契约](../wiki/llamacpp-fa-paths.md) |
 | llama.cpp 测试空跑、数值或计时范围不明 | [验证流程](../wiki/llamacpp-validation.md) |
 
 ## 必须保留的判断边界

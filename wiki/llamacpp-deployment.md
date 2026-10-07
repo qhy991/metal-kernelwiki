@@ -38,6 +38,8 @@ OUT=/absolute/path/external-results
 
 从 F16 KV 起步，确认 FA 激活后再测试 `-ctk q8_0 -ctv q8_0`，最后才探索更激进格式。量化 V 在当前初始化代码中要求 FA；参数被接受不代表所有模型头维度/算子均有同样支持。[初始化检查](https://github.com/ggml-org/llama.cpp/blob/master/src/llama-context.cpp) 对每一组合做长短上下文外部任务验证、perplexity/输出质量检查及内存测量；更少字节不保证更低延迟。
 
+固定上游快照的 [FA 路径分析](llamacpp-fa-paths.md)进一步区分 vec、regular、Tensor 与 sparse：量化 KV 的 F16 预转换有 query 长度等 gate，但单 op 分配需求仍预留 F16 scratch。存储压缩比不能直接当成 compute buffer 缩减或速度收益；支持检查还要求 K/V 同 dtype 和合法 head pair。
+
 ## 4. 统一内存需要总预算
 
 Metal 后端记录 `has_unified_memory`、`recommendedMaxWorkingSetSize` 和分配量；推荐工作集不是硬容量，超过它可能仍分配成功。[设备实现](https://github.com/ggml-org/llama.cpp/blob/master/ggml/src/ggml-metal/ggml-metal-device.m) 为权重、KV、计算临时量、host prompt cache、draft 和系统留余量；记录 RSS、Metal 分配、内存压力和 swap，不能把前两者直接相加为物理占用。

@@ -30,6 +30,8 @@ cmake --build build-metal --target ggml-metal-tuning test-backend-ops -j
 
 当前设备代码先检测 Metal 4 能力并试编译 tensor kernel，再选择路径；较旧芯片默认关闭 tensor API。不要把 `GGML_METAL_TENSOR_ENABLE` 当成通用加速开关。打包时还要核对 `ggml-tensor.metallib`，缺失可能关闭该路径。记录 `has tensor`、GPU family、编译器/OS 和实际 dispatch，再比较 PP、TG、量化与 batch；不要只凭 API 版本宣称使用了更快硬件。[设备和库加载代码](https://github.com/ggml-org/llama.cpp/blob/master/ggml/src/ggml-metal/ggml-metal-device.m)
 
+调参前先读固定快照的 [FA 分派与内存](llamacpp-fa-paths.md)：普通 vec 的 query 阈值、量化 KV 预转换阈值及 sparse 覆盖不是同一条件。分配中的 F16 scratch 不等于每次都执行转换；更不能任意调小 `n_kv_max`，它约束 mask 的实际有限项数量。
+
 ## 4. 报告热点、干预与失败面
 
 用 Metal GPU trace 定位 FA、matvec/matmul、图提交或同步开销，再限定一个干预。报告 shape、dtype、KV 长度、slot/batch、warmup、热状态、计时范围和分布，并给出 shader 数值容差与真实模型指标。需要 CPU/Metal 算子对照、perplexity 和 bench 回归；新增算子测试也应随实现更新。[上游贡献检查](https://github.com/ggml-org/llama.cpp/blob/master/CONTRIBUTING.md)

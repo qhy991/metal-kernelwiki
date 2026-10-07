@@ -382,6 +382,26 @@
       "门控激活",
       "激活融合",
       "ffn激活"
+    ],
+    "fa-routing": [
+      "fa dispatch",
+      "attention路径",
+      "fa路径",
+      "fa分派",
+      "flash attention dispatch"
+    ],
+    "scratch-memory": [
+      "scratch",
+      "临时内存",
+      "临时缓冲",
+      "compute buffer",
+      "计算缓冲"
+    ],
+    "sparse-mask-hint": [
+      "n_kv_max",
+      "稀疏mask",
+      "sparse mask",
+      "稀疏掩码"
     ]
   },
   "pages": [
@@ -417,7 +437,9 @@
         "mlx-custom-metal",
         "local-mlx-m4-r1",
         "local-mlx-boundaries-20261007",
-        "local-mlx-rope-qk-20261007"
+        "local-mlx-rope-qk-20261007",
+        "llama-metal-fa-ops-36a7391",
+        "llama-metal-fa-buffer-36a7391"
       ],
       "summary": "保持 mask 和 GQA 语义，按查询与 KV 形状选择融合或分块路径，并验证极值与尾部。"
     },
@@ -526,7 +548,9 @@
         "llama-args",
         "llama-bench",
         "llama-context",
-        "llama-metal-device"
+        "llama-metal-device",
+        "llama-metal-fa-ops-36a7391",
+        "llama-metal-fa-buffer-36a7391"
       ],
       "summary": "先确认 Metal 路径，再按 prefill、decode、上下文深度与总内存预算比较 FA、KV 量化和 batch。"
     },
@@ -560,7 +584,9 @@
         "llama-fa-discussion",
         "llama-tuning",
         "llama-metal-device",
-        "llama-contributing"
+        "llama-contributing",
+        "llama-metal-fa-ops-36a7391",
+        "llama-metal-fa-buffer-36a7391"
       ],
       "summary": "以目标 GPU 家族和实际形状调优 FA-vec，控制热漂移、检查数值覆盖，并区分 Tensor API 能力和实测收益。"
     },
@@ -927,7 +953,9 @@
         "mlx-quantized-matmul-api",
         "mlx-cache-code",
         "llama-context",
-        "apple-m5-ml"
+        "apple-m5-ml",
+        "llama-metal-fa-ops-36a7391",
+        "llama-metal-fa-buffer-36a7391"
       ],
       "summary": "按权重、KV、激活分别评估容量、格式兼容和质量，避免将更小文件等同更低延迟。"
     },
@@ -1066,7 +1094,8 @@
         "llama-backend-tests",
         "llama-backend-comparison",
         "llama-debugging-tests",
-        "llama-build-info"
+        "llama-build-info",
+        "local-llamacpp-fa-20261007"
       ],
       "summary": "以设备与实际用例行防止空跑，按算子语义、误差指标和图计时范围归因，并明确未运行源码观察与未知构建来源的证据边界。"
     },
@@ -1486,6 +1515,50 @@
         "local-mlx-swiglu-20261007"
       ],
       "summary": "M4/MLX0.31.2+MLX-LM0.31.3 SwiGLU 三路：216预检查与1512计时样本通过；库已compile，BF16 custom改变舍入，M512 compiled/expression轮次反转。无模型收益。"
+    },
+    {
+      "id": "llamacpp-fa-paths",
+      "title": "llama.cpp Metal Attention：分派、量化 KV 与临时内存",
+      "path": "wiki/llamacpp-fa-paths.md",
+      "type": "technique",
+      "engines": [
+        "llama.cpp",
+        "metal"
+      ],
+      "tags": [
+        "attention",
+        "flash-attention",
+        "quantized-kv",
+        "dequantization",
+        "memory-accounting",
+        "attention-mask",
+        "gqa",
+        "version-compatibility",
+        "local-validation",
+        "fa-routing",
+        "scratch-memory",
+        "sparse-mask-hint"
+      ],
+      "symptoms": [
+        "memory-pressure",
+        "slow-decode",
+        "numerical-drift"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "llama-metal-fa-ops-36a7391",
+        "llama-metal-fa-buffer-36a7391",
+        "llama-metal-fa-device-36a7391",
+        "llama-metal-fa-regular-36a7391",
+        "llama-metal-fa-vec-36a7391",
+        "llama-fa-construction-36a7391",
+        "llama-fa-hint-api-36a7391",
+        "llama-metal-fa-aux-36a7391",
+        "llama-quant-blocks-36a7391",
+        "llama-fa-predequant-pr",
+        "local-llamacpp-fa-20261007"
+      ],
+      "summary": "固定36a7391的vec/regular/Tensor/sparse条件与F16 scratch预留；n_kv_max不得低报。另有unknown构建的45个M4/CPU对照记录，不能验证当前上游或模型性能。"
     }
   ],
   "sources": [
@@ -2748,6 +2821,116 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-mlx-swiglu/derived/summary.json",
       "note": "216 prechecks and 1512 timed samples pass original gates. CPU audit covers 216 saved prechecks plus 108 first outputs. A/B exact on saved checks; custom changes rounding. M512 compiled/expression order reverses across processes; host completion only. Raw records unpublished."
+    },
+    {
+      "id": "llama-metal-fa-ops-36a7391",
+      "title": "Metal FA dispatch, preprocessing and scratch helpers",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/36a73916ee0cb3b457f356066afabd47cce68884/ggml/src/ggml-metal/ggml-metal-ops.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "36a73916ee0cb3b457f356066afabd47cce68884",
+      "mutable": false,
+      "note": "vec/Nq gate、量化预转换、Tensor和sparse选择；scratch需求与实际执行不同，无本机当前snapshot验证。"
+    },
+    {
+      "id": "llama-metal-fa-buffer-36a7391",
+      "title": "Metal per-op allocation requirements",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/36a73916ee0cb3b457f356066afabd47cce68884/ggml/src/ggml-metal/ggml-metal.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "36a73916ee0cb3b457f356066afabd47cce68884",
+      "mutable": false,
+      "note": "FLASH_ATTN_EXT的get_alloc_size加入各scratch区域，包括kv_f16；不是全图峰值。"
+    },
+    {
+      "id": "llama-metal-fa-device-36a7391",
+      "title": "Metal attention support and Tensor device capabilities",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/36a73916ee0cb3b457f356066afabd47cce68884/ggml/src/ggml-metal/ggml-metal-device.m",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "36a73916ee0cb3b457f356066afabd47cce68884",
+      "mutable": false,
+      "note": "K/V同dtype、head/能力门及Tensor试编译；通过supports_op仍须核对实际pipeline实例。"
+    },
+    {
+      "id": "llama-metal-fa-regular-36a7391",
+      "title": "Metal F16 regular FA explicit head-pair instances",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/36a73916ee0cb3b457f356066afabd47cce68884/ggml/src/ggml-metal/kernels/fa_f16.metal",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "36a73916ee0cb3b457f356066afabd47cce68884",
+      "mutable": false,
+      "note": "明确实例表约束head pair，DK>=DV不等于任意配对都可用。"
+    },
+    {
+      "id": "llama-metal-fa-vec-36a7391",
+      "title": "Metal F32 vector FA explicit head-pair instances",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/36a73916ee0cb3b457f356066afabd47cce68884/ggml/src/ggml-metal/kernels/fa_vec_f32.metal",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "36a73916ee0cb3b457f356066afabd47cce68884",
+      "mutable": false,
+      "note": "vec实例对应DK为32倍数的特定pair；实例存在不是本机全覆盖验证。"
+    },
+    {
+      "id": "llama-fa-construction-36a7391",
+      "title": "ggml Flash Attention shape and mask construction rules",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/36a73916ee0cb3b457f356066afabd47cce68884/ggml/src/ggml.c",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "36a73916ee0cb3b457f356066afabd47cce68884",
+      "mutable": false,
+      "note": "head整除、batch和连续F16 mask/广播约束；不可随意替换mask语义。"
+    },
+    {
+      "id": "llama-fa-hint-api-36a7391",
+      "title": "ggml n_kv_max finite-mask upper-bound contract",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/36a73916ee0cb3b457f356066afabd47cce68884/ggml/include/ggml.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "36a73916ee0cb3b457f356066afabd47cce68884",
+      "mutable": false,
+      "note": "n_kv_max是每行finite mask数量上界，不是任意裁剪预算或新CLI开关。"
+    },
+    {
+      "id": "llama-metal-fa-aux-36a7391",
+      "title": "Metal FA preprocessing and sparse index construction",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/36a73916ee0cb3b457f356066afabd47cce68884/ggml/src/ggml-metal/kernels/fa_aux.metal",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "36a73916ee0cb3b457f356066afabd47cce68884",
+      "mutable": false,
+      "note": "F16转换及mask finite索引收集；超过hint仅保留前n_kv_max项，未自动fallback。"
+    },
+    {
+      "id": "llama-quant-blocks-36a7391",
+      "title": "ggml quantized storage block definitions",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/36a73916ee0cb3b457f356066afabd47cce68884/ggml/src/ggml-common.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "36a73916ee0cb3b457f356066afabd47cce68884",
+      "mutable": false,
+      "note": "Q8_0每32值34字节，Q4_0每32值18字节；容量示例含scale但不含allocator或capacity padding。"
+    },
+    {
+      "id": "llama-fa-predequant-pr",
+      "title": "Metal quantized KV to F16 preprocessing PR #27390",
+      "url": "https://github.com/ggml-org/llama.cpp/pull/27390",
+      "kind": "merged-pr",
+      "checked": "2026-10-07",
+      "revision": "merged 2026-08-20; merge commit 70aff25; thread mutable",
+      "mutable": true,
+      "note": "机制历史与作者报告；早期type-only gate被后续条件取代，不能拿PR表格当本机加速证据。"
+    },
+    {
+      "id": "local-llamacpp-fa-20261007",
+      "title": "Existing M4 llama.cpp binary: 45 bounded FA CPU-comparison cases",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "2026-10-07 retained run; M4/macOS27.0; binary build_commit unknown",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-llamacpp-fa/derived/summary.json",
+      "note": "45 exact MTL0/test/supported/pass records, independently audited for completeness. No saved inputs/oracle arrays, numerical recomputation, current-upstream binary mapping, performance or model evidence. Small finite additive-mask domain; raw records unpublished."
     }
   ]
 }
