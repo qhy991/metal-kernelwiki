@@ -493,6 +493,33 @@
       "cancellation",
       "paired2",
       "相邻配对"
+    ],
+    "qmv": [
+      "quantized gemv",
+      "quantized matrix vector",
+      "量化GEMV",
+      "量化 GEMV",
+      "affine4",
+      "affine 4-bit",
+      "packed4"
+    ],
+    "bit-unpacking": [
+      "bit unpacking",
+      "解包",
+      "nibble",
+      "低位优先",
+      "packed uint32",
+      "4bit packing"
+    ],
+    "affine-rounding": [
+      "bias factoring",
+      "因式分解",
+      "参数提取",
+      "解量化舍入",
+      "affine cancellation",
+      "affine抵消",
+      "group_factored",
+      "word_literal"
     ]
   },
   "pages": [
@@ -1839,6 +1866,41 @@
         "mlx-custom-metal-impl-0312"
       ],
       "summary": "沿输出/沿K/8lane子组/两级归约的写法与MLX、llama.cpp布局策略。M4原540项有4项精度失败；CPU复现长K抵消，邻接K成对候选108项通过同门；无速度或模型结论。"
+    },
+    {
+      "id": "msl-quantized-gemv",
+      "title": "MSL 量化 GEMV：4-bit 解包、参数复用与 affine 舍入",
+      "path": "wiki/msl-quantized-gemv.md",
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx"
+      ],
+      "tags": [
+        "msl",
+        "gemv",
+        "qmv",
+        "quantization",
+        "bit-unpacking",
+        "affine-rounding",
+        "simd-reduction",
+        "noncontiguous",
+        "local-validation"
+      ],
+      "symptoms": [
+        "slow-decode",
+        "numerical-drift"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-quantization-api-bindings-0312",
+        "local-msl-qmv-20261007",
+        "apple-msl-spec-41",
+        "mlx-qvm-kernel-0312",
+        "mlx-qvm-dispatch-0312",
+        "mlx-custom-metal-impl-0312"
+      ],
+      "summary": "原创MSL packed4解包、word/group分工和scale/bias因式分解。M4同门348/360数值通过；12项affine抵消失败由CPU诊断并保留，区分量化损失、解码舍入与累加误差；无速度结论。"
     }
   ],
   "sources": [
@@ -2650,7 +2712,7 @@
       "checked": "2026-10-07",
       "revision": "v0.31.2 tag; binary dispatch not verified",
       "mutable": true,
-      "note": "qvm_impl旧行跨度和分区偏移支持错误切片假设；安装包附带头文件也有同类写法，不能证明实际二进制dispatch。"
+      "note": "qvm_impl旧行跨度和分区偏移支持错误切片假设；安装包附带头文件也有同类写法，不能证明实际二进制dispatch。 QMV页另核对affine量化器signed scale、packing、dequantize、load_vector/qdot与QMV参数提取；不改变旧QVM失败。"
     },
     {
       "id": "mlx-qvm-dispatch-0312",
@@ -2660,7 +2722,7 @@
       "checked": "2026-10-07",
       "revision": "v0.31.2 tag; binary dispatch not verified",
       "mutable": true,
-      "note": "transpose=False、M<4、K>=1024的split-K源码路线；K<=8192时8分区。已检查二维QVM及GQA helper形状对应；供源码推断与事后CPU诊断，不证明二进制dispatch或替代正确oracle。"
+      "note": "transpose=False、M<4、K>=1024的split-K源码路线；K<=8192时8分区。已检查二维QVM及GQA helper形状对应；供源码推断与事后CPU诊断，不证明二进制dispatch或替代正确oracle。 QMV页另核对M1/transposeTrue的quad/fast/general条件及矩阵连续化复制；仅源码条件，不证明binary分派。"
     },
     {
       "id": "mlx-lm-cache-0313",
@@ -3220,7 +3282,7 @@
       "revision": "Version 4.1; 2026-06-04",
       "checked": "2026-10-07",
       "mutable": true,
-      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。 矩阵页另读§2.4/6.8/7.2.1，区分同T公开签名、未规定lane映射及MPP接口条件。 GEMV页另读§6.10.2的shuffle XOR与活跃lane reduction语义。"
+      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。 矩阵页另读§2.4/6.8/7.2.1，区分同T公开签名、未规定lane映射及MPP接口条件。 GEMV页另读§6.10.2的shuffle XOR与活跃lane reduction语义。 量化GEMV页另读§3.1无符号移位与§6.10.2归约参与语义。"
     },
     {
       "id": "apple-msl-generic-pointers",
@@ -3421,6 +3483,26 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-msl-gemv/derived/summary.json",
       "note": "Original536/540numerical and216metadata pass:3subgroups8 long-cancellation failures and1native-promote normal/transposed gate overrun. Independent math.fsum audit plus CPU source-order diagnosis retains failures. Adjacent-K-pair successor108/108numeric+108metadata pass on same inputs/gate. No timings, profiler, model or universal error bound. Raw records unpublished."
+    },
+    {
+      "id": "mlx-quantization-api-bindings-0312",
+      "title": "MLX v0.31.2 quantize/dequantize/quantized_matmul Python API docstrings",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/python/src/ops.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag (mutable)",
+      "mutable": true,
+      "note": "固定版本API绑定：low-to-high uint32 packing、末维affine分组、group/bit/mode与transpose语义、dequantize dtype。文档简化量化公式不代替actual packed/scales/biases；没有逐位FMA或归约顺序承诺。"
+    },
+    {
+      "id": "local-msl-qmv-20261007",
+      "title": "M4 MSL affine4 GEMV: unpacking, factoring and rounding failures",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "2026-10-07; M4/MLX0.31.2; 348/360numeric pass; complete exit2",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-msl-qmv/derived/summary.json",
+      "note": "72saved inputs: G32/64/128,12shapes,3patterns,2layouts. 144decode and72metadata checks pass; group_factored/native_qmm each fail6 K8192 affine-cancellation cases. Independent fmaf/math.fsum audit retains failures; CPU group-order model accounts for custom bias-product rounding. No timing, binary-dispatch, model or universal-error claim. Raw records unpublished."
     }
   ]
 }

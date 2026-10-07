@@ -12,6 +12,8 @@
 
 MLX 的 quantized matmul 接受打包权重、group scales/biases 与模式；位宽、group size、transpose 必须匹配转换时的约定。GGUF 的 Q4 类格式与 MLX affine 4-bit 不可仅凭名称互换。具体支持查 [MLX quantize](https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.quantize.html) 与 [quantized_matmul](https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.quantized_matmul.html)，Metal Tensor 路径另读 [能力页](metal-tensors.md)。
 
+[MSL量化GEMV](msl-quantized-gemv.md)给出MLX affine4的低位解包、组参数索引和融合点积示例，并保留参数因式分解的舍入失败。激活、scale/bias和输出都为F32也不能取消affine抵消；压缩格式、解码与归约应分别验证。
+
 ## 预算方法
 
 工程估算，仅适用于标准 attention cache，K/V 同宽同 dtype 时：

@@ -2,7 +2,7 @@
 
 面向 Apple Silicon、Metal、MLX/MLX-LM 和 llama.cpp 的 LLM 部署与 kernel 优化知识库。以优化机制、适用条件、代价交换与有范围的观测组织内容，并保留一手来源。
 
-截至 2026-10-07：**38 个主题页、158 个来源条目**，其中 17 项为本地实验记录。M4 原语验证不代表整模型加速；捕获已导出不代表 profiler 已解析。详细范围见 [本地观测](wiki/local-mlx-m4.md)。
+截至 2026-10-07：**39 个主题页、160 个来源条目**，其中 18 项为本地实验记录。M4 原语验证不代表整模型加速；捕获已导出不代表 profiler 已解析。详细范围见 [本地观测](wiki/local-mlx-m4.md)。
 
 ## 从哪里开始
 
@@ -12,7 +12,7 @@
 - [llama.cpp 部署](wiki/llamacpp-deployment.md)、[Metal 调优](wiki/llamacpp-metal-tuning.md)、[验证与空跑](wiki/llamacpp-validation.md)。
 - [Attention](wiki/attention.md)、[GEMM/MoE](wiki/gemm-moe.md)、[量化 matmul 验证](wiki/quantized-matmul-validation.md)。
 - [Metal 能力](wiki/metal-capabilities.md)、[内存与线程组](wiki/metal-memory-threadgroups.md)、[运行时测量](wiki/runtime-measurement.md)。
-- [MSL 用法与正确性示例](wiki/msl-programming.md)、[MSL 优化方法](wiki/msl-optimization.md)、[矩阵乘与累加精度](wiki/msl-matrix.md)、[tile 共享与直接装载](wiki/msl-tiles.md)、[GEMV 与归约顺序](wiki/msl-gemv.md)。
+- [MSL 用法与正确性示例](wiki/msl-programming.md)、[MSL 优化方法](wiki/msl-optimization.md)、[矩阵乘与累加精度](wiki/msl-matrix.md)、[tile 共享与直接装载](wiki/msl-tiles.md)、[GEMV 与归约顺序](wiki/msl-gemv.md)、[量化 GEMV 与 affine 舍入](wiki/msl-quantized-gemv.md)。
 - [M4 本地记录](wiki/local-mlx-m4.md)、[异步求值边界](wiki/mlx-async-evaluation.md)、[float32 精度诊断](wiki/mlx-float32-precision.md)。
 - [量化三路径的时间与内存](wiki/mlx-qmm-path-comparison.md)、[缓存生命周期与 keep 策略](wiki/mlx-cache-lifecycle.md)。
 - [旋转缓存 mask 对齐](wiki/mlx-cache-mask-alignment.md)、[缓存保存恢复与续写](wiki/mlx-cache-persistence.md)。
