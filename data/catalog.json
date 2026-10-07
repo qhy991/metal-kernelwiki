@@ -267,6 +267,22 @@
       "缓存策略",
       "丢失前缀",
       "丢失sink"
+    ],
+    "dequantization": [
+      "dequantize",
+      "反量化",
+      "解量化"
+    ],
+    "resident-weights": [
+      "常驻权重",
+      "常驻dense",
+      "resident dense"
+    ],
+    "memory-accounting": [
+      "内存计量",
+      "内存核算",
+      "额外内存",
+      "memory accounting"
     ]
   },
   "pages": [
@@ -901,9 +917,10 @@
         "mlx-qvm-multirow-fix",
         "mlx-qvm-multirow-test",
         "mlx-qvm-kernel-0312",
-        "mlx-qvm-dispatch-0312"
+        "mlx-qvm-dispatch-0312",
+        "local-mlx-qmm-paths-20261007"
       ],
-      "summary": "分离量化与kernel误差；M4多行QVM的32个用例失败，前缀一致仍可算错。保留行跨度诊断，再设计packed、逐次解码、常驻dense性能比较。"
+      "summary": "分离量化与kernel误差；保留多行QVM失败和前缀一致仍算错的诊断。另有transpose=True三路径的数值、时间和内存观测，不据此生成通用分派阈值。"
     },
     {
       "id": "llamacpp-validation",
@@ -1066,6 +1083,43 @@
         "local-mlx-qvm-cache-20261007"
       ],
       "summary": "M4/MLX-LM0.31.3直接merge/extract将keep4变为0并在跨容量后丢失前缀，keep0对照通过；区分已受保护的模型缓存入口，不扩大为服务或模型质量结论。"
+    },
+    {
+      "id": "mlx-qmm-path-comparison",
+      "title": "量化线性层：反量化成本、常驻内存与 shape 一起比较",
+      "path": "wiki/mlx-qmm-path-comparison.md",
+      "type": "technique",
+      "engines": [
+        "mlx",
+        "metal"
+      ],
+      "tags": [
+        "quantization",
+        "dequantization",
+        "resident-weights",
+        "memory-accounting",
+        "benchmark",
+        "prefill",
+        "local-validation"
+      ],
+      "symptoms": [
+        "dequantization-overhead",
+        "memory-pressure",
+        "timing-ambiguity",
+        "slow-prefill"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-prefill-dequant-4621",
+        "mlx-quantized-matmul-api",
+        "mlx-eval-api",
+        "mlx-active-memory-api",
+        "mlx-cache-memory-api",
+        "mlx-peak-memory-api",
+        "mlx-reset-peak-api",
+        "local-mlx-qmm-paths-20261007"
+      ],
+      "summary": "M4/BF16 transpose=True的packed、逐次反量化、常驻dense共30个条件过数值门，18进程计时波动明显；C多驻4MiB，B操作窗口也出现额外占用。保留候选，不推导模型切换阈值。"
     }
   ],
   "sources": [
@@ -1918,6 +1972,56 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-mlx-qvm-cache/results-summary.json",
       "note": "32 QVM cases fail original CPU/dense gates; direct keep4 merge/extract loses policy/content while keep0 control passes. Saved-array CPU diagnosis supports old row stride without changing acceptance. No timing, profiler, model, mask or serving validation. Raw records retained externally, not published."
+    },
+    {
+      "id": "mlx-active-memory-api",
+      "title": "MLX get_active_memory API",
+      "url": "https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.get_active_memory.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation; installed 0.31.2 pyi also inspected",
+      "mutable": true,
+      "note": "活跃分配不含闲置缓存buffer；不是RSS或系统统一内存总量。"
+    },
+    {
+      "id": "mlx-cache-memory-api",
+      "title": "MLX get_cache_memory API",
+      "url": "https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.get_cache_memory.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation; installed 0.31.2 pyi also inspected",
+      "mutable": true,
+      "note": "分配器尚未归还系统的闲置buffer；不是GPU硬件缓存。"
+    },
+    {
+      "id": "mlx-peak-memory-api",
+      "title": "MLX get_peak_memory API",
+      "url": "https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.get_peak_memory.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation; installed 0.31.2 pyi also inspected",
+      "mutable": true,
+      "note": "启动或重置后活跃分配峰值；注明测量窗口及是否包含验证转换。"
+    },
+    {
+      "id": "mlx-reset-peak-api",
+      "title": "MLX reset_peak_memory API",
+      "url": "https://ml-explore.github.io/mlx/build/html/python/_autosummary/mlx.core.reset_peak_memory.html",
+      "kind": "official-doc",
+      "checked": "2026-10-07",
+      "revision": "MLX 0.32.3 live documentation; installed 0.31.2 pyi also inspected",
+      "mutable": true,
+      "note": "重置峰值计数，不释放常驻数组、不清分配器缓存或硬件cache。"
+    },
+    {
+      "id": "local-mlx-qmm-paths-20261007",
+      "title": "M4 BF16 QMM path correctness, host completion and allocator memory",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "M4 MLX0.31.2 macOS27.0(26A428); 1 prep, 6 checks, 18 benchmark processes",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-mlx-qmm-paths/derived/summary.json",
+      "note": "Shared packed inputs, BF16 transpose=True, 30 initial gates and 1170 measured-output checks pass. Three process repetitions use identical seeds; host intervals vary and allocator metrics are not RSS. Validation adds GPU float32 conversion outside windows. No profiler/model/deployment claim, no repair of prior transpose=False failure. Raw records retained externally, not published."
     }
   ]
 }

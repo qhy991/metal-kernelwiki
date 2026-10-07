@@ -42,6 +42,7 @@ python3 scripts/validate.py
 | 量化 matmul 的 batch 精度、prefill 路径 | [数值与性能验证](../wiki/quantized-matmul-validation.md)、[M4 本地记录](../wiki/local-mlx-m4.md) |
 | async、等待与数据依赖 | [求值边界](../wiki/mlx-async-evaluation.md) |
 | float32、singleton GQA 精度 | [数值诊断](../wiki/mlx-float32-precision.md) |
+| packed、逐次反量化与常驻 dense 的取舍 | [三路径时间/内存比较](../wiki/mlx-qmm-path-comparison.md) |
 | 多行 qvm 行错误、batch 前缀一致却算错 | [量化数值验证](../wiki/quantized-matmul-validation.md) |
 | rotating keep、合并后丢失前缀 | [缓存生命周期](../wiki/mlx-cache-lifecycle.md) |
 | 边界探针已测与未测范围 | [探针进度](../wiki/mlx-regression-probes.md) |
