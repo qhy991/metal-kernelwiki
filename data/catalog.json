@@ -248,6 +248,25 @@
       "dependency",
       "数据依赖",
       "依赖链"
+    ],
+    "qvm": [
+      "quantized vector matrix",
+      "多行量化",
+      "多行qvm",
+      "量化行错误"
+    ],
+    "row-stride": [
+      "row stride",
+      "行跨度",
+      "行步长"
+    ],
+    "cache-policy-loss": [
+      "keep策略",
+      "keep丢失",
+      "sink丢失",
+      "缓存策略",
+      "丢失前缀",
+      "丢失sink"
     ]
   },
   "pages": [
@@ -716,7 +735,8 @@
         "mlx-lm-readme",
         "mlx-generate-code",
         "mlx-fast-kv-cache",
-        "local-mlx-m4-r1"
+        "local-mlx-m4-r1",
+        "local-mlx-qvm-cache-20261007"
       ],
       "summary": "核对实际 cache 类型后，分别验证前缀复用、容量截断、KV 量化及追加分配策略。"
     },
@@ -861,20 +881,29 @@
         "split-k",
         "batch-invariance",
         "prefill",
-        "dequantization"
+        "dequantization",
+        "qvm",
+        "row-stride",
+        "local-validation"
       ],
       "symptoms": [
         "numerical-drift",
         "prefill-slow",
-        "memory-pressure"
+        "memory-pressure",
+        "wrong-output"
       ],
       "confidence": "source-reported",
       "sources": [
         "mlx-splitk-precision-4613",
         "mlx-prefill-dequant-4621",
-        "local-mlx-m4-r1"
+        "local-mlx-m4-r1",
+        "local-mlx-qvm-cache-20261007",
+        "mlx-qvm-multirow-fix",
+        "mlx-qvm-multirow-test",
+        "mlx-qvm-kernel-0312",
+        "mlx-qvm-dispatch-0312"
       ],
-      "summary": "固定packed权重分离量化与kernel误差，检查batch边界，再公平比较packed、逐次解码与常驻dense三条性能路径。"
+      "summary": "分离量化与kernel误差；M4多行QVM的32个用例失败，前缀一致仍可算错。保留行跨度诊断，再设计packed、逐次解码、常驻dense性能比较。"
     },
     {
       "id": "llamacpp-validation",
@@ -941,9 +970,10 @@
         "mlx-qvm-multirow-fix",
         "mlx-qvm-multirow-test",
         "mlx-rotating-keep-lifecycle-issue",
-        "local-mlx-boundaries-20261007"
+        "local-mlx-boundaries-20261007",
+        "local-mlx-qvm-cache-20261007"
       ],
-      "summary": "异步依赖与 singleton GQA 已有 M4 限定观测；多行 qvm 历史回归和 rotating keep 生命周期仍待验证，保留各轮证据范围。"
+      "summary": "四项已有M4限定观测：异步与singleton通过指定检查，多行QVM失败，rotating keep合并后丢失；mask和服务路径仍未验证。"
     },
     {
       "id": "mlx-async-evaluation",
@@ -1007,6 +1037,35 @@
         "local-mlx-boundaries-20261007"
       ],
       "summary": "区分存储dtype、内部精度与任务容差；M4/MLX0.31.2的48组singleton/broadcast配置三次精确等于存储V，不能证明M5历史问题修复或多key路径精度。"
+    },
+    {
+      "id": "mlx-cache-lifecycle",
+      "title": "旋转 KV cache：批处理必须保留每个请求的策略",
+      "path": "wiki/mlx-cache-lifecycle.md",
+      "type": "technique",
+      "engines": [
+        "mlx"
+      ],
+      "tags": [
+        "kv-cache",
+        "rotating-cache",
+        "batching",
+        "keep",
+        "attention-sinks",
+        "local-validation"
+      ],
+      "symptoms": [
+        "cache-policy-loss",
+        "wrong-output"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-rotating-keep-lifecycle-issue",
+        "mlx-lm-cache-0313",
+        "mlx-lm-generate-0313",
+        "local-mlx-qvm-cache-20261007"
+      ],
+      "summary": "M4/MLX-LM0.31.3直接merge/extract将keep4变为0并在跨容量后丢失前缀，keep0对照通过；区分已受保护的模型缓存入口，不扩大为服务或模型质量结论。"
     }
   ],
   "sources": [
@@ -1778,7 +1837,7 @@
       "checked": "2026-10-07",
       "revision": "Issue #1631 opened 2026-07-28; description corrected 2026-08-01; Open when checked",
       "mutable": true,
-      "note": "作者报告 supplied cache 的 merge/extract 可能丢失 keep；提出跨容量旋转及 mixed-policy 测试。未在本机验证，改 keep=0 不构成等价修复。"
+      "note": "作者报告 supplied cache 的 merge/extract 可能丢失 keep。本机 MLX-LM0.31.3 现有直接存储路径的限定复现，独立记录于 local-mlx-qvm-cache-20261007；未验证 mask/服务/模型质量，改 keep=0 不构成等价修复。"
     },
     {
       "id": "mlx-numerical-precision",
@@ -1809,6 +1868,56 @@
       "mutable": false,
       "note": "48 singleton configurations repeated in each process; four evaluation modes pass CPU oracle. Host completion intervals only, substantial variability and uncontrolled applications/thermal state; first run overlapped CPU installer tests. No model acceptance or profiler analysis. Raw records retained externally, not published.",
       "artifact_ref": "2026-10-07-mlx-boundaries/summary.json"
+    },
+    {
+      "id": "mlx-qvm-kernel-0312",
+      "title": "MLX v0.31.2 quantized Metal kernels",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/quantized.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag; binary dispatch not verified",
+      "mutable": true,
+      "note": "qvm_impl旧行跨度和分区偏移支持错误切片假设；安装包附带头文件也有同类写法，不能证明实际二进制dispatch。"
+    },
+    {
+      "id": "mlx-qvm-dispatch-0312",
+      "title": "MLX v0.31.2 quantized Metal dispatch",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/quantized.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag; binary dispatch not verified",
+      "mutable": true,
+      "note": "transpose=False、M<4、K>=1024的split-K源码路线；本轮K2048/4096对应8分区，供事后CPU诊断而非替换正确oracle。"
+    },
+    {
+      "id": "mlx-lm-cache-0313",
+      "title": "MLX-LM v0.31.3 rotating cache merge/extract",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/v0.31.3/mlx_lm/models/cache.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.3 tag",
+      "mutable": true,
+      "note": "merge检查max_size而未保留keep；extract默认keep0。直接缓存生命周期的本机结果另存，不扩展到所有服务入口。"
+    },
+    {
+      "id": "mlx-lm-generate-0313",
+      "title": "MLX-LM v0.31.3 batch cache construction and merge routes",
+      "url": "https://github.com/ml-explore/mlx-lm/blob/v0.31.3/mlx_lm/generate.py",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.3 tag",
+      "mutable": true,
+      "note": "_make_cache对模型make_cache返回的keep>0明确拒绝；_merge_caches调用各缓存merge。仅源码检查，未运行BatchGenerator或服务。"
+    },
+    {
+      "id": "local-mlx-qvm-cache-20261007",
+      "title": "M4 multi-row QVM and rotating-cache lifecycle failures",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "M4 MLX0.31.2 mlx-lm0.31.3 macOS27.0(26A428); one process, exit2",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-mlx-qvm-cache/results-summary.json",
+      "note": "32 QVM cases fail original CPU/dense gates; direct keep4 merge/extract loses policy/content while keep0 control passes. Saved-array CPU diagnosis supports old row stride without changing acceptance. No timing, profiler, model, mask or serving validation. Raw records retained externally, not published."
     }
   ]
 }

@@ -2,7 +2,7 @@
 
 面向 Apple Silicon、Metal、MLX/MLX-LM 和 llama.cpp 的 LLM 部署与 kernel 优化知识库。以优化机制、适用条件、代价交换与有范围的观测组织内容，并保留一手来源。
 
-截至 2026-10-07：**23 个主题页、80 个来源条目**，其中 3 项为本地实验记录。M4 原语验证不代表整模型加速；捕获已导出不代表 profiler 已解析。详细范围见 [本地观测](wiki/local-mlx-m4.md)。
+截至 2026-10-07：**24 个主题页、85 个来源条目**，其中 4 项为本地实验记录。M4 原语验证不代表整模型加速；捕获已导出不代表 profiler 已解析。详细范围见 [本地观测](wiki/local-mlx-m4.md)。
 
 ## 从哪里开始
 
@@ -13,7 +13,7 @@
 - [Attention](wiki/attention.md)、[GEMM/MoE](wiki/gemm-moe.md)、[量化 matmul 验证](wiki/quantized-matmul-validation.md)。
 - [Metal 能力](wiki/metal-capabilities.md)、[内存与线程组](wiki/metal-memory-threadgroups.md)、[运行时测量](wiki/runtime-measurement.md)。
 - [M4 本地记录](wiki/local-mlx-m4.md)、[异步求值边界](wiki/mlx-async-evaluation.md)、[float32 精度诊断](wiki/mlx-float32-precision.md)。
-- [边界探针进度](wiki/mlx-regression-probes.md)、[完整目录](data/catalog.json)。
+- [缓存生命周期与 keep 策略](wiki/mlx-cache-lifecycle.md)、[边界探针进度](wiki/mlx-regression-probes.md)、[完整目录](data/catalog.json)。
 
 ## 检索
 

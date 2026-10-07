@@ -20,6 +20,10 @@
 
 版本差异已实际出现：本机 MLX-LM 0.31.3 的 `generate_step` 默认起点为 **0**。同次合成 API 检查确认旋转缓存量化抛出 NYI，模型自有 `make_cache` 也优先于传入的最大容量。见 [原始记录说明](local-mlx-m4.md)。不要把本段的任一默认值当作跨版本常数。
 
+## 批处理：先检查保留策略能否跨 merge/extract
+
+本机 MLX-LM 0.31.3 的直接合并探针观察到 keep=4 在 extract 时变为 0，跨容量后丢失前缀；keep=0 对照通过。模型 make_cache 的另一路入口已有明确拒绝，不能把直接合并行为扩大成所有服务路径。完整输入、对照、失败和未测范围见 [缓存生命周期](mlx-cache-lifecycle.md)。吞吐候选先保留各请求语义，不能把改 keep=0 当等价修复。
+
 ## 自定义缓存：避免每 token 复制历史
 
 若 profiler 显示分配开销与核间空闲，比较逐步 concatenate 和分块预分配加 slice update。前者每步复制历史并改变 buffer 大小，后者可摊销增长。[Fast KV Cache](https://ml-explore.github.io/mlx/build/html/usage/kv_cache.html) 该文档的“256 倍数启用 cuDNN fused attention”是 CUDA 条件，不是 Metal 规则。

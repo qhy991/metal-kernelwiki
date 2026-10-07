@@ -1,6 +1,6 @@
 # 量化矩阵乘：把性能路径与数值路径一起比较
 
-证据状态：上游报告与待验证方法，核查于 2026-10-07。部分数值现象已有 [M4 本地记录](local-mlx-m4.md)，尚无整模型收益或质量结论。
+证据状态：上游报告、M4 限定本地观测与待验证性能方法，核查于 2026-10-07。r1 数值现象见 [M4 本地记录](local-mlx-m4.md)；后续多行 QVM 失败见本页。尚无整模型收益或质量结论。
 
 ## 先确定误差来自哪里
 
@@ -15,6 +15,26 @@
 可执行的小型诊断：固定 `X:[128,2560]` 与 `W:[1024,2560]`，affine 4-bit、group 64；一次量化，令 `M={16,32,33,64,65,128}`，每次使用相同 X 的前 M 行。比较每种 M 的前 16 行，记录最大/平均绝对差、相对 L2、有限值计数。最终 dtype 相同并不承诺 bitwise batch invariance；未满足任务质量门槛前，不据此批准 batch/dispatch 改动。
 
 把 kernel MAE 除以“理想结果仅做最终 dtype 舍入”的 MAE，是描述性比值，不是 ULP 数、合法误差上限或缺陷判据。分母很小时，float32 也可能得到很大的比值。应同时看绝对误差与任务质量，而非只看倍数。M4 的已测结果与上游环境不同，只能支持相似现象，不能宣称复现同一个根因。
+
+## 多行 QVM：前缀一致仍可能一起算错
+
+2026-10-07 在 Apple M4/16GB、macOS 27.0（26A428）、MLX 0.31.2、NumPy 2.4.3、Python 3.14.3 上执行一次无模型探针，默认 GPU，`MLX_ENABLE_TF32` 未设置。覆盖 [历史回归测试](https://github.com/ml-explore/mlx/pull/3497/commits/2ecf184f9150b85b0aa139f7d827751011874d35) 的形状范围，但使用自己的 CPU PCG64 输入，并非原测试输入重放：
+
+- float32，`X:[M,K],W:[K,128]`，`M={2,3},K={2048,4096},bits={4,8},group={32,64},transpose=False`。
+- 16 个形状/格式组合，seed=23/47，共 32 个用例。X 和 W 用独立 SeedSequence `[seed,K,0/1]` 生成 `0.1*normal` 后存为 float32；同 seed/K 的原始输入跨格式复用，M2/M3 共享 X 前缀和同一份 packed W。
+- CPU 按 uint32 从低位到高位解包，以实际 float32 scales/biases 做 float64 affine 解码，再一次舍入到 float32，最后以 CPU float64 dot 作主 oracle。预设 `max_abs<2e-3`；该阈值来自上游 dense 对照，被此探针采用为准确性目标，不是通用误差承诺。
+- 同时保存理想 affine、分开 float32 乘/加舍入两种参考，以及 `mx.dequantize` 后 GPU dense 对照。原始权重、packed 参数和输出均保留；不把量化损失混入 kernel 对照。
+
+**32/32 用例均未通过主 oracle 和 GPU dense 对照门。** 首行的逐行最大误差至多 `2.836e-7`，后续行的逐行最大误差为 `1.587～2.847`。GPU dense 相对主 oracle 最大误差为 `6.804e-7`；16 份权重的单次舍入 CPU 解码与 native dequantize 精确数值相等，但这不证明 GPU 使用了某种 FMA 指令。
+
+安装包附带头文件与 [v0.31.2 kernel](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/quantized.h) 仍有旧行跨度写法；[同版本 host 路由](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/quantized.cpp) 为这些形状选择 8 个 K 分区。[历史修复](https://github.com/ml-explore/mlx/pull/3497/commits/1ea24e11f068af5949cda98e5d3eb0ca5f86ea68) 将分区长度与完整行 stride 分开。源码观察不是当前二进制 dispatch 的证明。
+
+仅用保存数组做的事后 CPU 诊断：若错误地按 `K/8` 跨到下一行，第 r 行会读取 `flatX[r*(K/8):r*(K/8)+K]`。这一错误切片模型与实际输出的最大残差为 `2.907e-7`，支持旧 stride 缺陷假设；它不是新 oracle，没有把失败改判为通过，也没有修复安装包。
+
+16 组 M2/M3 前缀比较全部精确相等，尽管后续行均算错。因此 batch 一致性只能补充外部正确性检查。遇到这种失败，先阻止该候选进入性能验收，再对修复版本或其他实现做独立验证；不要放宽容差、只比较第一行，或直接采用未经验证的逐行调用作为部署修复。
+
+本轮没有性能、profiler、模型质量或其他 shape/dtype 的结论。来源 `local-mlx-qvm-cache-20261007` 的外部逻辑引用为 `2026-10-07-mlx-qvm-cache/results-summary.json`；原始失败、脚本、输入/输出和独立诊断留在仓库外，未公开。这里与 r1 的 transpose=True、M>=16 观察属于不同输入域。
+
 
 ## 比性能需要三条路径
 

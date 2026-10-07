@@ -42,7 +42,9 @@ python3 scripts/validate.py
 | 量化 matmul 的 batch 精度、prefill 路径 | [数值与性能验证](../wiki/quantized-matmul-validation.md)、[M4 本地记录](../wiki/local-mlx-m4.md) |
 | async、等待与数据依赖 | [求值边界](../wiki/mlx-async-evaluation.md) |
 | float32、singleton GQA 精度 | [数值诊断](../wiki/mlx-float32-precision.md) |
-| 多行 qvm、缓存生命周期边界 | [探针进度与待验证项](../wiki/mlx-regression-probes.md) |
+| 多行 qvm 行错误、batch 前缀一致却算错 | [量化数值验证](../wiki/quantized-matmul-validation.md) |
+| rotating keep、合并后丢失前缀 | [缓存生命周期](../wiki/mlx-cache-lifecycle.md) |
+| 边界探针已测与未测范围 | [探针进度](../wiki/mlx-regression-probes.md) |
 | llama.cpp 测试空跑、数值或计时范围不明 | [验证流程](../wiki/llamacpp-validation.md) |
 
 ## 必须保留的判断边界
