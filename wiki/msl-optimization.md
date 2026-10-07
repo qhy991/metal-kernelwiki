@@ -42,6 +42,8 @@ Apple [function specialization](https://developer.apple.com/documentation/metal/
 
 [MSL tile 比较](msl-tiles.md)进一步给出direct load、staging、四SIMD共享与BK8/32的原创代码片段和M4有限测量。扩大BK减少外层同步但增加scratch及K-tail工作；完成时间发生排序反转，不能从“少读、少barrier”直接挑选赢家。
 
+[GEMV的SIMD分工与归约顺序](msl-gemv.md)给出F16存储/F32计算的具体失败：8lane同号局部和产生明显抵消误差，相邻K配对候选在同门内通过。工作分配也属于数值设计，不能只按连续访存或更少barrier选方案。
+
 ## 调参要回到证据
 
 实际 dispatch 的线程组大小、pipeline 报告的合法上限、编译 descriptor 的 `maxTotalThreadsPerThreadgroup` 是相关但不同的量。不能把 MLX 的 `threadgroup=(...)` 当作已经修改了编译器资源提示；也不能把最大合法值当最快值。[Apple 线程组指南](https://developer.apple.com/documentation/metal/calculating-threadgroup-and-grid-sizes)

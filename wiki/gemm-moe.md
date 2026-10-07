@@ -6,6 +6,8 @@ MSL 层的 [矩阵乘与累加精度](msl-matrix.md)提供公开 API 的有界�
 
 [MSL tile 共享与直接装载](msl-tiles.md)另比较四个原创矩阵kernel和原生F32 matmul，记录尾块、非连续输入及主机完成时间波动；M=1的direct路线实际回退staging，不能据名称判断decode收益。
 
+[MSL GEMV](msl-gemv.md)进一步比较沿输出、沿K、子组与两级归约，核对MLX/llama.cpp的布局与精度条件；保留长K抵消失败及相邻K配对候选的独立验证。浮点累加类型相同仍可能因顺序改变质量，本轮未测decode速度。
+
 ## 用工作分解建立候选
 
 | 形状/阶段 | 候选 | 要测的额外成本 |

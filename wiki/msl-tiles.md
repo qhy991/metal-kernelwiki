@@ -109,4 +109,6 @@ PCG64 seed307；normal 的标准差0.5，先舍入到F16再存F32。另有交替
 
 本轮没有 device timestamp、GPU counters、反汇编或资源分配报告，不建立专用矩阵单元、DRAM 流量、寄存器/spill或occupancy结论。它没有测试模型、量化、F16 buffer、MPP/NAX、异步流水线、拆分K或更大tile，也不证明任一参数全局最优。真实优化仍要对目标的M/K/N、布局和dtype重新比较，并纳入输入转换、下游消费和模型质量。
 
+M=1的另一种工作分解见 [MSL GEMV](msl-gemv.md)：F16存储、F32输出的标量与SIMD归约实验，不与本页F32矩阵时间直接比较，并保留归约顺序导致的精度失败。
+
 本地来源 `local-msl-tiles-20261007`，逻辑引用 `2026-10-07-msl-tiles/derived/summary.json`；源码、54组输入/oracle、全部输出、逐样本时间及独立审查留在仓库外，未随公开仓库发布。保存记录不构成可独立复验的公开实验包或正式资格。

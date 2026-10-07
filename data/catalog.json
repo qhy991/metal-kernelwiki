@@ -474,6 +474,25 @@
       "直接加载",
       "device装载",
       "device load"
+    ],
+    "lane-mapping": [
+      "lane mapping",
+      "lane分工",
+      "SIMD分工",
+      "subgroups8",
+      "two_level128",
+      "lane布局"
+    ],
+    "reduction-order": [
+      "reduction order",
+      "归约顺序",
+      "累加顺序",
+      "长K",
+      "长归约",
+      "数值抵消",
+      "cancellation",
+      "paired2",
+      "相邻配对"
     ]
   },
   "pages": [
@@ -1782,6 +1801,44 @@
         "mlx-custom-metal-impl-0312"
       ],
       "summary": "公开矩阵API比较device直接装载、staging、四SIMD复用和BK8/32；M4共270项数值检查和750份计时输出通过，主机完成时间波动/排序反转，不证明DRAM减半或最优tile。"
+    },
+    {
+      "id": "msl-gemv",
+      "title": "MSL GEMV：SIMD 分工、权重布局与归约顺序",
+      "path": "wiki/msl-gemv.md",
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx",
+        "llama.cpp"
+      ],
+      "tags": [
+        "msl",
+        "gemv",
+        "simd-reduction",
+        "lane-mapping",
+        "reduction-order",
+        "accumulation-precision",
+        "noncontiguous",
+        "tail-correctness",
+        "local-validation"
+      ],
+      "symptoms": [
+        "slow-decode",
+        "numerical-drift"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-gemv-kernels-0312",
+        "llamacpp-msl-gemv-kernels-20261007",
+        "llamacpp-msl-gemv-pipelines-20261007",
+        "llamacpp-msl-gemv-dispatch-20261007",
+        "local-msl-gemv-20261007",
+        "apple-msl-spec-41",
+        "mlx-metal-matmul-host-0312",
+        "mlx-custom-metal-impl-0312"
+      ],
+      "summary": "沿输出/沿K/8lane子组/两级归约的写法与MLX、llama.cpp布局策略。M4原540项有4项精度失败；CPU复现长K抵消，邻接K成对候选108项通过同门；无速度或模型结论。"
     }
   ],
   "sources": [
@@ -3163,7 +3220,7 @@
       "revision": "Version 4.1; 2026-06-04",
       "checked": "2026-10-07",
       "mutable": true,
-      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。 矩阵页另读§2.4/6.8/7.2.1，区分同T公开签名、未规定lane映射及MPP接口条件。"
+      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。 矩阵页另读§2.4/6.8/7.2.1，区分同T公开签名、未规定lane映射及MPP接口条件。 GEMV页另读§6.10.2的shuffle XOR与活跃lane reduction语义。"
     },
     {
       "id": "apple-msl-generic-pointers",
@@ -3273,7 +3330,7 @@
       "checked": "2026-10-07",
       "revision": "v0.31.2 (tag; mutable)",
       "mutable": true,
-      "note": "check_transpose、regular tile dispatch、split-K/NAX selection；硬件可用性函数本体不在四文件范围内。"
+      "note": "check_transpose、regular tile dispatch、split-K/NAX selection；硬件可用性函数本体不在四文件范围内。 GEMV页另核对batch collapse后min(M,N)==1、gemv/gemv_t方向及组内K归约选择，未据源码推定实际dispatch。"
     },
     {
       "id": "mlx-steel-nax-0312",
@@ -3314,6 +3371,56 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-msl-tiles/derived/summary.json",
       "note": "270 numerical and108metadata checks pass; independent math.fsum audit. All750first/warm/timed outputs saved and independently audited; host completion only, large variance and ranking reversals. Inputs stored F32 after F16 rounding; direct8 also changes output stores. No profiler, actual DRAM or model claim; raw evidence unpublished."
+    },
+    {
+      "id": "mlx-gemv-kernels-0312",
+      "title": "MLX v0.31.2 GEMVKernel / GEMVTKernel and instantiations",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/gemv.metal",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 (tag; mutable)",
+      "mutable": true,
+      "note": "GEMVKernel/GEMVTKernel lane axes, half storage with float accumulation and T output, K/output tails and template instantiations. Source mechanisms only; no actual native dispatch or performance claim."
+    },
+    {
+      "id": "llamacpp-msl-gemv-kernels-20261007",
+      "title": "llama.cpp pinned Metal dense and quantized GEMV kernels",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/42b021b4dc42be573f1e1463528532fc8294c650/ggml/src/ggml-metal/kernels/mul_mv.metal",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "42b021b4dc42be573f1e1463528532fc8294c650",
+      "mutable": false,
+      "note": "Examined dense scalar/_4/short kernels (L928–1238), shared reduction (L169–209), small-batch ext (L602–702, L840–848), and Q4_0 block dot/group mapping (L87–109, L218–302). Source mechanisms only; no GPU, binary-source mapping, instruction or speed claim."
+    },
+    {
+      "id": "llamacpp-msl-gemv-pipelines-20261007",
+      "title": "llama.cpp pinned Metal GEMV pipeline specialization",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/42b021b4dc42be573f1e1463528532fc8294c650/ggml/src/ggml-metal/ggml-metal-device.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "42b021b4dc42be573f1e1463528532fc8294c650",
+      "mutable": false,
+      "note": "L986–1025 selects dense short/scalar/_4 and NSG/NR0/scratch; L1198–1223 builds specialization cache identity/function constants; L772–801 builds small-batch variants. Dense generic fallback scope; not a full capability proof."
+    },
+    {
+      "id": "llamacpp-msl-gemv-dispatch-20261007",
+      "title": "llama.cpp pinned Metal matmul host dispatch",
+      "url": "https://github.com/ggml-org/llama.cpp/blob/42b021b4dc42be573f1e1463528532fc8294c650/ggml/src/ggml-metal/ggml-metal-ops.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "42b021b4dc42be573f1e1463528532fc8294c650",
+      "mutable": false,
+      "note": "L2522–2585 generic GEMV binding/grid; L2588–2770 ordering and small-batch eligibility/geometry. Outer FWHT/MMA/MM predicate bodies outside reviewed scope; generic GEMV is not asserted to handle every dense matmul."
+    },
+    {
+      "id": "local-msl-gemv-20261007",
+      "title": "M4 MSL GEMV: reduction-order failures and adjacent-pair successor",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "2026-10-07; M4/MLX0.31.2; original540checks exits2; paired108checks pass",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-msl-gemv/derived/summary.json",
+      "note": "Original536/540numerical and216metadata pass:3subgroups8 long-cancellation failures and1native-promote normal/transposed gate overrun. Independent math.fsum audit plus CPU source-order diagnosis retains failures. Adjacent-K-pair successor108/108numeric+108metadata pass on same inputs/gate. No timings, profiler, model or universal error bound. Raw records unpublished."
     }
   ]
 }
