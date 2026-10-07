@@ -99,6 +99,6 @@ M4/16GB、macOS 27.0（26A428）、MLX 0.31.2、NumPy 2.4.3、Python 3.14.3。�
 
 Steel 的一个 SIMD-group 输出 tile 有 `TM=BM/(8*WM)`、`TN=BN/(8*WN)` 个维向片段，C 的源码每线程存储为 `2*TM*TN*sizeof(AccumType)`；这能提出寄存器压力假设，不能当成实际寄存器计数。当前 host 的 regular 初始候选64×64×16还受架构、shape、dtype分支修改，不宜直接搬入教学例。
 
-下一步应在同一输出合同下比较直接 device 装载与 staging、多 SIMD tile 复用、epilogue 和必要复制。公开接口将 float fragment 直接装载自 device 时需要 F32 buffer；若原输入为 F16，转换成本应计入完整路径，不能把 half 指针直接传给该已文档化重载。之后用真实 K/N、M=1/32/512 分别验证。小 M 填充较多的8×8路线不自动适合 decode。MPP API 支持、F32/TF32选择和实际物理计算单元也要分别查证，见 [Metal tensors](metal-tensors.md)、[GEMM/MoE](gemm-moe.md)、[MSL 调优](msl-optimization.md)。
+后续 [tile 共享与直接装载](msl-tiles.md)已在独立F32输入合同下比较device装载、staging、多SIMD复用与BK8/32，并保留主机完成时间的明显波动。它没有改变本页F16输入/half矩阵的失败，也不把完成时间归因于某个硬件单元。继续优化还应拆分epilogue和必要复制的影响。公开接口将 float fragment 直接装载自 device 时需要 F32 buffer；若原输入为 F16，转换成本应计入完整路径，不能把 half 指针直接传给该已文档化重载。之后用真实 K/N、M=1/32/512 分别验证。小 M 填充较多的8×8路线不自动适合 decode。MPP API 支持、F32/TF32选择和实际物理计算单元也要分别查证，见 [Metal tensors](metal-tensors.md)、[GEMM/MoE](gemm-moe.md)、[MSL 调优](msl-optimization.md)。
 
 原始来源 `local-msl-matrix-20261007`，逻辑引用 `2026-10-07-msl-matrix/derived/summary.json`。全部81组输入/CPU参考、324份输出、元数据、源文件及失败在仓库外保存，未随公共库发布。未测 BF16、NaN/Inf输入、任意 origin/transpose 参数、多 SIMD 协作、量化、模型质量、吞吐或其他芯片；本页不支持模型加速或可独立重放的公开实验包声明。

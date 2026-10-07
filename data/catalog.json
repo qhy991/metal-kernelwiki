@@ -456,6 +456,24 @@
       "FP16累加",
       "F32累加",
       "half matrix"
+    ],
+    "tile-reuse": [
+      "tile reuse",
+      "tile复用",
+      "跨SIMD共享",
+      "多SIMD",
+      "staging",
+      "暂存",
+      "BK",
+      "分块优化"
+    ],
+    "direct-load": [
+      "direct load",
+      "direct8",
+      "直接装载",
+      "直接加载",
+      "device装载",
+      "device load"
     ]
   },
   "pages": [
@@ -1725,6 +1743,45 @@
         "mlx-custom-metal-impl-0312"
       ],
       "summary": "公开8×8矩阵API、完整组/tail规则与Steel复用机制；M4三条F32路径243项通过，half矩阵81项失败，整体失败保留。源码lane映射非可移植合同，无性能结论。"
+    },
+    {
+      "id": "msl-tiles",
+      "title": "MSL tile 优化：直接装载、跨 SIMD 共享与 BK 的代价",
+      "path": "wiki/msl-tiles.md",
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx"
+      ],
+      "tags": [
+        "msl",
+        "simd-matrix",
+        "gemm",
+        "tile-reuse",
+        "direct-load",
+        "threadgroup",
+        "scratch-memory",
+        "noncontiguous",
+        "tail-correctness",
+        "timing-variance",
+        "benchmark",
+        "local-validation"
+      ],
+      "symptoms": [
+        "slow-prefill",
+        "slow-kernel",
+        "slow-decode"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "local-msl-tiles-20261007",
+        "apple-msl-spec-41",
+        "mlx-steel-mma-0312",
+        "mlx-steel-gemm-fused-0312",
+        "mlx-custom-metal-guide-0312",
+        "mlx-custom-metal-impl-0312"
+      ],
+      "summary": "公开矩阵API比较device直接装载、staging、四SIMD复用和BK8/32；M4共270项数值检查和750份计时输出通过，主机完成时间波动/排序反转，不证明DRAM减半或最优tile。"
     }
   ],
   "sources": [
@@ -3247,6 +3304,16 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-msl-matrix/derived/summary.json",
       "note": "324 numerical and81 metadata cases; three F32 routes each81pass, matrix_f16 all81fail, including27cases with +Inf. Independent math.fsum audit reproduces all results from saved arrays. Overall failure retained; no timing/profiler/model claims. Raw records unpublished."
+    },
+    {
+      "id": "local-msl-tiles-20261007",
+      "title": "M4 MSL tile comparison: direct/staged/cooperative paths and host completion variance",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "2026-10-07; M4/MLX0.31.2; five routes; 15 sequential benchmark processes",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-msl-tiles/derived/summary.json",
+      "note": "270 numerical and108metadata checks pass; independent math.fsum audit. All750first/warm/timed outputs saved and independently audited; host completion only, large variance and ranking reversals. Inputs stored F32 after F16 rounding; direct8 also changes output stores. No profiler, actual DRAM or model claim; raw evidence unpublished."
     }
   ]
 }

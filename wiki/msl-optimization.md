@@ -40,6 +40,8 @@ Apple [function specialization](https://developer.apple.com/documentation/metal/
 
 矩阵场景进一步看 [公开 SIMD-group API 与 Steel tile 复用](msl-matrix.md)：手工 lane fragment 映射属于实现细节，FP16 buffer、矩阵/累加类型和输出 dtype 分别决定数值行为，不能把降低中间精度当成无语义变化的优化。
 
+[MSL tile 比较](msl-tiles.md)进一步给出direct load、staging、四SIMD共享与BK8/32的原创代码片段和M4有限测量。扩大BK减少外层同步但增加scratch及K-tail工作；完成时间发生排序反转，不能从“少读、少barrier”直接挑选赢家。
+
 ## 调参要回到证据
 
 实际 dispatch 的线程组大小、pipeline 报告的合法上限、编译 descriptor 的 `maxTotalThreadsPerThreadgroup` 是相关但不同的量。不能把 MLX 的 `threadgroup=(...)` 当作已经修改了编译器资源提示；也不能把最大合法值当最快值。[Apple 线程组指南](https://developer.apple.com/documentation/metal/calculating-threadgroup-and-grid-sizes)

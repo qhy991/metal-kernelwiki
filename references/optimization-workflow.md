@@ -55,6 +55,7 @@ python3 scripts/validate.py
 | 边界探针已测与未测范围 | [探针进度](../wiki/mlx-regression-probes.md) |
 | MSL 写法、地址空间、packed 对齐、barrier 与精度 | [编程与有限检查](../wiki/msl-programming.md) |
 | MSL 矩阵乘、fragment、累加精度、M/N/K tail | [公开 API、Steel 模式与本地数值边界](../wiki/msl-matrix.md) |
+| MSL direct load、staging、跨SIMD tile复用、BK大小 | [写法、正确性与完成时间波动](../wiki/msl-tiles.md) |
 | MSL 每线程工作量、寄存器、SIMD 归约、函数常量 | [源码驱动的优化候选](../wiki/msl-optimization.md) |
 | llama.cpp FA 路径、量化 KV 后临时内存、sparse mask hint | [分派与分配契约](../wiki/llamacpp-fa-paths.md) |
 | llama.cpp 测试空跑、数值或计时范围不明 | [验证流程](../wiki/llamacpp-validation.md) |

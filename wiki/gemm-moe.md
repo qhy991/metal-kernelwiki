@@ -4,6 +4,8 @@
 
 MSL 层的 [矩阵乘与累加精度](msl-matrix.md)提供公开 API 的有界示例、Steel tile/fragment 机制及 M4 合成检查；它没有验证本页的模型吞吐或 MoE 路由。
 
+[MSL tile 共享与直接装载](msl-tiles.md)另比较四个原创矩阵kernel和原生F32 matmul，记录尾块、非连续输入及主机完成时间波动；M=1的direct路线实际回退staging，不能据名称判断decode收益。
+
 ## 用工作分解建立候选
 
 | 形状/阶段 | 候选 | 要测的额外成本 |
