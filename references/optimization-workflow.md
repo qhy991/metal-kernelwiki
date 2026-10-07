@@ -44,6 +44,7 @@ python3 scripts/validate.py
 | float32、singleton GQA 精度 | [数值诊断](../wiki/mlx-float32-precision.md) |
 | packed、逐次反量化与常驻 dense 的取舍 | [三路径时间/内存比较](../wiki/mlx-qmm-path-comparison.md) |
 | 多行 qvm 行错误、batch 前缀一致却算错 | [量化数值验证](../wiki/quantized-matmul-validation.md) |
+| 量化 KV、多 token 续写异常、GQA 的 QK/PV 定位 | [量化失真与执行错误](../wiki/mlx-quantized-attention.md) |
 | rotating keep、合并后丢失前缀 | [缓存生命周期](../wiki/mlx-cache-lifecycle.md) |
 | 左填充、旋转后 chunk 续写、mask 错位 | [mask 与返回槽位对齐](../wiki/mlx-cache-mask-alignment.md) |
 | 保存缓存、加载后报错、升级后的文件兼容 | [保存恢复与续写](../wiki/mlx-cache-persistence.md) |

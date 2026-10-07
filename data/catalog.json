@@ -343,6 +343,20 @@
       "自定义内核",
       "metal kernel",
       "custom kernel"
+    ],
+    "quantized-kv": [
+      "kv量化",
+      "量化kv",
+      "量化 kv",
+      "quantized kv",
+      "kv quantization"
+    ],
+    "multi-token": [
+      "多token",
+      "多 token",
+      "multi token",
+      "多步续写",
+      "chunk续写"
     ]
   },
   "pages": [
@@ -819,7 +833,8 @@
         "mlx-generate-code",
         "mlx-fast-kv-cache",
         "local-mlx-m4-r1",
-        "local-mlx-qvm-cache-20261007"
+        "local-mlx-qvm-cache-20261007",
+        "local-mlx-quantized-attention-20261007"
       ],
       "summary": "核对实际 cache 类型后，分别验证前缀复用、容量截断、KV 量化及追加分配策略。"
     },
@@ -985,7 +1000,8 @@
         "mlx-qvm-multirow-test",
         "mlx-qvm-kernel-0312",
         "mlx-qvm-dispatch-0312",
-        "local-mlx-qmm-paths-20261007"
+        "local-mlx-qmm-paths-20261007",
+        "local-mlx-quantized-attention-20261007"
       ],
       "summary": "分离量化与kernel误差；保留多行QVM失败和前缀一致仍算错的诊断。另有transpose=True三路径的数值、时间和内存观测，不据此生成通用分派阈值。"
     },
@@ -1056,7 +1072,8 @@
         "mlx-rotating-keep-lifecycle-issue",
         "local-mlx-boundaries-20261007",
         "local-mlx-qvm-cache-20261007",
-        "local-mlx-cache-mask-20261007"
+        "local-mlx-cache-mask-20261007",
+        "local-mlx-quantized-attention-20261007"
       ],
       "summary": "四项已有M4限定观测：异步与singleton通过指定检查，多行QVM失败，rotating keep合并后丢失；另测keep0 mask在旋转后chunk续写时错位，服务与模型仍未验证。"
     },
@@ -1319,6 +1336,43 @@
         "local-mlx-custom-rms-20261007"
       ],
       "summary": "M4/MLX0.31.2的双输出RMSNorm，native fast与自动连续化/显式stride两个custom路径：216项正确性及1512计时样本过门；M512隔列copy更慢，strided较快，BF16仅小幅差异，小尺寸无统一赢家。"
+    },
+    {
+      "id": "mlx-quantized-attention",
+      "title": "量化 KV attention：量化损失与多 token 执行错误",
+      "path": "wiki/mlx-quantized-attention.md",
+      "type": "technique",
+      "engines": [
+        "mlx",
+        "metal"
+      ],
+      "tags": [
+        "kv-cache",
+        "quantization",
+        "quantized-kv",
+        "attention",
+        "gqa",
+        "qvm",
+        "multi-token",
+        "correctness",
+        "local-validation"
+      ],
+      "symptoms": [
+        "numerical-drift",
+        "long-context"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "mlx-lm-base-mask-0313",
+        "mlx-lm-cache-0313",
+        "mlx-quantized-frontend-0312",
+        "mlx-qvm-dispatch-0312",
+        "mlx-qvm-kernel-0312",
+        "mlx-qvm-multirow-fix",
+        "mlx-qvm-multirow-test",
+        "local-mlx-quantized-attention-20261007"
+      ],
+      "summary": "M4/MLX0.31.2及MLX-LM0.31.3量化KV helper，128个F32 GQA配置中48个多token PV失败；QK/softmax/dense全部通过。分开量化失真、packed存储与执行正确性，无模型或性能结论。"
     }
   ],
   "sources": [
@@ -2140,17 +2194,17 @@
       "checked": "2026-10-07",
       "revision": "v0.31.2 tag; binary dispatch not verified",
       "mutable": true,
-      "note": "transpose=False、M<4、K>=1024的split-K源码路线；本轮K2048/4096对应8分区，供事后CPU诊断而非替换正确oracle。"
+      "note": "transpose=False、M<4、K>=1024的split-K源码路线；K<=8192时8分区。已检查二维QVM及GQA helper形状对应；供源码推断与事后CPU诊断，不证明二进制dispatch或替代正确oracle。"
     },
     {
       "id": "mlx-lm-cache-0313",
-      "title": "MLX-LM v0.31.3 rotating cache lifecycle and mask",
+      "title": "MLX-LM v0.31.3 cache lifecycle, masks and quantized storage",
       "url": "https://github.com/ml-explore/mlx-lm/blob/v0.31.3/mlx_lm/models/cache.py",
       "kind": "upstream-code",
       "checked": "2026-10-07",
       "revision": "v0.31.3 tag",
       "mutable": true,
-      "note": "merge检查max_size而未保留keep；extract默认keep0。直接缓存生命周期的本机结果另存，不扩展到所有服务入口。 另核查make_mask与_update_concat归序/裁剪时序；独立mask探针保留在另一运行。"
+      "note": "merge检查max_size而未保留keep；extract默认keep0。直接缓存生命周期的本机结果另存，不扩展到所有服务入口。 另核查make_mask与_update_concat归序/裁剪时序；独立mask探针保留在另一运行。 另核查QuantizedKVCache的有效fetch切片、mask生成时序、256容量增长与packed/scales/biases存储；本地量化attention记录独立保留。"
     },
     {
       "id": "mlx-lm-generate-0313",
@@ -2224,13 +2278,13 @@
     },
     {
       "id": "mlx-lm-base-mask-0313",
-      "title": "MLX-LM v0.31.3 causal and sliding-window mask semantics",
+      "title": "MLX-LM v0.31.3 masks and quantized GQA attention",
       "url": "https://github.com/ml-explore/mlx-lm/blob/v0.31.3/mlx_lm/models/base.py",
       "kind": "upstream-code",
       "checked": "2026-10-07",
       "revision": "v0.31.3 tag",
       "mutable": true,
-      "note": "窗口包含当前token，key<=query<key+window并排除padding；作为逻辑参考的语义来源，不复制cache物理roll公式。"
+      "note": "窗口包含当前token，key<=query<key+window并排除padding；作为逻辑参考的语义来源，不复制cache物理roll公式。 另核查bits分支、GQA reshape、QK/precise softmax/PV链及右下causal；不代表任意mask或模型验收。"
     },
     {
       "id": "mlx-lm-cache-tests-0313",
@@ -2371,6 +2425,26 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-mlx-custom-rms/derived/summary.json",
       "note": "216 F32/BF16 prechecks and 1512 online timed-output gates pass for native and two custom routes. Both y and residual required; real contiguous/step2 metadata checked. D4103 correctness only; random D4096 timing. 216 check and 108 first output pairs retained; 1404 success pairs metrics only. No profiler/model claim; raw records external/unpublished."
+    },
+    {
+      "id": "mlx-quantized-frontend-0312",
+      "title": "MLX v0.31.2 quantized matmul frontend broadcasting",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/ops.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "quantized_matmul保留末两轴并广播batch轴；结合Metal host源码分析GQA PV的M=Lq，不是实际二进制dispatch证明。"
+    },
+    {
+      "id": "local-mlx-quantized-attention-20261007",
+      "title": "M4 quantized KV attention stage correctness and distortion",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "M4 MLX0.31.2 mlx-lm0.31.3 macOS27.0(26A428); one model-free process, exit2",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-mlx-quantized-attention/derived/summary.json",
+      "note": "128 F32 GQA/cache/helper cases, 80 pass and 48 PV failures at tested Tk1024/2048/4096 Lq2/3, both bits4/8. QK/softmax/dense controls pass, actual packed decoding exact. Posthoc wrong-stride diagnosis does not change gates. No timing, profiler, model or repaired-version validation; raw arrays external/unpublished."
     }
   ]
 }

@@ -39,6 +39,8 @@
 
 逐行报告误差，避免总均值隐藏第二、三行错误。此检查不覆盖 5D GQA broadcast、任意 tail 或 speculative decoding 的模型质量；r1 的转置方向和 M 范围不同，不能代替它。
 
+另一运行已补充限定的 5D GQA 与真实量化 attention helper 范围：[128 项分阶段检查](mlx-quantized-attention.md)中 48 项多 token PV 失败，QK/softmax/dense 对照通过。它有独立输入、门槛与记录，不能追溯性地扩大上述二维探针，亦未测 speculative decoding 模型质量。
+
 ## 4. RotatingKVCache：keep 策略跨 batching 保存（存储路径与另组 mask 已执行，服务未测）
 
 同轮直接 merge/update/extract 接受了 keep=(4,4) 与混合 (0,4)，随后丢失 keep=4 的策略和前缀；(0,0) 对照通过。详见 [缓存生命周期](mlx-cache-lifecycle.md)。未执行 attention/mask、服务或模型质量验证，因此原设计的这些判据仍未满足；没有将 keep 改为 0 后重报通过。

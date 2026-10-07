@@ -36,6 +36,8 @@
 本轮没有性能、profiler、模型质量或其他 shape/dtype 的结论。来源 `local-mlx-qvm-cache-20261007` 的外部逻辑引用为 `2026-10-07-mlx-qvm-cache/results-summary.json`；原始失败、脚本、输入/输出和独立诊断留在仓库外，未公开。这里与 r1 的 transpose=True、M>=16 观察属于不同输入域。
 
 
+后续独立 [量化 KV attention 探针](mlx-quantized-attention.md)已覆盖指定 5D GQA 广播、causal mask、softmax 和真实 MLX-LM helper：128 项有 48 项在多 token PV 失败，相同 packed 数据的 dense 对照通过。这扩展了实测范围，但不改变上面二维探针的原始范围；仍没有模型、服务或通用修复验收。
+
 ## 比性能需要三条路径
 
 上游 [issue #4621](https://github.com/ml-explore/mlx/issues/4621) 在 MLX 0.32.3、M2 Max 64GB 上报告某些大 M 场景中反量化加 dense matmul 比 packed QMM 快。它是候选来源，不能把报告中的 token 阈值直接变为其他机器的分派规则。
