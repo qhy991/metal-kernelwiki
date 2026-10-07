@@ -37,7 +37,7 @@
 git clone https://github.com/qhy991/metal-kernelwiki.git
 cd metal-kernelwiki
 python3 scripts/install_skill.py
-python3 "$HOME/.codex/skills/metal-kernelwiki/scripts/wiki.py" query "首 token 慢"
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/metal-kernelwiki/scripts/wiki.py" query "首 token 慢"
 ```
 
 安装器默认使用 `CODEX_HOME/skills`（未设置时为 `~/.codex/skills`），也可用 `--dest /绝对路径/metal-kernelwiki` 指定技能目录。已存在的目标会被拒绝，不覆盖其他安装。它只复制 `skill/metal-kernelwiki/`，并创建 `knowledge` 链接指向当前 checkout；更新仓库后，知识内容自动可见，仓库移动后需要重新建立该链接。直接在 checkout 内运行模板入口也可使用：
