@@ -46,7 +46,7 @@ Apple [function specialization](https://developer.apple.com/documentation/metal/
 
 [量化GEMV的参数提取](msl-quantized-gemv.md)比较word与group分工、逐项FMA与bias factoring。后者减少源码affine表达式，却在合成抵消输入上未过相同数值门；记录解码和算术误差后才能进入性能选择，不能把更少运算直接当作可采用优化。
 
-[MSL softmax](msl-softmax.md)比较三遍重读、在线统计和三阶段分块合并，说明空块neutral与跨SIMD初始化；同门数值通过与读次数、指数函数精度、实际速度分别记录。MLX API的precise参数也不能直接解释成MSL precise::exp。
+[MSL softmax](msl-softmax.md)比较三遍重读、在线统计和三阶段分块合并，说明空块neutral与跨SIMD初始化；同门数值通过与读次数、指数函数精度、实际速度分别记录。[后续softmax计时](msl-softmax-timing.md)保留长短行的不同表现和两种统计量的排序反转，不用单次最小值选择通用赢家。MLX API的precise参数也不能直接解释成MSL precise::exp。
 
 ## 调参要回到证据
 

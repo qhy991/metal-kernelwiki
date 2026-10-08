@@ -557,6 +557,14 @@
       "指数精度",
       "exp精度",
       "precise参数"
+    ],
+    "softmax-timing": [
+      "softmax timing",
+      "softmax latency",
+      "softmax 计时",
+      "softmax计时",
+      "softmax 测速",
+      "softmax测速"
     ]
   },
   "pages": [
@@ -1971,9 +1979,49 @@
         "online-softmax-1805.02867-v2",
         "local-msl-softmax-20261007",
         "apple-msl-spec-41",
-        "mlx-quantization-api-bindings-0312"
+        "mlx-quantization-api-bindings-0312",
+        "mlx-softmax-factory-0312",
+        "mlx-softmax-defines-0312",
+        "mlx-softmax-instantiation-0312"
       ],
-      "summary": "原创SG32/TG128、在线normalizer、split256状态合并与空mask处理。M4六路径144项概率、24状态、48元数据通过独立审查；区分API precise与MSL指数函数，无速度或完整attention结论。"
+      "summary": "原创SG32/TG128、在线normalizer、split256状态合并与空mask处理；144项数值、24状态、48元数据通过。核实MLX AccT/N_READS，区分API precise与MSL指数函数；后续计时另页限定范围。"
+    },
+    {
+      "id": "msl-softmax-timing",
+      "title": "MSL softmax 计时：线程分工、分块与实际调用成本",
+      "path": "wiki/msl-softmax-timing.md",
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx"
+      ],
+      "tags": [
+        "msl",
+        "softmax",
+        "softmax-timing",
+        "online-softmax",
+        "masked-softmax",
+        "chunk-merge",
+        "exp-precision",
+        "benchmark",
+        "timing-variance",
+        "noncontiguous",
+        "local-validation"
+      ],
+      "symptoms": [
+        "slow-kernel",
+        "slow-prefill",
+        "slow-decode",
+        "misleading-timing"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "local-msl-softmax-timing-20261007",
+        "local-msl-softmax-20261007",
+        "mlx-softmax-kernel-0312",
+        "mlx-softmax-dispatch-0312"
+      ],
+      "summary": "M4六路径、三进程、1620份输出与计时独立复核。长行分工/分块候选、短行波动、进程中位数与block配对比值的排序反转；仅主机完成时间，无GPU瓶颈或模型结论。"
     }
   ],
   "sources": [
@@ -3616,6 +3664,46 @@
       "mutable": false,
       "artifact_ref": "2026-10-07-msl-softmax/derived/summary.json",
       "note": "24saved inputmatrices (12widths,8rows,2layouts) and144outputs. IndependentCPU math.exp/fsum audit confirms probability/rowsum/L1/maskedpositivezero gates, split max/count/mass, translation and layout diagnostics. Installed precise=True nativecall accepts; does not prove precise::exp. Explicit finite input and allmasked policy, no speed/model claim. Raw records unpublished."
+    },
+    {
+      "id": "mlx-softmax-factory-0312",
+      "title": "MLX v0.31.2 Metal softmax JIT factory",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/jit_kernels.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag (mutable)",
+      "mutable": true,
+      "note": "get_softmax_kernel L290-308: in_type comes from output dtype; AccT is float32 iff precise, otherwise output dtype; instantiate block and looped. Source only, installed binary and actual runtime dispatch not established."
+    },
+    {
+      "id": "mlx-softmax-defines-0312",
+      "title": "MLX v0.31.2 Metal softmax read-count definition",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/defines.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag (mutable)",
+      "mutable": true,
+      "note": "L14 sets SOFTMAX_N_READS=4; L18-24 define template instantiation macro. Compile-time source fact, not an observed runtime resource count."
+    },
+    {
+      "id": "mlx-softmax-instantiation-0312",
+      "title": "MLX v0.31.2 Metal softmax static instantiations",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/softmax.metal",
+      "kind": "upstream-code",
+      "checked": "2026-10-07",
+      "revision": "v0.31.2 tag (mutable)",
+      "mutable": true,
+      "note": "L12-24: normal float/half/bfloat16 instantiations use default AccT=T; precise half/BF16 explicitly instantiate float AccT. No distinct precise float32 static variant. No installed-binary equivalence claim."
+    },
+    {
+      "id": "local-msl-softmax-timing-20261007",
+      "title": "M4 softmax host-completion timings: six routes and all-output CPU audit",
+      "kind": "local-experiment",
+      "checked": "2026-10-07",
+      "revision": "2026-10-07; M4/MLX0.31.2; 3 processes, 1620 outputs and 36 metadata checks",
+      "mutable": false,
+      "artifact_ref": "2026-10-07-msl-softmax-timing/derived/summary.json",
+      "note": "Prior accepted source bodies and six R8 input conditions reused. All first/warmup/timed outputs retained and independently checked. Per-process medians and paired block ratios reported separately; estimator and process rank reversals retained. Includes Python graph/eval/native-mask/split-stage costs, no GPU-only/profile/model claim. Raw records unpublished."
     }
   ]
 }

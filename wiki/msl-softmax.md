@@ -1,6 +1,6 @@
 # MSL softmax：在线归一化、分块合并与 mask 契约
 
-softmax 优化需要一起决定输入读几遍、保留多少局部值、如何合并归约，以及空行输出什么。本页给出原创 MSL 写法、MLX v0.31.2 的源码线索和 M4 有限检查。它只输出给定 logits 的概率，没有实现 QK/PV、KV cache 或完整 FlashAttention，也没有本轮速度结论。
+softmax 优化需要一起决定输入读几遍、保留多少局部值、如何合并归约，以及空行输出什么。本页给出原创 MSL 写法、MLX v0.31.2 的源码线索和 M4 有限检查。它只输出给定 logits 的概率，没有实现 QK/PV、KV cache 或完整 FlashAttention，原数值运行未计时；后续[独立计时页](msl-softmax-timing.md)记录同一候选的主机完成成本与统计差异。
 
 ## 先定义有效集合，再谈稳定计算
 
@@ -79,11 +79,11 @@ split256 的第一阶段每块32lane，做局部max/count和指数和；每个�
 
 MLX v0.31.2 [Python绑定](https://github.com/ml-explore/mlx/blob/v0.31.2/python/src/ops.cpp#L3021)实际接受关键字 `precise`，默认false，但相邻手写签名遗漏它；安装包的 `.pyi` 因此也不能单独作为“不支持该参数”的证据。其 [Metal源码](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/softmax.h#L3)的 `softmax_exp` 始终调用 `fast::exp`，不能把API参数名解释为选择MSL `precise::exp`。
 
-该源码的输入/输出是T，内部统计与数组是AccT，最后转回T；本次三文件阅读未闭合kernel factory的dtype实例化，不能据模板默认值推断所有half/BF16路径。本轮仅用F32，没有声称half累加规则或低精度输出质量。
+该源码的输入/输出是T，内部统计与数组是AccT，最后转回T。后续补读 [JIT factory](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/jit_kernels.cpp#L290) 和 [静态实例化](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/softmax.metal#L12)，核实 AccT 取 `precise ? float32 : output_dtype`：F32两种flag都是float，half/BF16在false时使用对应类型、true时使用float，输出类型不变。这是源码变量/存储类型，不等于逐条硬件指令的精度证据。本机只测F32，未验证低精度输出质量；F32调用传precise=True也不表示启用独立于false的源码累加类型。
 
 ## MLX如何在保存与重读之间选择
 
-[v0.31.2 host](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/softmax.cpp)以末维4096为界：较短行用block，较长行用looped。block每线程保存 `ld[N_READS]`，先存输入后改存指数，再直接写输出；looped用有界小数组在线更新统计，归约后重读输入。线程数分别按N_READS向完整SIMD取整和使用pipeline上限；本次未核实N_READS数值、实际pipeline上限或binary分派。
+[v0.31.2 host](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/softmax.cpp)以末维4096为界：较短行用block，较长行用looped。block每线程保存 `ld[N_READS]`，先存输入后改存指数，再直接写输出；looped用有界小数组在线更新统计，归约后重读输入。线程数分别按N_READS向完整SIMD取整和使用pipeline上限。补读 [defines.h](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/defines.h#L14) 核实 `N_READS=4`；固定tag的block组大小为 `32*ceil(K/128)`，故K128对应32线程、K257对应96。K8193走looped；未核实实际pipeline上限或安装binary分派。
 
 原生入口要求contiguous标志且末维stride=1，否则可能先复制。本地native对照还含显式mask操作，因此与custom step2路径不构成相同物理访存的性能A/B。源码tag可移动，也不能当作已确认与安装binary逐字一致。
 
@@ -116,6 +116,6 @@ native对照明确执行 `where(mask,x,-16385)` → `mx.softmax(...,axis=-1,prec
 
 独立CPU审查重新构造并核对声明的输入模式，用保存数组计算12组参考，另外12组仅在逻辑输入相等后复用。全部144输出、24状态文件、48元数据及终态一致，保存的参考差为0。144项平移对照和72组跨布局输出还观察到逐位相同，这是额外诊断结果，不是推广后的bitwise保证；逻辑NPZ也不能独立证明历史物理stride或无隐藏越界读取。
 
-当前可采用的知识是明确的空集、归约和依赖写法，以及这些F32候选在共同门内通过的有限证据。下一步性能比较仍须区分单kernel在线路径与三阶段split路径，计入临时状态、mask处理、布局复制和输出消费。不能把“少一遍源码读取”“更多线程组”或本轮全部通过直接写成更快。
+当前可采用的知识是明确的空集、归约和依赖写法，以及这些F32候选在共同门内通过的有限证据。后续[计时比较](msl-softmax-timing.md)区分单kernel在线路径与三阶段split路径，计入临时状态和mask包装，同时保留布局及输出消费边界。不能把“少一遍源码读取”“更多线程组”或本轮全部通过直接写成更快。
 
-来源 `local-msl-softmax-20261007`，逻辑引用 `2026-10-07-msl-softmax/derived/summary.json`。源程序、输入、输出、中间状态及审查记录在仓库外保留，未随公开库发布。本页没有GPU时间、指令、寄存器、带宽、模型质量或端到端attention结论；通过候选的实际性能还需同一目标工作负载和明确测量范围。
+来源 `local-msl-softmax-20261007`，逻辑引用 `2026-10-07-msl-softmax/derived/summary.json`。源程序、输入、输出、中间状态及审查记录在仓库外保留，未随公开库发布。本页数值记录没有GPU时间、指令、寄存器、带宽、模型质量或端到端attention结论；后续主机计时也不提供这些硬件归因。
