@@ -50,7 +50,7 @@ Apple [function specialization](https://developer.apple.com/documentation/metal/
 
 [低精度softmax](msl-softmax-lowp.md)把输入存储、float统计和输出窄化分开：half长行全零与次正规输出保留可以同时出现在不同计算路线，不能只看输出dtype判断原因，也不能用精度提升恢复已经量化掉的logits信息。
 
-[half表达式边界](msl-half-arithmetic.md)解释如何显式选择float倒数再窄化，并区分MSL算术FTZ、转换规则和源码编译选项；sizeof只能观察表达式宽度，未完成的本地探针没有提供数值或速度验收。
+[half表达式边界](msl-half-arithmetic.md)解释如何显式选择float倒数再窄化，并区分MSL算术FTZ、转换规则和源码编译选项；sizeof只能观察表达式宽度。独立后继28项通过数值门，同时记录F32差异被half窄化掩盖的情形；保留次正规值与排除有限FTZ模型均不构成全局硬件或速度结论。
 
 ## 调参要回到证据
 

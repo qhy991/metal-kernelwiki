@@ -606,6 +606,14 @@
       "float16_t",
       "sizeof",
       "字面量类型"
+    ],
+    "output-rounding": [
+      "output rounding",
+      "输出舍入",
+      "窄化",
+      "narrowing",
+      "舍入掩盖",
+      "rounding masks"
     ]
   },
   "pages": [
@@ -2124,12 +2132,13 @@
         "mixed-precision",
         "custom-metal",
         "toolchain",
-        "local-validation"
+        "local-validation",
+        "output-rounding"
       ],
       "symptoms": [
         "numerical-drift"
       ],
-      "confidence": "documented",
+      "confidence": "locally-measured",
       "sources": [
         "local-msl-half-arithmetic-20261008",
         "apple-msl-spec-41",
@@ -2137,9 +2146,10 @@
         "mlx-metal-device-compile-0312",
         "mlx-custom-metal-impl-0312",
         "mlx-msl-utils-v0312",
-        "mlx-compiled-layout-0312"
+        "mlx-compiled-layout-0312",
+        "local-msl-half-arithmetic-values-20261008"
       ],
-      "summary": "区分half/float表达式、divide函数、算术FTZ与窄化规则；追踪MLX源码编译选项而不冒充实际flags。M4仅完成sizeof元数据，float16_t签名被half-only检查器拒绝，28项算术计划未执行、原失败保留，无精度或速度验收。"
+      "summary": "区分half/float表达式、算术FTZ、窄化和源码编译选项。保留首次签名检查失败；独立后继28项通过，所测half次正规值保留，F32倒数每布局1248项偏离RNE但在half舍入后消失。值模型不唯一确定中间精度、舍入模式或native softmax原因，无速度结论。"
     }
   ],
   "sources": [
@@ -3872,6 +3882,16 @@
       "mutable": false,
       "artifact_ref": "2026-10-08-msl-half-arithmetic/derived/summary.json",
       "note": "Planned28 arithmetic outputs but stopped before arithmetic loop: generated float16_t pointer rejected by literal half-only signature checker.16384 first-input bits,634-byte wrapper and sizeof[2,2,2,4,4] retained; independent CPU audit verifies existing records, not matrix acceptance. Source tag defines alias; original exception remains. No arithmetic accuracy/FTZ, timing/profile/model or native-softmax causal conclusion; raw records unpublished."
+    },
+    {
+      "id": "local-msl-half-arithmetic-values-20261008",
+      "title": "M4 half arithmetic values: subnormal retention and F32 differences hidden by half rounding",
+      "kind": "local-experiment",
+      "checked": "2026-10-08",
+      "revision": "2026-10-08; M4/MLX0.31.2/macOS27.0.1; independent successor; 28 outputs accepted",
+      "mutable": false,
+      "artifact_ref": "2026-10-08-msl-half-arithmetic-values/derived/summary.json",
+      "note": "Original signature failure preserved.4 inputs/4 metadata/28 raw-bit outputs and32 wrappers;258034 values independently CPU audited,14 cross-layout pairs equal. All28 quality checks pass.Each F16 reciprocal route retains2047 subnormals and matches RNE; each F32 reciprocal output has1248 adjacent-value differences, all hidden by CPU half narrowing.Small RNE/RTZ ambiguity and restricted FTZ model exclusions retained.No timing/profile/model/native-softmax causal claim; raw records unpublished."
     }
   ]
 }
