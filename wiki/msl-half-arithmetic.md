@@ -81,6 +81,8 @@ MLX v0.31.2的[custom kernel生成器](https://github.com/ml-explore/mlx/blob/v0
 
 对**已保存的这份F32输出**做独立CPU精确RNE到half，全部16384项又与直接half RNE及六种实际half输出逐位一致；1248个F32差异在half舍入后全部消失。这说明最终half检查可能看不到F32差异，不证明另六个kernel实际经过同一F32中间值。本轮 `precise::divide` 的buffer是half，尚未单独验证它的F32逐位输出；不能从half结果相同推定fast与precise在F32中等价。
 
+后续独立的[F32除法对照](msl-f32-divide.md)已直接保存三种表达式的float输出，并比较half与float同值输入。该后继发现half来源precise仍有非正确舍入点预测结果；它扩展证据范围，不改变本页28项检查的输出类型和结论。
+
 ## 次正规结果支持哪些解释
 
 六种half倒数路线都保留了h>16384的2047个正次正规输出，包括h=65472和65504时的 `0x0100 = 2^-16`。原语没有denominator累加，分母都是正常有限half，因此在这些程序中没有出现“所有half次正规倒数一律冲零”。这仍不能排除原生softmax中的累加溢出、不同中间值或编译上下文，也不能唯一解释其全零行。

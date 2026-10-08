@@ -614,6 +614,39 @@
       "narrowing",
       "舍入掩盖",
       "rounding masks"
+    ],
+    "f32-divide": [
+      "f32 division",
+      "float division",
+      "division precision",
+      "F32除法",
+      "float除法",
+      "除法精度",
+      "fast::divide",
+      "precise::divide"
+    ],
+    "math-mode": [
+      "math mode",
+      "mathMode",
+      "fastMathEnabled",
+      "safe precise",
+      "数学模式",
+      "编译精度"
+    ],
+    "input-provenance": [
+      "input provenance",
+      "same values different storage",
+      "输入来源",
+      "同值不同存储"
+    ],
+    "materialization": [
+      "materialization",
+      "materialize",
+      "evaluated intermediate",
+      "中间数组",
+      "先转换再除法",
+      "单独转换",
+      "物化"
     ]
   },
   "pages": [
@@ -2150,6 +2183,41 @@
         "local-msl-half-arithmetic-values-20261008"
       ],
       "summary": "区分half/float表达式、算术FTZ、窄化和源码编译选项。保留首次签名检查失败；独立后继28项通过，所测half次正规值保留，F32倒数每布局1248项偏离RNE但在half舍入后消失。值模型不唯一确定中间精度、舍入模式或native softmax原因，无速度结论。"
+    },
+    {
+      "id": "msl-f32-divide",
+      "title": "MSL F32 除法：函数选择、舍入与输入来源",
+      "path": "wiki/msl-f32-divide.md",
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx"
+      ],
+      "tags": [
+        "msl",
+        "f32-divide",
+        "math-mode",
+        "input-provenance",
+        "float32-precision",
+        "half-arithmetic",
+        "custom-metal",
+        "local-validation",
+        "output-rounding",
+        "materialization"
+      ],
+      "symptoms": [
+        "numerical-drift"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "local-msl-f32-divide-20261008",
+        "apple-msl-spec-41",
+        "apple-metal-compile-mathmode",
+        "mlx-metal-device-compile-0312",
+        "mlx-custom-metal-impl-0312",
+        "local-msl-divide-provenance-20261008"
+      ],
+      "summary": "区分除法函数语义、数学模式与输入来源。原18项通过质量门，half提升后的precise仍有1232项非RNE/RTZ；独立三路对照中，GPU先完成F32转换再用共享consumer除法与CPU-F32同值对照均匹配RNE。未定位编译阶段、资源绑定或指令，无速度结论。"
     }
   ],
   "sources": [
@@ -3181,7 +3249,7 @@
       "checked": "2026-10-08",
       "revision": "v0.31.2 tag; installed binary internals not profiled",
       "mutable": true,
-      "note": "source触发元数据注入、0D标量引用、ensure_row_contiguous复制和init_value填充、线程组clamp与pipeline上限。一次调用不等于完整路径单dispatch。 Read downloaded raw physical L301–305 and379–380: verbose generated source uses C++ std::cout/std::endl; custom kernel reaches Device::get_library builder on metal::utils()+source_. Source policy, not installed-binary mapping. Signature-stop follow-up: physical L70–87 inputs and112–124 outputs insert get_type_string; verbose wrapper L301–305 omits helper text later prefixed by metal::utils() atL379. Observed float16_t pointer spelling is consistent with tag source; checker literal half-pointer gate rejected it and run remains incomplete."
+      "note": "source触发元数据注入、0D标量引用、ensure_row_contiguous复制和init_value填充、线程组clamp与pipeline上限。一次调用不等于完整路径单dispatch。 Read downloaded raw physical L301–305 and379–380: verbose generated source uses C++ std::cout/std::endl; custom kernel reaches Device::get_library builder on metal::utils()+source_. Source policy, not installed-binary mapping. Signature-stop follow-up: physical L70–87 inputs and112–124 outputs insert get_type_string; verbose wrapper L301–305 omits helper text later prefixed by metal::utils() atL379. Observed float16_t pointer spelling is consistent with tag source; checker literal half-pointer gate rejected it and run remains incomplete. F32division binding diagnosis: physical155–173 write_template,225 by-value closure,265–298 finalname/template suffix/host_name,308–323 passes generatedname/source toCustomKernel,364–380 name→source cache guard andget_library/get_kernel. Actual24wrappers use12unique names; same-route2layout wrappers identical, no crossdomain/mode namecollision. Upstreamsource not installedbinary proof."
     },
     {
       "id": "mlx-normalization-0312",
@@ -3531,7 +3599,7 @@
       "revision": "Version 4.1; 2026-06-04",
       "checked": "2026-10-08",
       "mutable": true,
-      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。 矩阵页另读§2.4/6.8/7.2.1，区分同T公开签名、未规定lane映射及MPP接口条件。 GEMV页另读§6.10.2的shuffle XOR与活跃lane reduction语义。 量化GEMV页另读§3.1无符号移位与§6.10.2归约参与语义。 Softmax页另核对float exp精度表、precise/fast区分、活跃lane归约及threadgroup barrier；不从函数拼写推定周边算术精度。 2026-10-08 reread sections 1.6.3,2.23,2.24,3.1,8.1,8.2,8.4,8.6. BF16/half to float lossless; default float-to-BF16/half ties-to-even, but Metal4.1 RTZ conversion option can override. Arithmetic accuracy/FTZ and compiler reordering are separate; runtime flags unobserved. Lowp CPU diagnosis additionally read §8.5/8.6: permitted arithmetic FTZ differs from float-to-half conversion of newly generated subnormals; no actual runtime option attribution. Half arithmetic probe sources: pp26,110–112,205–209,368,370–376. divide(T,T) supports half/float; explicit fast/precise documented for float. Arithmetic FTZ differs from float-to-half subnormal conversion; no explicit half/integer rank table found. Source guarantees only; compiler sizeof observations are registered separately as a limited local record."
+      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。 矩阵页另读§2.4/6.8/7.2.1，区分同T公开签名、未规定lane映射及MPP接口条件。 GEMV页另读§6.10.2的shuffle XOR与活跃lane reduction语义。 量化GEMV页另读§3.1无符号移位与§6.10.2归约参与语义。 Softmax页另核对float exp精度表、precise/fast区分、活跃lane归约及threadgroup barrier；不从函数拼写推定周边算术精度。 2026-10-08 reread sections 1.6.3,2.23,2.24,3.1,8.1,8.2,8.4,8.6. BF16/half to float lossless; default float-to-BF16/half ties-to-even, but Metal4.1 RTZ conversion option can override. Arithmetic accuracy/FTZ and compiler reordering are separate; runtime flags unobserved. Lowp CPU diagnosis additionally read §8.5/8.6: permitted arithmetic FTZ differs from float-to-half conversion of newly generated subnormals; no actual runtime option attribution. Half arithmetic probe sources: pp26,110–112,205–209,368,370–376. divide(T,T) supports half/float; explicit fast/precise documented for float. Arithmetic FTZ differs from float-to-half subnormal conversion; no explicit half/integer rank table found. Source guarantees only; compiler sizeof observations are registered separately as a limited local record. F32divide follow-up reread pp15–17,112,205–209,368,370–371,375–376: separate defaultFP32functions and mathmode axes; explicitfast/precise floatvariants. Table8.2 fastreciprocal1ULP and generaldivide2.5ULP have separate rows and denominator domain. Correctrounding subjectto8.2 RNE/RTZ; ULP uses exactrealreference, notdistancefromRNE. No actualruntimeflag attribution."
     },
     {
       "id": "apple-msl-generic-pointers",
@@ -3861,7 +3929,7 @@
       "checked": "2026-10-08",
       "revision": "v0.31.2 tag (mutable); physical raw lines checked",
       "mutable": true,
-      "note": "L36–48 selects language4.0 onOS26+,3.2 onmacOS15+/iOS18+, otherwise3.1; L547–563 setsFastMathEnabled(false), language version andnewLibrary; L695–712 custombuilder cache miss reachesbuild_library_. Source policy only, not installedbinary or runtime observation."
+      "note": "L36–48 selects language4.0 onOS26+,3.2 onmacOS15+/iOS18+, otherwise3.1; L547–563 setsFastMathEnabled(false), language version andnewLibrary; L695–712 custombuilder cache miss reachesbuild_library_. Source policy only, not installedbinary or runtime observation. F32divide sources additionally consult officialMTLCompileOptions.mathMode compatibility mapping: fastMathEnabled(false) requests safe+precise, subsequent setters may override. This strengthens conditional source-policy interpretation only; actualinstalledbinary/options remain unobserved. F32division source-binding audit additionally reads physical695–722 library cache/clear and734–788 pipeline lookup keyed bylibrary pointer andname. Actual wrappers do not reveal runtimepipeline/cache identities; no obvious retained-name collision is not proof allcache bugs excluded."
     },
     {
       "id": "apple-half-promotion-wwdc16-606",
@@ -3892,6 +3960,36 @@
       "mutable": false,
       "artifact_ref": "2026-10-08-msl-half-arithmetic-values/derived/summary.json",
       "note": "Original signature failure preserved.4 inputs/4 metadata/28 raw-bit outputs and32 wrappers;258034 values independently CPU audited,14 cross-layout pairs equal. All28 quality checks pass.Each F16 reciprocal route retains2047 subnormals and matches RNE; each F32 reciprocal output has1248 adjacent-value differences, all hidden by CPU half narrowing.Small RNE/RTZ ambiguity and restricted FTZ model exclusions retained.No timing/profile/model/native-softmax causal claim; raw records unpublished."
+    },
+    {
+      "id": "apple-metal-compile-mathmode",
+      "title": "MTLCompileOptions mathMode and legacy fastMathEnabled mapping",
+      "url": "https://developer.apple.com/documentation/metal/mtlcompileoptions/mathmode",
+      "kind": "official-doc",
+      "checked": "2026-10-08",
+      "revision": "Mutable Apple documentation; currentJSON retrieved2026-10-08",
+      "mutable": true,
+      "note": "Discussion maps legacyfalse tosafe+precise andtrue tofast+fast; subsequentmathMode/mathFloatingPointFunctions calls override each directly. CurrentoldfastMathEnabled page has conflictinghighprecision wording; useexplicitmapping. Doesnot observeinstalledMLXruntimeoptions."
+    },
+    {
+      "id": "local-msl-f32-divide-20261008",
+      "title": "M4 F32 division: input storage provenance and unresolved precise rounding differences",
+      "kind": "local-experiment",
+      "checked": "2026-10-08",
+      "revision": "2026-10-08; M4/MLX0.31.2/macOS27.0.1;18 output arrays; no timing",
+      "mutable": false,
+      "artifact_ref": "2026-10-08-msl-f32-divide/derived/summary.json",
+      "note": "6 inputs/6 metadata/18 outputs/24 wrappers;221190 values independently CPU audited. All18 quality gates pass. Half-input promoted-to-float precise has1248 non-RNE and1232 neither-RNE-nor-RTZ results per layout; same values in float storage match RNE for operator/precise. General fast division has1150 non-RNE per layout. Source-binding check finds no obvious name collision; cause unresolved. Initial auditor name-suffix error retained with separate corrected audit; no GPU rerun or actual options/instruction/LLM speed claim. Raw records unpublished."
+    },
+    {
+      "id": "local-msl-divide-provenance-20261008",
+      "title": "M4 precise divide: completed GPU F32 materialization versus inline half promotion",
+      "kind": "local-experiment",
+      "checked": "2026-10-08",
+      "revision": "2026-10-08; M4/MLX0.31.2 and mlx-metal0.31.2/macOS27.0.1;3 divide outputs,1 promotion; no timing",
+      "mutable": false,
+      "artifact_ref": "2026-10-08-msl-divide-provenance/derived/summary.json",
+      "note": "One contiguous N16384 domain, TG128. Three divide outputs plus one promotion,3 metadata,7 wrappers,9 events independently CPU audited; exact quality3/3 pass, promotion bits exact. Inline has1248 non-RNE and1232 neither-RNE-nor-RTZ; GPU-materialized F32 and CPU-F32 controls are bitwise equal and match RNE. Shared consumer wrapper/launch and12 host identity links verified; no actual dispatch/resource/compiler-pass or speed claim. Old difference retained; raw records unpublished."
     }
   ]
 }

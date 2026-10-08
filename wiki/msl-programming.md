@@ -93,6 +93,9 @@ barrier 要同时检查参与线程、控制流和内存域。`mem_none` 不为�
 
 [half算术与类型提升](msl-half-arithmetic.md)进一步区分float字面量、显式窄化、算术FTZ和框架float16_t别名；首轮签名检查失败保持，独立后继28项数值检查通过；F32倒数仍有RNE差异被half输出舍入掩盖，不能把最终值或sizeof当作中间指令精度证明。
 
+[F32除法与输入来源](msl-f32-divide.md)直接对比普通除法、fast和precise，区分质量门、精确舍入、ULP及编译模式。half提升后与同值float输入出现不同结果；独立后继先在GPU完成F32转换后再用共享consumer除法，结果与CPU-F32对照匹配RNE。该应用可观察边界仍未定位指令或编译原因，也没有速度结论。
+
+
 原子计数只解决对应对象的原子性，不能代替普通 payload 的发布协议或全 grid barrier。旧版 relaxed 接口的限制不能泛化到 4.1 新增 order/mem_flags 接口；atomic_float 类型存在也不表示所有地址空间都支持同样运算，threadgroup add/sub 支持有版本条件。浮点原子累加仍可能因顺序变化而数值不同。本轮没有执行原子、跨组同步或 4.1 新接口实验。[规范 §6.16](https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf)
 
 ## 本地教学检查与未覆盖范围

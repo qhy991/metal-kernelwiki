@@ -52,6 +52,9 @@ Apple [function specialization](https://developer.apple.com/documentation/metal/
 
 [half表达式边界](msl-half-arithmetic.md)解释如何显式选择float倒数再窄化，并区分MSL算术FTZ、转换规则和源码编译选项；sizeof只能观察表达式宽度。独立后继28项通过数值门，同时记录F32差异被half窄化掩盖的情形；保留次正规值与排除有限FTZ模型均不构成全局硬件或速度结论。
 
+[F32除法与输入来源](msl-f32-divide.md)直接对比普通除法、fast和precise，区分质量门、精确舍入、ULP及编译模式。half提升后与同值float输入出现不同结果；独立后继先在GPU完成F32转换后再用共享consumer除法，结果与CPU-F32对照匹配RNE。该应用可观察边界仍未定位指令或编译原因，也没有速度结论。
+
+
 ## 调参要回到证据
 
 实际 dispatch 的线程组大小、pipeline 报告的合法上限、编译 descriptor 的 `maxTotalThreadsPerThreadgroup` 是相关但不同的量。不能把 MLX 的 `threadgroup=(...)` 当作已经修改了编译器资源提示；也不能把最大合法值当最快值。[Apple 线程组指南](https://developer.apple.com/documentation/metal/calculating-threadgroup-and-grid-sizes)

@@ -55,6 +55,7 @@ python3 scripts/validate.py
 | 边界探针已测与未测范围 | [探针进度](../wiki/mlx-regression-probes.md) |
 | MSL 写法、地址空间、packed 对齐、barrier 与精度 | [编程与有限检查](../wiki/msl-programming.md) |
 | MSL 矩阵乘、fragment、累加精度、M/N/K tail | [公开 API、Steel 模式与本地数值边界](../wiki/msl-matrix.md) |
+| MSL F32除法、fast/precise、数学模式、同值输入存储差异 | [函数精度与未解释舍入差异](../wiki/msl-f32-divide.md) |
 | MSL half倒数、类型提升、float16_t、算术FTZ与窄化 | [half算术与证据边界](../wiki/msl-half-arithmetic.md) |
 | MSL低精度softmax、half长行全零、BF16/float转换 | [存储、累加与次正规输出](../wiki/msl-softmax-lowp.md) |
 | MSL softmax、在线归一化、空mask、分块状态合并 | [写法、同步与指数精度](../wiki/msl-softmax.md)；[主机调用成本与计时差异](../wiki/msl-softmax-timing.md) |
