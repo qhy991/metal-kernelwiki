@@ -107,6 +107,8 @@ barrier 要同时检查参与线程、控制流和内存域。`mem_none` 不为�
 
 这组检查不包含 FP16/BF16、NaN/Inf、任意转置/负 stride、非完整归约线程组、原子、function constants 或矩阵/tensor 操作，也没有证明向量访存指令、最优 TG 或速度收益。来源 `local-msl-usage-20261007`，逻辑引用 `2026-10-07-msl-usage/derived/summary.json`；原始记录在仓库外且未公开，公开页面不能独立重放本机结果。
 
+后续[低精度softmax](msl-softmax-lowp.md)另演示half/BF16存储的显式float读取、归约与OT窄化，以及低精度计算中的失败；它有独立输入、容差和原始位模式记录。
+
 矩阵协作的统一参与、无 masked load/store、float/half 中间精度见 [MSL 矩阵乘](msl-matrix.md)，包含独立于本页的 324 项数值检查与失败。
 
 在线max/normalizer状态、空mask与三阶段依赖的具体写法见 [MSL softmax](msl-softmax.md)；其全空行归零是显式合同，不由softmax数学式或原生API名字自动给出。

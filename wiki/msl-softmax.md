@@ -79,7 +79,7 @@ split256 的第一阶段每块32lane，做局部max/count和指数和；每个�
 
 MLX v0.31.2 [Python绑定](https://github.com/ml-explore/mlx/blob/v0.31.2/python/src/ops.cpp#L3021)实际接受关键字 `precise`，默认false，但相邻手写签名遗漏它；安装包的 `.pyi` 因此也不能单独作为“不支持该参数”的证据。其 [Metal源码](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/softmax.h#L3)的 `softmax_exp` 始终调用 `fast::exp`，不能把API参数名解释为选择MSL `precise::exp`。
 
-该源码的输入/输出是T，内部统计与数组是AccT，最后转回T。后续补读 [JIT factory](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/jit_kernels.cpp#L290) 和 [静态实例化](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/softmax.metal#L12)，核实 AccT 取 `precise ? float32 : output_dtype`：F32两种flag都是float，half/BF16在false时使用对应类型、true时使用float，输出类型不变。这是源码变量/存储类型，不等于逐条硬件指令的精度证据。本机只测F32，未验证低精度输出质量；F32调用传precise=True也不表示启用独立于false的源码累加类型。
+该源码的输入/输出是T，内部统计与数组是AccT，最后转回T。后续补读 [JIT factory](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/jit_kernels.cpp#L290) 和 [静态实例化](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/kernels/softmax.metal#L12)，核实 AccT 取 `precise ? float32 : output_dtype`：F32两种flag都是float，half/BF16在false时使用对应类型、true时使用float，输出类型不变。这是源码变量/存储类型，不等于逐条硬件指令的精度证据。本页原数值运行只测F32；后续[低精度softmax](msl-softmax-lowp.md)另保留含F32对照的330项低精度研究检查、26项失败与输入信息损失，未把原F32记录扩写成低精度验收；F32调用传precise=True也不表示启用独立于false的源码累加类型。
 
 ## MLX如何在保存与重读之间选择
 
