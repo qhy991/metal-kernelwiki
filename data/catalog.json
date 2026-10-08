@@ -588,6 +588,24 @@
       "输入舍入",
       "输入信息损失",
       "存储舍入"
+    ],
+    "half-arithmetic": [
+      "half arithmetic",
+      "half算术",
+      "半精度算术",
+      "half reciprocal",
+      "half倒数",
+      "half除法",
+      "fast::divide",
+      "precise::divide"
+    ],
+    "type-promotion": [
+      "type promotion",
+      "类型提升",
+      "混合精度表达式",
+      "float16_t",
+      "sizeof",
+      "字面量类型"
     ]
   },
   "pages": [
@@ -2087,6 +2105,41 @@
         "mlx-softmax-factory-0312"
       ],
       "summary": "显式float读/统计与OT输出转换；66组输入（含F32对照）、330输出中26项native_false未过门，half长行出现全零但不能唯一归因。分开输入平移信息损失、实际存储oracle与输出次正规数；CPU审查保留失败，无计时或模型结论。"
+    },
+    {
+      "id": "msl-half-arithmetic",
+      "title": "MSL half 算术：类型提升、倒数与次正规数",
+      "path": "wiki/msl-half-arithmetic.md",
+      "type": "technique",
+      "engines": [
+        "metal",
+        "mlx"
+      ],
+      "tags": [
+        "msl",
+        "half-arithmetic",
+        "type-promotion",
+        "fp16",
+        "subnormal",
+        "mixed-precision",
+        "custom-metal",
+        "toolchain",
+        "local-validation"
+      ],
+      "symptoms": [
+        "numerical-drift"
+      ],
+      "confidence": "documented",
+      "sources": [
+        "local-msl-half-arithmetic-20261008",
+        "apple-msl-spec-41",
+        "apple-half-promotion-wwdc16-606",
+        "mlx-metal-device-compile-0312",
+        "mlx-custom-metal-impl-0312",
+        "mlx-msl-utils-v0312",
+        "mlx-compiled-layout-0312"
+      ],
+      "summary": "区分half/float表达式、divide函数、算术FTZ与窄化规则；追踪MLX源码编译选项而不冒充实际flags。M4仅完成sizeof元数据，float16_t签名被half-only检查器拒绝，28项算术计划未执行、原失败保留，无精度或速度验收。"
     }
   ],
   "sources": [
@@ -3115,10 +3168,10 @@
       "title": "MLX v0.31.2 custom Metal signature and dispatch implementation",
       "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/custom_kernel.cpp",
       "kind": "upstream-code",
-      "checked": "2026-10-07",
+      "checked": "2026-10-08",
       "revision": "v0.31.2 tag; installed binary internals not profiled",
       "mutable": true,
-      "note": "source触发元数据注入、0D标量引用、ensure_row_contiguous复制和init_value填充、线程组clamp与pipeline上限。一次调用不等于完整路径单dispatch。"
+      "note": "source触发元数据注入、0D标量引用、ensure_row_contiguous复制和init_value填充、线程组clamp与pipeline上限。一次调用不等于完整路径单dispatch。 Read downloaded raw physical L301–305 and379–380: verbose generated source uses C++ std::cout/std::endl; custom kernel reaches Device::get_library builder on metal::utils()+source_. Source policy, not installed-binary mapping. Signature-stop follow-up: physical L70–87 inputs and112–124 outputs insert get_type_string; verbose wrapper L301–305 omits helper text later prefixed by metal::utils() atL379. Observed float16_t pointer spelling is consistent with tag source; checker literal half-pointer gate rejected it and run remains incomplete."
     },
     {
       "id": "mlx-normalization-0312",
@@ -3308,7 +3361,7 @@
       "checked": "2026-10-08",
       "revision": "v0.31.2 tag",
       "mutable": true,
-      "note": "共同连续条件、shape/stride 折叠与输出分配；配合 Metal 实现说明非连续直接寻址，不套用 custom 默认复制机制。 2026-10-08 additionally read L47-54 get_type_string: float32/float16/bfloat16 map to float/float16_t/bfloat16_t in generated source. Source body insertion does not rewrite literal float declarations/casts."
+      "note": "共同连续条件、shape/stride 折叠与输出分配；配合 Metal 实现说明非连续直接寻址，不套用 custom 默认复制机制。 2026-10-08 additionally read L47-54 get_type_string: float32/float16/bfloat16 map to float/float16_t/bfloat16_t in generated source. Source body insertion does not rewrite literal float declarations/casts. 2026-10-08 signature-stop audit: downloaded physical L47–54 get_type_string maps float16 to float16_t. Followed custom signature input/output insertion. Source mapping only; no arithmetic-value observation."
     },
     {
       "id": "mlx-sigmoid-metal-0312",
@@ -3468,7 +3521,7 @@
       "revision": "Version 4.1; 2026-06-04",
       "checked": "2026-10-08",
       "mutable": true,
-      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。 矩阵页另读§2.4/6.8/7.2.1，区分同T公开签名、未规定lane映射及MPP接口条件。 GEMV页另读§6.10.2的shuffle XOR与活跃lane reduction语义。 量化GEMV页另读§3.1无符号移位与§6.10.2归约参与语义。 Softmax页另核对float exp精度表、precise/fast区分、活跃lane归约及threadgroup barrier；不从函数拼写推定周边算术精度。 2026-10-08 reread sections 1.6.3,2.23,2.24,3.1,8.1,8.2,8.4,8.6. BF16/half to float lossless; default float-to-BF16/half ties-to-even, but Metal4.1 RTZ conversion option can override. Arithmetic accuracy/FTZ and compiler reordering are separate; runtime flags unobserved. Lowp CPU diagnosis additionally read §8.5/8.6: permitted arithmetic FTZ differs from float-to-half conversion of newly generated subnormals; no actual runtime option attribution."
+      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。 矩阵页另读§2.4/6.8/7.2.1，区分同T公开签名、未规定lane映射及MPP接口条件。 GEMV页另读§6.10.2的shuffle XOR与活跃lane reduction语义。 量化GEMV页另读§3.1无符号移位与§6.10.2归约参与语义。 Softmax页另核对float exp精度表、precise/fast区分、活跃lane归约及threadgroup barrier；不从函数拼写推定周边算术精度。 2026-10-08 reread sections 1.6.3,2.23,2.24,3.1,8.1,8.2,8.4,8.6. BF16/half to float lossless; default float-to-BF16/half ties-to-even, but Metal4.1 RTZ conversion option can override. Arithmetic accuracy/FTZ and compiler reordering are separate; runtime flags unobserved. Lowp CPU diagnosis additionally read §8.5/8.6: permitted arithmetic FTZ differs from float-to-half conversion of newly generated subnormals; no actual runtime option attribution. Half arithmetic probe sources: pp26,110–112,205–209,368,370–376. divide(T,T) supports half/float; explicit fast/precise documented for float. Arithmetic FTZ differs from float-to-half subnormal conversion; no explicit half/integer rank table found. Source guarantees only; compiler sizeof observations are registered separately as a limited local record."
     },
     {
       "id": "apple-msl-generic-pointers",
@@ -3518,7 +3571,7 @@
       "checked": "2026-10-08",
       "revision": "v0.31.2 tag; URL can move, not a verified binary-source mapping",
       "mutable": true,
-      "note": "WorkPerThread<U>::n=8/sizeof(U); elem_to_loc implements logical-to-strided offset conversion. These defaults are implementation policy, not hardware optimality guarantees. Tag URL is version-scoped but movable; not immutable commit evidence. 2026-10-08 additionally read L4-11,48-62: includes bf16.h and bf16_math.h; float16_t aliases half. Completes helper include chain from indexed softmax.metal."
+      "note": "WorkPerThread<U>::n=8/sizeof(U); elem_to_loc implements logical-to-strided offset conversion. These defaults are implementation policy, not hardware optimality guarantees. Tag URL is version-scoped but movable; not immutable commit evidence. 2026-10-08 additionally read L4-11,48-62: includes bf16.h and bf16_math.h; float16_t aliases half. Completes helper include chain from indexed softmax.metal. 2026-10-08 signature-stop audit: downloaded physical L13 typedef half float16_t; alias explains float16_t spelling in the retained metadata wrapper. Upstream tag source, not installed-binary/helper-prefix identity."
     },
     {
       "id": "apple-msl-compute-tech10580",
@@ -3789,6 +3842,36 @@
       "mutable": false,
       "artifact_ref": "2026-10-08-msl-softmax-lowp/derived/summary.json",
       "note": "66 input cases, F32/F16/BF16 and two layouts; CPU-RNE raw storage,330 raw-bit outputs and independent exp/fsum audit.304 pass/26fail (native_false F16 10,BF16 16); whole run remains failed. F16 K65537 contains zero probability rows; source/CPU diagnosis cannot uniquely identify overflow versus arithmetic subnormal handling. Input translation loss separated. No timing/profile/model claim; raw records unpublished."
+    },
+    {
+      "id": "mlx-metal-device-compile-0312",
+      "title": "MLX v0.31.2 Metal JIT compile options and language selection",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/device.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-08",
+      "revision": "v0.31.2 tag (mutable); physical raw lines checked",
+      "mutable": true,
+      "note": "L36–48 selects language4.0 onOS26+,3.2 onmacOS15+/iOS18+, otherwise3.1; L547–563 setsFastMathEnabled(false), language version andnewLibrary; L695–712 custombuilder cache miss reachesbuild_library_. Source policy only, not installedbinary or runtime observation."
+    },
+    {
+      "id": "apple-half-promotion-wwdc16-606",
+      "title": "Advanced Metal Shader Optimization — scalar half/float promotion",
+      "url": "https://developer.apple.com/videos/play/wwdc2016/606/",
+      "kind": "official-doc",
+      "checked": "2026-10-08",
+      "revision": "WWDC2016 session606; transcript checked2026-10-08",
+      "mutable": true,
+      "note": "Transcript scalar promotion discussion explains float/half operands produce float arithmetic despite a half destination; use h-suffixed literals for half arithmetic. Historical performance guidance is outside scope; no M4 claim."
+    },
+    {
+      "id": "local-msl-half-arithmetic-20261008",
+      "title": "M4 half-expression metadata and preserved generated-signature gate failure",
+      "kind": "local-experiment",
+      "checked": "2026-10-08",
+      "revision": "2026-10-08; M4/MLX0.31.2/macOS27.0.1; one metadata call, zero arithmetic outputs; incomplete",
+      "mutable": false,
+      "artifact_ref": "2026-10-08-msl-half-arithmetic/derived/summary.json",
+      "note": "Planned28 arithmetic outputs but stopped before arithmetic loop: generated float16_t pointer rejected by literal half-only signature checker.16384 first-input bits,634-byte wrapper and sizeof[2,2,2,4,4] retained; independent CPU audit verifies existing records, not matrix acceptance. Source tag defines alias; original exception remains. No arithmetic accuracy/FTZ, timing/profile/model or native-softmax causal conclusion; raw records unpublished."
     }
   ]
 }

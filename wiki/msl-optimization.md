@@ -50,6 +50,8 @@ Apple [function specialization](https://developer.apple.com/documentation/metal/
 
 [低精度softmax](msl-softmax-lowp.md)把输入存储、float统计和输出窄化分开：half长行全零与次正规输出保留可以同时出现在不同计算路线，不能只看输出dtype判断原因，也不能用精度提升恢复已经量化掉的logits信息。
 
+[half表达式边界](msl-half-arithmetic.md)解释如何显式选择float倒数再窄化，并区分MSL算术FTZ、转换规则和源码编译选项；sizeof只能观察表达式宽度，未完成的本地探针没有提供数值或速度验收。
+
 ## 调参要回到证据
 
 实际 dispatch 的线程组大小、pipeline 报告的合法上限、编译 descriptor 的 `maxTotalThreadsPerThreadgroup` 是相关但不同的量。不能把 MLX 的 `threadgroup=(...)` 当作已经修改了编译器资源提示；也不能把最大合法值当最快值。[Apple 线程组指南](https://developer.apple.com/documentation/metal/calculating-threadgroup-and-grid-sizes)

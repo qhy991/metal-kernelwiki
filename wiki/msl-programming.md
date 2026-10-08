@@ -91,6 +91,8 @@ barrier 要同时检查参与线程、控制流和内存域。`mem_none` 不为�
 
 `precise::exp` 选择这个函数的精度版本，不使其他算术自动逐位等同 CPU。math mode、FP32 函数集、乘加 contraction、中间 dtype 转换是不同设置；safe math 也不能替代固定分步舍入要求。先定义有限输入/特殊值域、存储 dtype、参考与容差，再比较 fast 候选。[规范 §1.6.3、§8](https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf)，已有 [SwiGLU 舍入观察](mlx-swiglu.md)。
 
+[half算术与类型提升](msl-half-arithmetic.md)进一步区分float字面量、显式窄化、算术FTZ和框架float16_t别名；本机仅完成sizeof元数据，算术测试因签名检查失败尚未执行，不能当作精度验证。
+
 原子计数只解决对应对象的原子性，不能代替普通 payload 的发布协议或全 grid barrier。旧版 relaxed 接口的限制不能泛化到 4.1 新增 order/mem_flags 接口；atomic_float 类型存在也不表示所有地址空间都支持同样运算，threadgroup add/sub 支持有版本条件。浮点原子累加仍可能因顺序变化而数值不同。本轮没有执行原子、跨组同步或 4.1 新接口实验。[规范 §6.16](https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf)
 
 ## 本地教学检查与未覆盖范围
