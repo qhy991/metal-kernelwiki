@@ -1,5 +1,7 @@
 # SwiGLU：已有编译函数、显式表达式与自定义 Metal
 
+[English companion](en/mlx-swiglu.md)
+
 证据：2026-10-07，Apple M4、MLX 0.31.2、MLX-LM 0.31.3 的模型外比较。**216 项预检查通过**，包括 F32/BF16、连续与隔列输入和非整齐尾维。优先确认调用链里是否已经使用 compiled helper；手写 kernel 还会改变数值计算方式，不能把差异全部解释成融合。
 
 ## 确认基线已有的优化

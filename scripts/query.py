@@ -7,7 +7,7 @@ import sys
 
 sys.dont_write_bytecode = True
 
-from _kb import KnowledgeBaseError, alias_lookup, contains, load_catalog, normalized, query_groups, read_page, unique_index
+from _kb import KnowledgeBaseError, alias_lookup, contains, load_catalog, localized_page, normalized, query_groups, read_page, unique_index
 
 
 def expanded_values(values, aliases):
@@ -50,6 +50,7 @@ def main(argv=None):
     for flag in ("engine", "type", "tag", "symptom"):
         parser.add_argument("--" + flag, action="append", help="Exact value or alias; repeated/comma values are OR, categories are AND")
     parser.add_argument("--limit", type=int, default=8)
+    parser.add_argument("--lang", choices=("zh", "en"), default="zh", help="Page edition; English is a companion guide")
     output = parser.add_mutually_exclusive_group()
     output.add_argument("--json", action="store_true", help="Emit a JSON array")
     output.add_argument("--paths-only", action="store_true", help="Emit registered relative page paths")
@@ -69,6 +70,7 @@ def main(argv=None):
         }
         results = []
         for page in data["pages"]:
+            page = localized_page(page, args.lang)
             keep = True
             for field, wanted in filters.items():
                 values = [page.get(field, "")] if field == "type" else page.get(field, [])

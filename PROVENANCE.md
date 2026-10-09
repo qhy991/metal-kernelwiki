@@ -1,5 +1,7 @@
 # 来源与复用范围
 
+[English](PROVENANCE.en.md)。全部主题提供英文伴读版，保留主要机制、结果及限制；中文详细记录继续拥有完整表格和实验历史。语言与 HTML 更新不增加实验覆盖或新测量证据。
+
 本库由原 `metal-llm-optimization` 技能整理并改名为 `metal-kernelwiki`。保留其 21 个主题页、检索代码、来源目录和限定范围的本机观测。
 
 仓库与 skill 分离、以薄入口访问 canonical checkout 的组织方式参考 [qhy991/bw1100-kernelwiki](https://github.com/qhy991/bw1100-kernelwiki)，检查时为提交 `52ae9a1`。本库的 `knowledge/` 仅链接知识文件，不链接包含 skill 模板的整份仓库，以避免重复发现。没有复制 BW1100 的知识正文、实验结果、检索实现或硬件结论；本库的 Python 标准库检索与安装入口为此项目编写。

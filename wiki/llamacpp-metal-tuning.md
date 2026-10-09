@@ -1,5 +1,7 @@
 # llama.cpp：Metal FA 调参与后端证据
 
+[English companion](en/llamacpp-metal-tuning.md)
+
 核对日期：2026-10-07。适用于 profiler 已把热点定位到 Metal attention/kernel 的后端开发；普通部署先读 [部署页](llamacpp-deployment.md)。调参会占用 GPU，以下命令是工作方案，本次知识整理没有执行它们。
 
 ## 1. 可复用经验：优化按 GPU 家族与形状落地

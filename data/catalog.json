@@ -686,7 +686,15 @@
         "llama-metal-fa-ops-36a7391",
         "llama-metal-fa-buffer-36a7391"
       ],
-      "summary": "保持 mask 和 GQA 语义，按查询与 KV 形状选择融合或分块路径，并验证极值与尾部。"
+      "summary": "保持 mask 和 GQA 语义，按查询与 KV 形状选择融合或分块路径，并验证极值与尾部。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/attention.md",
+          "title": "Attention: separate prefill, decode and GQA paths",
+          "summary": "Start from framework primitives when attention is a measured hotspot.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "fusion",
@@ -725,7 +733,15 @@
         "local-mlx-swiglu-20261007",
         "mlx-lm-swiglu-0313"
       ],
-      "summary": "用 trace 区分表达式、kernel 和提交开销，比较融合收益与寄存器、复制、同步代价。"
+      "summary": "用 trace 区分表达式、kernel 和提交开销，比较融合收益与寄存器、复制、同步代价。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/fusion.md",
+          "title": "Fusion and submission: establish the source of overhead",
+          "summary": "Use fusion candidates when traces show short dispatches, CPU encoding, waits or intermediate traffic.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "gemm-moe",
@@ -760,7 +776,15 @@
         "local-mlx-swiglu-20261007",
         "mlx-lm-swiglu-0313"
       ],
-      "summary": "从合入 PR 提取形状相关候选，检查索引、排序、归约和尾部，而非照搬历史阈值。"
+      "summary": "从合入 PR 提取形状相关候选，检查索引、排序、归约和尾部，而非照搬历史阈值。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/gemm-moe.md",
+          "title": "GEMM, GEMV and MoE: choose algorithms for actual shapes",
+          "summary": "Upstream changes are mechanism references, not reproduced local speedups.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "llamacpp-deployment",
@@ -797,7 +821,15 @@
         "llama-metal-fa-ops-36a7391",
         "llama-metal-fa-buffer-36a7391"
       ],
-      "summary": "先确认 Metal 路径，再按 prefill、decode、上下文深度与总内存预算比较 FA、KV 量化和 batch。"
+      "summary": "先确认 Metal 路径，再按 prefill、decode、上下文深度与总内存预算比较 FA、KV 量化和 batch。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/llamacpp-deployment.md",
+          "title": "llama.cpp Metal deployment: offload, capacity and PP/TG",
+          "summary": "Pin the llama.cpp commit, GGUF model/quantization, chip, memory and macOS.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "llamacpp-metal-tuning",
@@ -833,7 +865,15 @@
         "llama-metal-fa-ops-36a7391",
         "llama-metal-fa-buffer-36a7391"
       ],
-      "summary": "以目标 GPU 家族和实际形状调优 FA-vec，控制热漂移、检查数值覆盖，并区分 Tensor API 能力和实测收益。"
+      "summary": "以目标 GPU 家族和实际形状调优 FA-vec，控制热漂移、检查数值覆盖，并区分 Tensor API 能力和实测收益。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/llamacpp-metal-tuning.md",
+          "title": "llama.cpp Metal tuning: GPU families, numerical gates and Tensor paths",
+          "summary": "Tune only after profiling identifies the relevant Metal operation.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "llamacpp-serving",
@@ -867,7 +907,15 @@
         "llama-spec-code",
         "llama-speed-bench"
       ],
-      "summary": "固定请求分布与缓存冷热，分别优化服务并发、前缀复用和推测解码，并保留端到端及逐请求证据。"
+      "summary": "固定请求分布与缓存冷热，分别优化服务并发、前缀复用和推测解码，并保留端到端及逐请求证据。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/llamacpp-serving.md",
+          "title": "llama.cpp serving: slots, prefix reuse and speculative decoding",
+          "summary": "Keep request lengths, templates, sampling, cache state and quality targets fixed.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "measurement",
@@ -899,7 +947,15 @@
         "mlx-eval-api",
         "mlx-synchronize-api"
       ],
-      "summary": "固定负载和计时范围，分解阶段并以外部正确性、profiler 和端到端测量检验候选。"
+      "summary": "固定负载和计时范围，分解阶段并以外部正确性、profiler 和端到端测量检验候选。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/measurement.md",
+          "title": "Measurement: turn slow inference into testable bottlenecks",
+          "summary": "These are measurement methods and candidate designs, not newly measured GPU results.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "metal-capabilities",
@@ -931,7 +987,15 @@
         "apple-mlx-nax-pr",
         "apple-llama-metal-api"
       ],
-      "summary": "按 SDK、OS、硬件与后端四层核查能力，区分 API 支持、实际路线与可测加速。"
+      "summary": "按 SDK、OS、硬件与后端四层核查能力，区分 API 支持、实际路线与可测加速。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/metal-capabilities.md",
+          "title": "Metal capabilities and deployment boundaries",
+          "summary": "Use this page when selecting a backend or diagnosing a missing fast path.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "metal-memory-threadgroups",
@@ -966,7 +1030,15 @@
         "apple-m3-profiling",
         "apple-m5-profiling"
       ],
-      "summary": "从 pipeline 限制调线程组，明确统一内存的时序与 ownership，并用 profiler 解释占用率。"
+      "summary": "从 pipeline 限制调线程组，明确统一内存的时序与 ownership，并用 profiler 解释占用率。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/metal-memory-threadgroups.md",
+          "title": "Metal memory, threadgroups and synchronization",
+          "summary": "These are documented candidates for reductions, GEMV, normalization, RoPE and small matrices.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "metal-profiling",
@@ -1002,7 +1074,15 @@
         "apple-resource-sync",
         "apple-gpu-counters"
       ],
-      "summary": "先追踪请求关键路径再捕获热点 kernel，按 counter 建立假设并保存正确性及端到端基准证据。"
+      "summary": "先追踪请求关键路径再捕获热点 kernel，按 counter 建立假设并保存正确性及端到端基准证据。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/metal-profiling.md",
+          "title": "Metal LLM profiling and evidence",
+          "summary": "Start with the request timeline, then inspect the critical pipeline.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "metal-tensors",
@@ -1033,7 +1113,15 @@
         "apple-mpp-guide",
         "apple-wwdc26-tensors"
       ],
-      "summary": "按版本核查 TensorOps，提出缓存分块、量化和融合候选，并保留边界、布局与数值验证。"
+      "summary": "按版本核查 TensorOps，提出缓存分块、量化和融合候选，并保留边界、布局与数值验证。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/metal-tensors.md",
+          "title": "TensorOps, quantization and fusion candidates",
+          "summary": "This is an unmeasured candidate plan for prefill GEMM, quantized linear layers and attention.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-deployment",
@@ -1064,7 +1152,15 @@
         "mlx-quantized-layers",
         "mlx-lm-readme"
       ],
-      "summary": "分别测量 prefill、decode、内存和质量，以量化配置和 prefill 步长形成可比较的部署候选。"
+      "summary": "分别测量 prefill、decode、内存和质量，以量化配置和 prefill 步长形成可比较的部署候选。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-deployment.md",
+          "title": "MLX-LM deployment: capacity, quantization and staged benchmarks",
+          "summary": "Fix the chip, memory, macOS, MLX/MLX-LM versions, model revision, tokenizer, quantization and request distribution before comparing settings.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-execution",
@@ -1107,7 +1203,15 @@
         "local-mlx-swiglu-20261007",
         "mlx-lm-swiglu-0313"
       ],
-      "summary": "完成惰性求值再计时，优先采用 fast 原语与稳定子图编译，最后依据 profile 编写 custom Metal。"
+      "summary": "完成惰性求值再计时，优先采用 fast 原语与稳定子图编译，最后依据 profile 编写 custom Metal。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-execution.md",
+          "title": "MLX execution: lazy graphs, compilation and custom Metal",
+          "summary": "Separate graph construction, submission and completion.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-kv-cache",
@@ -1141,7 +1245,15 @@
         "local-mlx-qvm-cache-20261007",
         "local-mlx-quantized-attention-20261007"
       ],
-      "summary": "核对实际 cache 类型后，分别验证前缀复用、容量截断、KV 量化及追加分配策略。"
+      "summary": "核对实际 cache 类型后，分别验证前缀复用、容量截断、KV 量化及追加分配策略。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-kv-cache.md",
+          "title": "MLX KV cache: reuse, rotation, quantization and correctness",
+          "summary": "Prefer the model's make_cache() contract over a generic cache assumption.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-serving",
@@ -1169,7 +1281,15 @@
         "mlx-server-code",
         "mlx-generate-code"
       ],
-      "summary": "检查请求是否进入 batch，围绕延迟目标搜索并发，并将 speculative decoding 作为独立候选。"
+      "summary": "检查请求是否进入 batch，围绕延迟目标搜索并发，并将 speculative decoding 作为独立候选。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-serving.md",
+          "title": "MLX serving: batching eligibility, cache budgets and speculation",
+          "summary": "Treat service throughput as a request-distribution measurement.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "quantization",
@@ -1202,7 +1322,15 @@
         "llama-metal-fa-ops-36a7391",
         "llama-metal-fa-buffer-36a7391"
       ],
-      "summary": "按权重、KV、激活分别评估容量、格式兼容和质量，避免将更小文件等同更低延迟。"
+      "summary": "按权重、KV、激活分别评估容量、格式兼容和质量，避免将更小文件等同更低延迟。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/quantization.md",
+          "title": "Weights, KV and low precision: choose compression boundaries",
+          "summary": "Weight quantization reduces resident storage and traffic but adds format/scaling/decode and quality requirements.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "runtime-measurement",
@@ -1240,7 +1368,15 @@
         "apple-counter-clock-conversion",
         "apple-programmatic-capture"
       ],
-      "summary": "分开验证离线和运行时路线，正确区分秒与原始时间戳，以有界探针记录计时、捕获及分析各自的证据范围。"
+      "summary": "分开验证离线和运行时路线，正确区分秒与原始时间戳，以有界探针记录计时、捕获及分析各自的证据范围。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/runtime-measurement.md",
+          "title": "Runtime validation and GPU timing with limited tools",
+          "summary": "Offline Metal tools, existing framework operators and runtime source compilation are separate capabilities.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "local-mlx-m4",
@@ -1270,7 +1406,15 @@
         "local-mlx-m4-r1",
         "local-mlx-m4-capture-r1"
       ],
-      "summary": "M4/MLX0.31.2 的16项attention oracle、8项调用计时、18项QMM数值观察与独立capture导出；无模型或profiler分析结论。"
+      "summary": "M4/MLX0.31.2 的16项attention oracle、8项调用计时、18项QMM数值观察与独立capture导出；无模型或profiler分析结论。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/local-mlx-m4.md",
+          "title": "Local M4 baseline: SDPA, quantized matmul and tool limits",
+          "summary": "The 2026-10-07 probe used Apple M4/16 GB, macOS 27.0 (26A428), MLX 0.31.2, MLX-LM 0.31.3, NumPy 2.4.3 and Python 3.14.3.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "quantized-matmul-validation",
@@ -1310,7 +1454,15 @@
         "local-mlx-qmm-paths-20261007",
         "local-mlx-quantized-attention-20261007"
       ],
-      "summary": "分离量化与kernel误差；保留多行QVM失败和前缀一致仍算错的诊断。另有transpose=True三路径的数值、时间和内存观测，不据此生成通用分派阈值。"
+      "summary": "分离量化与kernel误差；保留多行QVM失败和前缀一致仍算错的诊断。另有transpose=True三路径的数值、时间和内存观测，不据此生成通用分派阈值。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/quantized-matmul-validation.md",
+          "title": "Quantized matmul: separate quantization loss, decoding and execution error",
+          "summary": "Reuse one packed-weight/scales/biases set across candidates.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "llamacpp-validation",
@@ -1342,7 +1494,15 @@
         "llama-build-info",
         "local-llamacpp-fa-20261007"
       ],
-      "summary": "以设备与实际用例行防止空跑，按算子语义、误差指标和图计时范围归因，并明确未运行源码观察与未知构建来源的证据边界。"
+      "summary": "以设备与实际用例行防止空跑，按算子语义、误差指标和图计时范围归因，并明确未运行源码观察与未知构建来源的证据边界。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/llamacpp-validation.md",
+          "title": "llama.cpp Metal validation: executed cases, numerical scope and timing",
+          "summary": "Require successful target-device initialization, exact expected parameter cases, a positive execution count, support and numerical pass.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-regression-probes",
@@ -1383,7 +1543,15 @@
         "local-mlx-cache-mask-20261007",
         "local-mlx-quantized-attention-20261007"
       ],
-      "summary": "四项已有M4限定观测：异步与singleton通过指定检查，多行QVM失败，rotating keep合并后丢失；另测keep0 mask在旋转后chunk续写时错位，服务与模型仍未验证。"
+      "summary": "四项已有M4限定观测：异步与singleton通过指定检查，多行QVM失败，rotating keep合并后丢失；另测keep0 mask在旋转后chunk续写时错位，服务与模型仍未验证。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-regression-probes.md",
+          "title": "MLX boundary probes: observed results and remaining scope",
+          "summary": "This page tracks bounded M4/MLX 0.31.2 observations rather than a general backend qualification.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-async-evaluation",
@@ -1415,7 +1583,15 @@
         "mlx-eval-implementation-0312",
         "local-mlx-boundaries-20261007"
       ],
-      "summary": "M4/MLX0.31.2 比较三种32步依赖链求值边界与独立任务；三进程均过CPU oracle，保留主机完成区间的分布和环境干扰，不推导decode加速。"
+      "summary": "M4/MLX0.31.2 比较三种32步依赖链求值边界与独立任务；三进程均过CPU oracle，保留主机完成区间的分布和环境干扰，不推导decode加速。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-async-evaluation.md",
+          "title": "MLX async evaluation: dependency chains and completion boundaries",
+          "summary": "The M4/MLX 0.31.2 probe compared 32 dependent tanh-matmul steps with per-step sync evaluation, per-step async submission plus final evaluation, and evaluation only at the dependent tail.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-float32-precision",
@@ -1446,7 +1622,15 @@
         "mlx-sdpa-api",
         "local-mlx-boundaries-20261007"
       ],
-      "summary": "区分存储dtype、内部精度与任务容差；M4/MLX0.31.2的48组singleton/broadcast配置三次精确等于存储V，不能证明M5历史问题修复或多key路径精度。"
+      "summary": "区分存储dtype、内部精度与任务容差；M4/MLX0.31.2的48组singleton/broadcast配置三次精确等于存储V，不能证明M5历史问题修复或多key路径精度。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-float32-precision.md",
+          "title": "MLX float32 precision: singleton GQA as a diagnostic",
+          "summary": "Float32 input/output does not guarantee full float32 internal arithmetic.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-cache-lifecycle",
@@ -1476,7 +1660,15 @@
         "local-mlx-qvm-cache-20261007",
         "local-mlx-cache-mask-20261007"
       ],
-      "summary": "M4/MLX-LM0.31.3直接merge/extract将keep4变为0并在跨容量后丢失前缀，keep0对照通过；区分已受保护的模型缓存入口，不扩大为服务或模型质量结论。"
+      "summary": "M4/MLX-LM0.31.3直接merge/extract将keep4变为0并在跨容量后丢失前缀，keep0对照通过；区分已受保护的模型缓存入口，不扩大为服务或模型质量结论。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-cache-lifecycle.md",
+          "title": "Rotating KV cache: preserve request policy through batching",
+          "summary": "Rotation retains a prefix of keep tokens and a recent-history suffix.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-qmm-path-comparison",
@@ -1513,7 +1705,15 @@
         "mlx-reset-peak-api",
         "local-mlx-qmm-paths-20261007"
       ],
-      "summary": "M4/BF16 transpose=True的packed、逐次反量化、常驻dense共30个条件过数值门，18进程计时波动明显；C多驻4MiB，B操作窗口也出现额外占用。保留候选，不推导模型切换阈值。"
+      "summary": "M4/BF16 transpose=True的packed、逐次反量化、常驻dense共30个条件过数值门，18进程计时波动明显；C多驻4MiB，B操作窗口也出现额外占用。保留候选，不推导模型切换阈值。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-qmm-path-comparison.md",
+          "title": "Quantized linear layers: packed execution, decode cost and resident dense memory",
+          "summary": "Compare three routes on identical packed parameters: A packed QMM; B dequantization plus dense matmul inside each measured call; C predecoded resident dense weights.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-cache-mask-alignment",
@@ -1545,7 +1745,15 @@
         "mlx-lm-cache-tests-0313",
         "local-mlx-cache-mask-20261007"
       ],
-      "summary": "M4/MLX-LM0.31.3的90项窗口检查中4项失败：不等长旋转缓存切回3-token追加时mask屏蔽有效token，attention误差0.03125；K/V、offset、参考mask对照通过，无模型或性能结论。"
+      "summary": "M4/MLX-LM0.31.3的90项窗口检查中4项失败：不等长旋转缓存切回3-token追加时mask屏蔽有效token，attention误差0.03125；K/V、offset、参考mask对照通过，无模型或性能结论。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-cache-mask-alignment.md",
+          "title": "Rotating-cache masks: align visibility with returned slots",
+          "summary": "Correct K/V content and offsets do not establish correct attention visibility.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-cache-persistence",
@@ -1577,7 +1785,15 @@
         "mlx-cache-full-state-ee19be4",
         "local-mlx-cache-roundtrip-20261007"
       ],
-      "summary": "M4/MLX-LM0.31.3的12份缓存文件均读回且张量一致，2份rotated标志错误；BatchRotating恢复后6次续写缺_lengths异常，其他指定对照通过。区分状态、接续与跨版格式。"
+      "summary": "M4/MLX-LM0.31.3的12份缓存文件均读回且张量一致，2份rotated标志错误；BatchRotating恢复后6次续写缺_lengths异常，其他指定对照通过。区分状态、接续与跨版格式。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-cache-persistence.md",
+          "title": "Cache persistence: tensor round-trip and continuation are separate gates",
+          "summary": "Saving a prompt cache can avoid repeated prefill only when model, tokenizer, template, tokens and positions match.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-residual-rms",
@@ -1611,7 +1827,15 @@
         "local-mlx-residual-rms-20261007",
         "local-mlx-custom-rms-20261007"
       ],
-      "summary": "M4上残差RMSNorm的表达式/compile/fast三路，F32与BF16共90数值配置和756计时样本过门；M512的fast逐轮较快，小M排序反转、r2-compiled波动大，不推出单核融合或模型收益。"
+      "summary": "M4上残差RMSNorm的表达式/compile/fast三路，F32与BF16共90数值配置和756计时样本过门；M512的fast逐轮较快，小M排序反转、r2-compiled波动大，不推出单核融合或模型收益。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-residual-rms.md",
+          "title": "Residual RMSNorm: expressions, compile and fast primitives",
+          "summary": "Define output ownership before evaluating fusion.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-custom-rms",
@@ -1643,7 +1867,15 @@
         "mlx-normalization-0312",
         "local-mlx-custom-rms-20261007"
       ],
-      "summary": "M4/MLX0.31.2的双输出RMSNorm，native fast与自动连续化/显式stride两个custom路径：216项正确性及1512计时样本过门；M512隔列copy更慢，strided较快，BF16仅小幅差异，小尺寸无统一赢家。"
+      "summary": "M4/MLX0.31.2的双输出RMSNorm，native fast与自动连续化/显式stride两个custom路径：216项正确性及1512计时样本过门；M512隔列copy更慢，strided较快，BF16仅小幅差异，小尺寸无统一赢家。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-custom-rms.md",
+          "title": "Custom Metal RMSNorm: two outputs and stride costs",
+          "summary": "This contract returns both s=x+r, rounded to input dtype, and weighted RMSNorm(s).",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-quantized-attention",
@@ -1681,7 +1913,15 @@
         "local-mlx-quantized-attention-20261007",
         "mlx-release-0320"
       ],
-      "summary": "M4/MLX0.31.2及MLX-LM0.31.3量化KV helper，128个F32 GQA配置中48个多token PV失败；QK/softmax/dense全部通过。分开量化失真、packed存储与执行正确性，无模型或性能结论。"
+      "summary": "M4/MLX0.31.2及MLX-LM0.31.3量化KV helper，128个F32 GQA配置中48个多token PV失败；QK/softmax/dense全部通过。分开量化失真、packed存储与执行正确性，无模型或性能结论。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-quantized-attention.md",
+          "title": "Quantized KV attention: isolate QK, softmax and PV",
+          "summary": "The installed MLX-LM 0.31.3 helper scales Q, computes quantized QK, applies the mask, uses precise softmax and computes nontransposed quantized PV.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-rope-qk",
@@ -1720,7 +1960,15 @@
         "mlx-lm-qwen3-rope-0313",
         "local-mlx-rope-qk-20261007"
       ],
-      "summary": "M4/MLX0.31.2的RoPE Q/K合并：720项486过234败；12配置分开过而concat失败。区分B2单token标量offset、布局变化与长位置共同误差，无性能/模型结论。"
+      "summary": "M4/MLX0.31.2的RoPE Q/K合并：720项486过234败；12配置分开过而concat失败。区分B2单token标量offset、布局变化与长位置共同误差，无性能/模型结论。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-rope-qk.md",
+          "title": "Joint Q/K RoPE: positions, layout and numerical gates",
+          "summary": "Compare separate RoPE(Q)/RoPE(K) with concatenation along heads, one RoPE call and a split at Hq.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "mlx-swiglu",
@@ -1759,7 +2007,15 @@
         "mlx-custom-metal-impl-0312",
         "local-mlx-swiglu-20261007"
       ],
-      "summary": "M4/MLX0.31.2+MLX-LM0.31.3 SwiGLU 三路：216预检查与1512计时样本通过；库已compile，BF16 custom改变舍入，M512 compiled/expression轮次反转。无模型收益。"
+      "summary": "M4/MLX0.31.2+MLX-LM0.31.3 SwiGLU 三路：216预检查与1512计时样本通过；库已compile，BF16 custom改变舍入，M512 compiled/expression轮次反转。无模型收益。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/mlx-swiglu.md",
+          "title": "SwiGLU: existing compiled helpers and custom Metal arithmetic",
+          "summary": "Check existing fusion before creating a custom shader.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "llamacpp-fa-paths",
@@ -1803,7 +2059,15 @@
         "llama-fa-predequant-pr",
         "local-llamacpp-fa-20261007"
       ],
-      "summary": "固定36a7391的vec/regular/Tensor/sparse条件与F16 scratch预留；n_kv_max不得低报。另有unknown构建的45个M4/CPU对照记录，不能验证当前上游或模型性能。"
+      "summary": "固定36a7391的vec/regular/Tensor/sparse条件与F16 scratch预留；n_kv_max不得低报。另有unknown构建的45个M4/CPU对照记录，不能验证当前上游或模型性能。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/llamacpp-fa-paths.md",
+          "title": "llama.cpp Metal FA: dispatch, quantized KV and temporary memory",
+          "summary": "Source mechanisms below use upstream commit 36a73916ee0cb3b457f356066afabd47cce68884.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "type": "technique",
@@ -1836,7 +2100,15 @@
         "mlx-custom-metal-guide-0312",
         "local-msl-usage-20261007"
       ],
-      "summary": "MSL4.1版本规则与原创packed/归约示例；修正版170数值通过，但singleton stride元数据1项失败，首版constant/device编译错误保留。无性能承诺。"
+      "summary": "MSL4.1版本规则与原创packed/归约示例；修正版170数值通过，但singleton stride元数据1项失败，首版constant/device编译错误保留。无性能承诺。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/msl-programming.md",
+          "title": "MSL programming: address spaces, vector layout and synchronization",
+          "summary": "Write access and participation contracts before tuning.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "type": "technique",
@@ -1876,7 +2148,15 @@
         "apple-m3-profiling",
         "apple-m5-profiling"
       ],
-      "summary": "从MLX具体MSL写法解释每线程多元素、重读与寄存器保留、两级归约、function constant/template；区分源码机制与尚未测量的收益。"
+      "summary": "从MLX具体MSL写法解释每线程多元素、重读与寄存器保留、两级归约、function constant/template；区分源码机制与尚未测量的收益。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/msl-optimization.md",
+          "title": "MSL optimization: candidate mechanisms and their costs",
+          "summary": "After locating a kernel hotspot, change a specific mechanism and measure its full cost.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "msl-matrix",
@@ -1915,7 +2195,15 @@
         "mlx-custom-metal-guide-0312",
         "mlx-custom-metal-impl-0312"
       ],
-      "summary": "公开8×8矩阵API、完整组/tail规则与Steel复用机制；M4三条F32路径243项通过，half矩阵81项失败，整体失败保留。源码lane映射非可移植合同，无性能结论。"
+      "summary": "公开8×8矩阵API、完整组/tail规则与Steel复用机制；M4三条F32路径243项通过，half矩阵81项失败，整体失败保留。源码lane映射非可移植合同，无性能结论。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/msl-matrix.md",
+          "title": "MSL matrix multiplication: fragments, tails and accumulation precision",
+          "summary": "Public simdgroup_matrix operations cooperate across a SIMD group.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "msl-tiles",
@@ -1954,7 +2242,15 @@
         "mlx-custom-metal-guide-0312",
         "mlx-custom-metal-impl-0312"
       ],
-      "summary": "公开矩阵API比较device直接装载、staging、四SIMD复用和BK8/32；M4共270项数值检查和750份计时输出通过，主机完成时间波动/排序反转，不证明DRAM减半或最优tile。"
+      "summary": "公开矩阵API比较device直接装载、staging、四SIMD复用和BK8/32；M4共270项数值检查和750份计时输出通过，主机完成时间波动/排序反转，不证明DRAM减半或最优tile。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/msl-tiles.md",
+          "title": "MSL tiles: direct loading, shared operands and BK tradeoffs",
+          "summary": "Compare direct 8×8 loading, staged 8×8 tiles, four SIMD groups sharing a 16×16 output tile, and larger K staging blocks.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "msl-gemv",
@@ -1992,7 +2288,15 @@
         "mlx-metal-matmul-host-0312",
         "mlx-custom-metal-impl-0312"
       ],
-      "summary": "沿输出/沿K/8lane子组/两级归约的写法与MLX、llama.cpp布局策略。M4原540项有4项精度失败；CPU复现长K抵消，邻接K成对候选108项通过同门；无速度或模型结论。"
+      "summary": "沿输出/沿K/8lane子组/两级归约的写法与MLX、llama.cpp布局策略。M4原540项有4项精度失败；CPU复现长K抵消，邻接K成对候选108项通过同门；无速度或模型结论。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/msl-gemv.md",
+          "title": "MSL GEMV: lane assignment, weight layout and reduction order",
+          "summary": "For y[n]=sum_k x[k]*W[n,k], divide lanes between independent outputs and K reduction.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "msl-quantized-gemv",
@@ -2027,7 +2331,15 @@
         "mlx-qvm-dispatch-0312",
         "mlx-custom-metal-impl-0312"
       ],
-      "summary": "原创MSL packed4解包、word/group分工和scale/bias因式分解。M4同门348/360数值通过；12项affine抵消失败由CPU诊断并保留，区分量化损失、解码舍入与累加误差；无速度结论。"
+      "summary": "原创MSL packed4解包、word/group分工和scale/bias因式分解。M4同门348/360数值通过；12项affine抵消失败由CPU诊断并保留，区分量化损失、解码舍入与累加误差；无速度结论。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/msl-quantized-gemv.md",
+          "title": "MSL quantized GEMV: 4-bit unpacking and affine rounding",
+          "summary": "The example computes a dot product with F32 x/scales/biases/output and unsigned 4-bit weights packed eight codes per uint32, low bits first.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "msl-softmax",
@@ -2066,7 +2378,15 @@
         "mlx-softmax-defines-0312",
         "mlx-softmax-instantiation-0312"
       ],
-      "summary": "原创SG32/TG128、在线normalizer、split256状态合并与空mask处理；144项数值、24状态、48元数据通过。核实MLX AccT/N_READS，区分API precise与MSL指数函数；后续计时另页限定范围。"
+      "summary": "原创SG32/TG128、在线normalizer、split256状态合并与空mask处理；144项数值、24状态、48元数据通过。核实MLX AccT/N_READS，区分API precise与MSL指数函数；后续计时另页限定范围。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/msl-softmax.md",
+          "title": "MSL softmax: online state, split reduction and empty masks",
+          "summary": "Define the valid set before choosing an algorithm.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "msl-softmax-timing",
@@ -2103,7 +2423,15 @@
         "mlx-softmax-kernel-0312",
         "mlx-softmax-dispatch-0312"
       ],
-      "summary": "M4六路径、三进程、1620份输出与计时独立复核。长行分工/分块候选、短行波动、进程中位数与block配对比值的排序反转；仅主机完成时间，无GPU瓶颈或模型结论。"
+      "summary": "M4六路径、三进程、1620份输出与计时独立复核。长行分工/分块候选、短行波动、进程中位数与block配对比值的排序反转；仅主机完成时间，无GPU瓶颈或模型结论。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/msl-softmax-timing.md",
+          "title": "MSL softmax timing: full call cost and statistical scope",
+          "summary": "This M4/MLX 0.31.2 comparison reused numerically accepted F32 softmax functions and six input conditions: R8, K128/257/8193, contiguous/step-two layouts and mixed masks.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "msl-softmax-lowp",
@@ -2145,7 +2473,15 @@
         "mlx-softmax-dispatch-0312",
         "mlx-softmax-factory-0312"
       ],
-      "summary": "显式float读/统计与OT输出转换；66组输入（含F32对照）、330输出中26项native_false未过门，half长行出现全零但不能唯一归因。分开输入平移信息损失、实际存储oracle与输出次正规数；CPU审查保留失败，无计时或模型结论。"
+      "summary": "显式float读/统计与OT输出转换；66组输入（含F32对照）、330输出中26项native_false未过门，half长行出现全零但不能唯一归因。分开输入平移信息损失、实际存储oracle与输出次正规数；CPU审查保留失败，无计时或模型结论。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/msl-softmax-lowp.md",
+          "title": "Low-precision softmax: storage, accumulation and subnormal outputs",
+          "summary": "Specify input storage, statistic dtype and final narrowing separately.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "msl-half-arithmetic",
@@ -2182,7 +2518,15 @@
         "mlx-compiled-layout-0312",
         "local-msl-half-arithmetic-values-20261008"
       ],
-      "summary": "区分half/float表达式、算术FTZ、窄化和源码编译选项。保留首次签名检查失败；独立后继28项通过，所测half次正规值保留，F32倒数每布局1248项偏离RNE但在half舍入后消失。值模型不唯一确定中间精度、舍入模式或native softmax原因，无速度结论。"
+      "summary": "区分half/float表达式、算术FTZ、窄化和源码编译选项。保留首次签名检查失败；独立后继28项通过，所测half次正规值保留，F32倒数每布局1248项偏离RNE但在half舍入后消失。值模型不唯一确定中间精度、舍入模式或native softmax原因，无速度结论。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/msl-half-arithmetic.md",
+          "title": "MSL half arithmetic: promotion, reciprocal and subnormal boundaries",
+          "summary": "Half output storage does not establish half expression evaluation.",
+          "edition": "companion"
+        }
+      }
     },
     {
       "id": "msl-f32-divide",
@@ -2217,7 +2561,15 @@
         "mlx-custom-metal-impl-0312",
         "local-msl-divide-provenance-20261008"
       ],
-      "summary": "区分除法函数语义、数学模式与输入来源。原18项通过质量门，half提升后的precise仍有1232项非RNE/RTZ；独立三路对照中，GPU先完成F32转换再用共享consumer除法与CPU-F32同值对照均匹配RNE。未定位编译阶段、资源绑定或指令，无速度结论。"
+      "summary": "区分除法函数语义、数学模式与输入来源。原18项通过质量门，half提升后的precise仍有1232项非RNE/RTZ；独立三路对照中，GPU先完成F32转换再用共享consumer除法与CPU-F32同值对照均匹配RNE。未定位编译阶段、资源绑定或指令，无速度结论。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/msl-f32-divide.md",
+          "title": "MSL F32 division: function choice, rounding and input provenance",
+          "summary": "Compare ordinary a/b, metal::fast::divide(a,b) and metal::precise::divide(a,b) while retaining float outputs.",
+          "edition": "companion"
+        }
+      }
     }
   ],
   "sources": [

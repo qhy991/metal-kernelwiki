@@ -1,5 +1,7 @@
 # 融合与提交：先证明开销在哪里
 
+[English companion](en/fusion.md)
+
 当 trace 显示 GPU 间隙、许多短 dispatch、CPU 编码/采样或中间数组读写时使用本页。下面都是待测候选，不是“kernel 数越少越快”的规则。
 
 ## 三个层次分别优化

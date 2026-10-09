@@ -1,5 +1,7 @@
 # MSL softmax 计时：线程分工、分块与实际调用成本
 
+[English companion](en/msl-softmax-timing.md)
+
 减少源码中的输入遍历、扩大线程组、把长行拆成多个 kernel，都会同时改变别的成本。本页对[已通过数值门的六种 softmax 路线](msl-softmax.md)做有限的 M4 主机完成计时，帮助选择下一步候选。它测量给定 logits 到概率的调用序列，没有 QK/PV、KV cache、完整 attention 或模型推理。
 
 ## 同一输入与同一计时边界

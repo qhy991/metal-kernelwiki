@@ -1,5 +1,7 @@
 # Metal LLM 性能诊断与证据
 
+[English companion](en/metal-profiling.md)
+
 适用：首 token 慢、decode 吞吐低、GPU 间歇空闲、融合 kernel 变慢。**以下采集与比较方案未执行。**
 
 ## 先看整个请求，再看 kernel

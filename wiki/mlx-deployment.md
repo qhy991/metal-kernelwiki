@@ -1,5 +1,7 @@
 # MLX 部署：按 prefill、decode 和内存分别选择候选
 
+[English companion](en/mlx-deployment.md)
+
 证据状态：官方文档与上游源码；核查于 2026-10-07。文档显示 MLX 0.32.3，MLX-LM 链接指向可变的 `main`。本页方法未在本机执行，不含本机测量结果。
 
 ## 适用与第一步

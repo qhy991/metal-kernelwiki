@@ -1,5 +1,7 @@
 # llama.cpp Metal Attention：分派、量化 KV 与临时内存
 
+[English companion](en/llamacpp-fa-paths.md)
+
 量化 KV 的存储大小、执行时是否预反量化，以及 FA 的临时分配是三个不同问题。本页按上游固定提交 [`36a7391`](https://github.com/ggml-org/llama.cpp/commit/36a73916ee0cb3b457f356066afabd47cce68884)（2026-10-07）解释源码机制；另有本机现存 binary 的 **45 项有限 CPU 对照检查**。本机 binary 的 build commit 为 `unknown`，其结果不能充当这个上游快照的运行验证。
 
 ## 先确定实际 FA 算子的输入

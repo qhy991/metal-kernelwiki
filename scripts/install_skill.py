@@ -21,7 +21,8 @@ def main():
     if destination.name != 'metal-kernelwiki':
         parser.error('Destination directory must be named metal-kernelwiki')
     source = root / 'skill' / 'metal-kernelwiki'
-    knowledge_entries = ('data', 'wiki', 'references', 'README.md', 'MAINTENANCE.md', 'PROVENANCE.md')
+    knowledge_entries = ('data', 'wiki', 'references', 'README.md', 'MAINTENANCE.md', 'PROVENANCE.md',
+                         'README.en.md', 'MAINTENANCE.en.md', 'PROVENANCE.en.md')
     if (not (root / 'mwiki').is_file()
             or not (root / 'data/catalog.json').is_file()
             or not (source / 'SKILL.md').is_file()

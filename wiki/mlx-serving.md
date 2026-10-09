@@ -1,5 +1,7 @@
 # MLX Serving：先检查 batch 路径，再搜索并发
 
+[English companion](en/mlx-serving.md)
+
 证据状态：上游源码描述；核查于 2026-10-07。本文针对 MLX-LM 所见 `main`，不承诺其他服务器具有相同特性。本页没有本机服务或吞吐测量。
 
 ## 建立请求级目标

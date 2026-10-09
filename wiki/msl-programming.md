@@ -1,5 +1,7 @@
 # MSL 用法：地址空间、向量布局、同步与数值契约
 
+[English companion](en/msl-programming.md)
+
 MSL kernel 的第一步是把访问与参与规则写对，再讨论是否更快。本页核对 Apple **MSL 4.1 规范（2026-06-04）**，并用 M4 / MLX 0.31.2 检查两个原创示例。官方规范 URL 可更新；阅读 4.1 文档不代表本机编译器启用了全部 4.1 特性。调优候选另见 [MSL 优化方法](msl-optimization.md)。
 
 ## 地址空间要与实际函数签名一致

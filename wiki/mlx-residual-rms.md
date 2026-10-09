@@ -1,5 +1,7 @@
 # 残差 RMSNorm：编译、专用原语与舍入顺序一起比较
 
+[English companion](en/mlx-residual-rms.md)
+
 证据：2026-10-07，M4 上 MLX 0.31.2 的限定数值与主机计时观测。普通表达式、`mx.compile` 表达式和 `mx.fast.rms_norm` 三路的 90 项预检查均通过，随后 756 个计时样本均通过在线数值门。编译路径波动明显；本轮没有 profiler、单 kernel 融合或模型加速结论。
 
 ## 先固定输出与精度契约

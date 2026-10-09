@@ -1,5 +1,7 @@
 # 旋转 KV cache：批处理必须保留每个请求的策略
 
+[English companion](en/mlx-cache-lifecycle.md)
+
 证据：MLX-LM v0.31.3 源码、上游报告与 2026-10-07 一次 M4 本地探针。已观察到直接 merge/extract 路径丢失 `keep=4`；本页没有测服务、attention 或模型质量。
 
 ## 内存优化不能悄悄改变保留规则

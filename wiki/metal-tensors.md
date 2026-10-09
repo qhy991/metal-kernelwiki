@@ -1,5 +1,7 @@
 # TensorOps、量化与融合候选
 
+[English companion](en/metal-tensors.md)
+
 适用：prefill GEMM、量化线性层和自定义 attention。**本文是未执行的优化方案；没有本地速度提升声明。**
 
 ## 先决定是否值得下到 kernel

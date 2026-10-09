@@ -1,5 +1,7 @@
 # MSL 量化 GEMV：4-bit 解包、参数复用与 affine 舍入
 
+[English companion](en/msl-quantized-gemv.md)
+
 单 token decode 常需要在读取压缩权重时完成解包、应用 scale/bias 和归约。本页用原创 MSL 比较逐元素 affine 与按组提取参数的写法，并区分**量化损失、解量化舍入、点积累加误差**。格式和分派来自 MLX v0.31.2；本地结果只覆盖 M4 上的合成数据，不是模型质量、带宽或速度结论。
 
 ## 先写出 packed 格式合同

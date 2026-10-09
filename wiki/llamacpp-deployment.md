@@ -1,5 +1,7 @@
 # llama.cpp：Metal 部署、容量与阶段基准
 
+[English companion](en/llamacpp-deployment.md)
+
 核对日期：2026-10-07。适用于 Apple Silicon 上的 GGUF 推理；网页 `master` 会变化，命令是待执行配方，不是本机实测结论。先固定 llama.cpp commit、GGUF 名称及量化、macOS、芯片和内存；用对应二进制的 `--help` 核对参数，不能拿 server 帮助代替 bench 帮助。
 
 ## 1. 先确认真正运行 Metal

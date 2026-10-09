@@ -1,5 +1,7 @@
 # Metal 内存、线程组与同步
 
+[English companion](en/metal-memory-threadgroups.md)
+
 适用：GEMV、RMSNorm、RoPE、softmax、小矩阵乘，及频繁读回或分配导致的慢推理。**以下为文档支持的候选方法，尚未执行设备验证。**
 
 具体语言层面的地址空间、packed 对齐、barrier 参与及 MSL 4.1 版本条件见 [MSL 用法](msl-programming.md)；每线程工作量、寄存器与模板/函数常量见 [MSL 优化](msl-optimization.md)。这些新页的有限本地检查不会追溯性验证本页全部候选。

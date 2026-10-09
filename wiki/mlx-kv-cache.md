@@ -1,5 +1,7 @@
 # MLX KV cache：前缀复用、容量和量化是不同决策
 
+[English companion](en/mlx-kv-cache.md)
+
 证据状态：官方说明与上游源码；核查于 2026-10-07。`main` 可变，缓存类型和功能组合必须与安装版本核对。另有不加载模型的 [MLX-LM 0.31.3 本地 API 观察](local-mlx-m4.md)，不构成缓存质量或性能结论。
 
 ## 先识别缓存类型

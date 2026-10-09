@@ -1,5 +1,9 @@
 # Metal KernelWiki
 
+[English](README.en.md) · [中英文 HTML 总览](docs/index.html) · [English HTML overview](docs/index.en.html)
+
+全部 44 个主题均有英文伴读版（`wiki/en/`），介绍机制、主要结果与验证限制，并链接中文详细记录；不是每张表、代码和历史记录的逐句翻译。来源元数据保留原语言。使用 `--lang en` 返回英文标题、摘要和正文，默认 `zh` 保留中文。HTML 文件已提交到仓库；GitHub 文件页显示源码，下载或 clone 后打开即可浏览。
+
 面向 Apple Silicon、Metal、MLX/MLX-LM 和 llama.cpp 的 LLM 部署与 kernel 优化知识库。以优化机制、适用条件、代价交换与有范围的观测组织内容，并保留一手来源。
 
 截至 2026-10-08：**44 个主题页、177 个来源条目**，其中 25 项为本地实验记录。M4 原语验证不代表整模型加速；捕获已导出不代表 profiler 已解析。详细范围见 [本地观测](wiki/local-mlx-m4.md)。
@@ -33,6 +37,8 @@
 ./mwiki query "量化 batch数值"
 ./mwiki get mlx-kv-cache --follow-sources
 ./mwiki get local-mlx-m4
+./mwiki query "MSL reduction precision" --lang en
+./mwiki get msl-f32-divide --lang en --follow-sources
 ./mwiki validate
 ```
 

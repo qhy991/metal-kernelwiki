@@ -1,5 +1,7 @@
 # M4 本地观测：attention、量化 matmul 与 capture
 
+[English companion](en/local-mlx-m4.md)
+
 证据状态：`locally-measured`，2026-10-07 的一次小型探索。模型未加载，Compiler/Lab 未改动；这不是端到端 LLM 验收、正式实验或系统资格认证。只采用下列域内结论。
 
 ## 环境与原始记录

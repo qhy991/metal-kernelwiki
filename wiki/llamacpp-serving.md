@@ -1,5 +1,7 @@
 # llama.cpp：并发、前缀缓存与推测解码
 
+[English companion](en/llamacpp-serving.md)
+
 核对日期：2026-10-07。适用于已正确运行的 Metal 服务；这些是待验证候选，收益取决于请求分布。首先固定 prompt/template、输入输出 token 长度、并发、缓存冷热、采样和质量门槛。命令只示意，执行前核对该版本 `--help`，模型和输出路径放在 checkout 外。
 
 ## 1. 并发配额与 batch 不是同一件事

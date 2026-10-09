@@ -1,5 +1,7 @@
 # GEMM、GEMV 与 MoE：按真实 shape 选择算法
 
+[English companion](en/gemm-moe.md)
+
 适用于 matmul/quantized matmul/expert gather 热点。上游 PR 是方法来源；这里没有复现其速度，也不把 PR 描述中的旧开关当成现行 API。
 
 MSL 层的 [矩阵乘与累加精度](msl-matrix.md)提供公开 API 的有界示例、Steel tile/fragment 机制及 M4 合成检查；它没有验证本页的模型吞吐或 MoE 路由。

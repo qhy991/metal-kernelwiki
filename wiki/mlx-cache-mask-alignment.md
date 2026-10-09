@@ -1,5 +1,7 @@
 # 旋转缓存 mask：内容正确仍可能屏蔽有效历史
 
+[English companion](en/mlx-cache-mask-alignment.md)
+
 证据：2026-10-07 的一次 M4 本地运行，MLX 0.31.2、MLX-LM 0.31.3。90 项窗口检查中，4 项原生 mask 与 attention 输出失败；返回的缓存内容、应见 token 完整性和 offset 全部通过。适用范围是下面的直接 API 轨迹，不是整模型、服务或当前上游版本的普遍结论。
 
 ## 优化前先验证 mask 与返回槽位对齐

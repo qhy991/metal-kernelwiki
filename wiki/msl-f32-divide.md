@@ -1,5 +1,7 @@
 # MSL F32 除法：函数选择、舍入与输入来源
 
+[English companion](en/msl-f32-divide.md)
+
 [half算术研究](msl-half-arithmetic.md)发现，half输出相同可以掩盖F32舍入差异。本页直接保存F32结果，比较普通除法、显式fast与显式precise。数值验收、正确舍入、规范精度界和部署速度分别判断。
 
 ## 选择函数，不靠输出dtype猜精度

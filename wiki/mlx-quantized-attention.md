@@ -1,5 +1,7 @@
 # 量化 KV attention：把量化损失与多 token 执行错误分开
 
+[English companion](en/mlx-quantized-attention.md)
+
 2026-10-07，Apple M4、MLX 0.31.2 / MLX-LM 0.31.3 的无模型探针中，**128 个配置有 48 个未通过数值门**。失败均发生在本次测试的 Tk={1024,2048,4096}、Lq={2,3}；QK、softmax 和同一份量化数据的 dense 对照全部通过，错误定位到量化 PV。执行以 exit 2 保留失败结束，没有性能验收、软件更新或容差修改。
 
 ## 实际调用路径

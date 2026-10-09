@@ -66,6 +66,45 @@ class InstallSkillTests(unittest.TestCase):
         self.assertIn('refusing to overwrite', result.stderr)
         self.assertEqual(config.read_bytes(), before)
 
+    def test_language_selection_preserves_topic_and_sources(self):
+        catalog = json.loads((self.repo / 'data/catalog.json').read_text())
+        self.assertEqual(len({page['id'] for page in catalog['pages']}), len(catalog['pages']))
+        for page in catalog['pages']:
+            english = page['translations']['en']
+            self.assertTrue((self.skill / 'knowledge' / english['path']).is_file())
+        self.assertTrue((self.skill / 'knowledge/README.en.md').is_file())
+        result = self.run_python(self.launcher, 'query', 'division provenance', '--lang', 'en', '--json')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        results = json.loads(result.stdout)
+        self.assertIn('msl-f32-divide', [row['id'] for row in results])
+        for row in results:
+            original = next(page for page in catalog['pages'] if page['id'] == row['id'])
+            self.assertEqual(row['sources'], original['sources'])
+            self.assertEqual(row['path'], original['translations']['en']['path'])
+        for args in (
+            ('get', 'msl-f32-divide', '--lang', 'en'),
+            ('get', 'wiki/en/msl-f32-divide.md'),
+        ):
+            result = self.run_python(self.launcher, *args)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertTrue(result.stdout.startswith('# MSL F32 division:'))
+        result = self.run_python(self.launcher, 'get', 'wiki/en/msl-f32-divide.md', '--lang', 'zh')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(result.stdout.startswith('# MSL F32 除法'))
+        result = self.run_python(self.launcher, 'get', 'measurement', '--lang', 'fr')
+        self.assertEqual(result.returncode, 2)
+
+    def test_translation_validation_rejects_missing_and_escaping_paths(self):
+        path = self.repo / 'data/catalog.json'
+        original = json.loads(path.read_text())
+        for bad_path in ('wiki/en/absent.md', '../outside.md'):
+            modified = json.loads(json.dumps(original))
+            modified['pages'][0]['translations']['en']['path'] = bad_path
+            path.write_text(json.dumps(modified), encoding='utf-8')
+            result = self.run_python(self.launcher, 'validate')
+            self.assertEqual(result.returncode, 1)
+            self.assertNotIn('Traceback', result.stderr)
+
     def test_missing_or_invalid_locator_does_not_use_cwd(self):
         config = self.skill / 'repository.json'
         for value in (None, '{broken JSON', '{"repository": "relative/path"}', '{}'):

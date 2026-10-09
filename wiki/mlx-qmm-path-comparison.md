@@ -1,5 +1,7 @@
 # 量化线性层：反量化成本、常驻内存与 shape 一起比较
 
+[English companion](en/mlx-qmm-path-comparison.md)
+
 证据：2026-10-07 的 M4/MLX 0.31.2 有界观测与官方内存 API。4-bit、M=128 的 dense 路径在三轮中的主机完成中位数均低于 packed；其他配置存在较大波动或排序变化。常驻 dense 增加了 4 MiB 基础占用，本页不能给出整模型的自动切换阈值。
 
 ## 比较的是同一份量化权重

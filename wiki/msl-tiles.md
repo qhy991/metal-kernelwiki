@@ -1,5 +1,7 @@
 # MSL tile 优化：直接装载、跨 SIMD 共享与 BK 的代价
 
+[English companion](en/msl-tiles.md)
+
 本页比较四种原创 MSL 写法和原生 MLX matmul：直接从 device 装入矩阵、先放 threadgroup scratch、四个 SIMD-group 共享操作数，以及扩大 K 暂存块。它延续 [矩阵接口与精度](msl-matrix.md)的公开 API 路线。M4 / MLX 0.31.2 的有限结果见下文；输入是 **F32 buffer**，不能外推为 F16 存储或 LLM 加速。
 
 ## 改动到底省了什么

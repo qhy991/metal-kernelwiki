@@ -1,0 +1,1367 @@
+<!doctype html>
+<html lang="en" data-theme="shadcn" data-mode="auto" data-style="80">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="Answer me with HTML 0.4.8">
+<title>Metal KernelWiki</title>
+<style>
+html[data-theme="blueprint"], html[data-theme="blueprint"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 0px;
+  --shadow: none;
+  --bw: 1.5px;
+  --head-font: var(--font-sans);
+  --bg: #f6f6f3;
+  --paper: #ffffff;
+  --ink: #16181d;
+  --ink-2: #4b5260;
+  --ink-3: #8b929e;
+  --line: #1d2026;
+  --line-2: #d6dae1;
+  --fill: #f3f5f8;
+  --accent: #1d5fbf;
+  --accent-bg: #e4ecf8;
+  --ok: #1d5fbf;
+  --ok-bg: #e4ecf8;
+  --err: #c62828;
+  --err-bg: #fbeaea;
+  --warn: #a8620a;
+  --warn-bg: #fdf3e2;
+  --head-bg: #16181d;
+  --head-fg: #ffffff;
+}
+html[data-theme="blueprint"][data-mode="dark"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="blueprint"][data-mode="auto"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+}
+
+html[data-theme="shadcn"], html[data-theme="shadcn"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 8px;
+  --shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+  --bw: 1px;
+  --head-font: var(--font-sans);
+  --bg: #fafafa;
+  --paper: #ffffff;
+  --ink: #09090b;
+  --ink-2: #71717a;
+  --ink-3: #a1a1aa;
+  --line: #e4e4e7;
+  --line-2: #f0f0f2;
+  --fill: #f4f4f5;
+  --accent: #2563eb;
+  --accent-bg: #eff6ff;
+  --ok: #16a34a;
+  --ok-bg: #f0fdf4;
+  --err: #dc2626;
+  --err-bg: #fef2f2;
+  --warn: #d97706;
+  --warn-bg: #fffbeb;
+  --head-bg: #18181b;
+  --head-fg: #fafafa;
+}
+html[data-theme="shadcn"][data-mode="dark"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="shadcn"][data-mode="auto"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+}
+
+html[lang="ja"][data-theme][data-mode] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans CJK JP", "Noto Sans JP", "PingFang SC", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+html[lang="ja"][data-theme="3b1b"][data-mode] {
+  --v-title-font: "CMU Serif", "Latin Modern Roman", "Iowan Old Style", "Palatino", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", "Noto Serif JP", "Songti SC", serif;
+}
+
+/* Answer me with HTML base — uses theme variables only, never hard-coded colors (theme tokens: themes/index.js). Exception: the var() fallbacks of diagrams (flow / sequence) equal the blueprint light tokens, guarded by a test. */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-sans); font-size: 14px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+code, pre, kbd { font-family: var(--font-mono); }
+
+/* ── Toolbar ─────────────────────────────── */
+.am-toolbar {
+  position: fixed; top: 12px; right: 12px; z-index: 10; display: flex; gap: 6px;
+}
+.am-btn {
+  font: 12px/1 var(--font-sans); color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line-2); border-radius: var(--radius); padding: 7px 10px; cursor: pointer;
+}
+.am-btn:hover { border-color: var(--ink-3); }
+.am-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── Header ───────────────────────────────── */
+.am-head { margin: 0 0 20px; padding-right: 260px; }
+.am-head h1 { margin: 0; font-size: 24px; line-height: 1.25; letter-spacing: -0.01em; }
+.am-sub { margin: 4px 0 0; color: var(--ink-2); }
+.am-head-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 12px; color: var(--ink-2); }
+.am-head-meta b { font-family: var(--font-mono); font-weight: 400; color: var(--ink-3); margin-right: 6px; }
+.am-intro { margin-top: 12px; max-width: 80ch; }
+
+/* ── sheet template ────────────────────────── */
+.am-sheet { max-width: 1680px; margin: 0 auto; padding: 32px 28px 40px; }
+.am-frame { position: relative; }
+.am-grid {
+  display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: 20px; align-items: start;
+}
+.am-ruler { display: none; }
+html[data-theme="blueprint"] .am-frame { border: 1px solid var(--line); padding: 30px; }
+html[data-theme="blueprint"] .am-frame::before {
+  content: ""; position: absolute; inset: 18px; border: 1px solid var(--line); pointer-events: none;
+}
+html[data-theme="blueprint"] .am-ruler {
+  display: flex; position: absolute; font: 10px/1 var(--font-mono); color: var(--ink-3);
+}
+.am-ruler span { flex: 1; display: flex; align-items: center; justify-content: center; }
+.am-ruler--top, .am-ruler--bottom { left: 18px; right: 18px; height: 18px; }
+.am-ruler--top { top: 0; }
+.am-ruler--bottom { bottom: 0; }
+.am-ruler--left, .am-ruler--right { top: 18px; bottom: 18px; width: 18px; flex-direction: column; }
+.am-ruler--left { left: 0; }
+.am-ruler--right { right: 0; }
+.am-ruler--top span + span, .am-ruler--bottom span + span { border-left: 1px solid var(--line); }
+.am-ruler--left span + span, .am-ruler--right span + span { border-top: 1px solid var(--line); }
+
+/* ── Panels ───────────────────────────────── */
+.am-panel {
+  background: var(--paper); border: var(--bw) solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow); min-width: 0; overflow: hidden;
+}
+.am-panel-head {
+  display: flex; align-items: stretch; gap: 0; border-bottom: var(--bw) solid var(--line); min-height: 34px;
+}
+.am-panel-id {
+  display: flex; align-items: center; justify-content: center; min-width: 34px; padding: 0 8px;
+  background: var(--head-bg); color: var(--head-fg); font-weight: 600; font-size: 14px;
+}
+html[data-theme="shadcn"] .am-panel-id { border-radius: 6px; min-width: 24px; height: 24px; margin: 9px 0 9px 14px; font-size: 12px; }
+html[data-theme="shadcn"] .am-panel-head { border-bottom-width: 1px; }
+.am-panel-head h2 { margin: 0; padding: 7px 12px; font-size: 15px; font-weight: 600; flex: 1; display: flex; align-items: center; }
+.am-panel-meta { align-self: center; padding: 0 12px; font: 11px/1.3 var(--font-mono); color: var(--ink-2); text-align: right; }
+.am-panel-body { padding: 14px 16px 16px; }
+.am-panel-body > * + * { margin-top: 12px; }
+
+/* ── Markdown body ───────────────────────── */
+.am-md > :first-child { margin-top: 0; }
+.am-md > :last-child { margin-bottom: 0; }
+.am-md p { margin: 0 0 8px; }
+.am-md ul, .am-md ol { margin: 0 0 8px; padding-left: 20px; }
+.am-md li + li { margin-top: 3px; }
+.am-md h3, .am-md h4 { margin: 14px 0 6px; font-size: 13px; }
+.am-md a { color: var(--accent); }
+.am-md blockquote { margin: 0 0 8px; padding: 2px 12px; border-left: 3px solid var(--line-2); color: var(--ink-2); }
+.am-md :not(pre) > code { font-size: 0.9em; background: var(--fill); padding: 1px 5px; border-radius: 4px; }
+.am-md hr { border: 0; border-top: 1px solid var(--line-2); margin: 12px 0; }
+.am-md table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.am-md th {
+  text-align: left; font: 11px/1.3 var(--font-mono); color: var(--ink-2); font-weight: 400;
+  padding: 6px 10px; border-bottom: 1px solid var(--line-2);
+}
+/* th { text-align: left } outranks the align attribute from Markdown alignment, so restore right and center columns explicitly. */
+.am-md th[align="right"] { text-align: right; }
+.am-md th[align="center"] { text-align: center; }
+.am-md td { padding: 7px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+.am-md tbody tr:nth-child(even) td { background: var(--fill); }
+.am-table-wrap { overflow-x: auto; }
+.am-code {
+  margin: 0; padding: 12px 14px; background: var(--fill); border: 1px solid var(--line-2);
+  border-radius: var(--radius); overflow-x: auto; font-size: 12.5px; line-height: 1.5;
+}
+
+/* ── Status badges ok / no / warn ──────────────── */
+.am-status { white-space: nowrap; font-weight: 500; }
+.am-status--ok { color: var(--ok); }
+.am-status--no { color: var(--err); }
+.am-status--warn { color: var(--warn); }
+.am-status-icon { display: inline-block; width: 1.1em; font-weight: 700; }
+
+/* ── callout ─────────────────────────────── */
+.am-callout {
+  border: 1px solid var(--line-2); border-left: 3px solid var(--accent); background: var(--accent-bg);
+  padding: 10px 14px; border-radius: var(--radius);
+}
+.am-callout--ok { border-left-color: var(--ok); background: var(--ok-bg); }
+.am-callout--warn { border-left-color: var(--warn); background: var(--warn-bg); }
+.am-callout--err { border-left-color: var(--err); background: var(--err-bg); }
+.am-callout-title { font-weight: 600; margin-bottom: 4px; }
+
+/* ── kv title block ─────────────────────────── */
+.am-kv {
+  display: grid; grid-template-columns: repeat(var(--kv-cols, 2), minmax(0, 1fr)); margin: 0;
+  border-top: var(--bw) solid var(--line); border-left: var(--bw) solid var(--line);
+}
+.am-kv-cell { border-right: var(--bw) solid var(--line); border-bottom: var(--bw) solid var(--line); padding: 6px 10px 8px; min-width: 0; }
+.am-kv-cell--wide { grid-column: 1 / -1; }
+.am-kv dt { font: 11px/1.4 var(--font-mono); color: var(--ink-2); }
+.am-kv dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.am-kv-cell--wide dd { font-size: 17px; font-weight: 600; }
+html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var(--radius); overflow: hidden; }
+
+/* ── timeline ────────────────────────────── */
+.am-timeline { list-style: none; margin: 0; padding: 0; }
+.am-timeline--h { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); padding-top: 4px; }
+.am-timeline--h li { position: relative; text-align: center; padding: 0 6px; }
+.am-timeline--h li::before {
+  content: ""; position: absolute; top: 31px; left: 0; right: 0; border-top: var(--bw) solid var(--line);
+}
+.am-timeline--h li:first-child::before { left: 50%; }
+.am-timeline--h li:last-child::before { right: 50%; }
+.am-tl-when { display: block; font-size: 15px; font-weight: 500; height: 24px; }
+.am-tl-dot {
+  position: relative; display: block; width: 11px; height: 11px; margin: 2px auto 8px;
+  border: var(--bw) solid var(--line); border-radius: 50%; background: var(--paper);
+}
+.am-tl-item--hi .am-tl-dot { background: var(--accent); border-color: var(--accent); }
+.am-tl-title { display: block; font-size: 12.5px; font-weight: 500; }
+.am-tl-text { display: block; font-size: 12px; color: var(--ink-2); line-height: 1.45; }
+.am-timeline--v li { position: relative; padding: 0 0 14px 22px; }
+.am-timeline--v li::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: -6px; border-left: var(--bw) solid var(--line-2); }
+.am-timeline--v li:last-child::before { display: none; }
+.am-timeline--v .am-tl-dot { position: absolute; left: 0; top: 4px; margin: 0; }
+.am-timeline--v .am-tl-when { display: inline; height: auto; font: 12px var(--font-mono); color: var(--ink-2); margin-right: 8px; }
+.am-timeline--v .am-tl-title { display: inline; font-size: 14px; }
+.am-timeline--v .am-tl-text { margin-top: 2px; }
+
+/* ── annot sentence notes ──────────────────────── */
+.am-annot + .am-annot { border-top: 1px solid var(--line-2); padding-top: 12px; }
+.am-annot-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.am-annot-meta { font: 11px var(--font-mono); font-weight: 400; color: var(--ink-2); }
+.am-annot-scroll { overflow-x: auto; }
+.am-annot-line {
+  position: relative; display: inline-block; white-space: pre; font: 14px/1.6 var(--font-mono);
+  padding-bottom: calc(var(--rows, 0) * 17px + 14px);
+}
+.am-annot-line--wrap { display: block; white-space: normal; padding-bottom: 10px; }
+.am-annot-line--wrap .am-seg { white-space: nowrap; }
+.am-seg { position: relative; }
+.am-seg::after {
+  content: ""; position: absolute; left: 1px; right: 1px; top: calc(100% + 1px); height: 5px;
+  border: 1px solid var(--accent); border-top: 0;
+}
+.am-seg-n {
+  position: absolute; left: 0; top: calc(100% + 8px + var(--row, 0) * 17px);
+  font: 11px/16px var(--font-sans); color: var(--accent); white-space: nowrap;
+}
+.am-seg--err { color: var(--err); }
+.am-seg--err::after { border-color: var(--err); }
+.am-seg--err .am-seg-n { color: var(--err); }
+.am-annot-caption { font-size: 12px; color: var(--ink-2); }
+
+/* ── limits bars ───────────────────────── */
+.am-lim + .am-lim { margin-top: 14px; }
+.am-lim-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 4px; }
+.am-lim-val { font: 12px var(--font-mono); color: var(--accent); white-space: nowrap; }
+.am-lim-track { position: relative; height: 12px; border: 1px solid var(--line-2); background: var(--fill); border-radius: calc(var(--radius) / 2); }
+.am-lim-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent-bg); border-right: 1px solid var(--accent); }
+.am-lim-mark { position: absolute; top: -4px; bottom: -4px; border-left: 2px solid var(--accent); }
+.am-lim.is-over .am-lim-fill { background: var(--err-bg); border-right-color: var(--err); }
+.am-lim.is-over .am-lim-val { color: var(--err); }
+.am-lim-ticks { position: relative; height: 16px; font: 10px/16px var(--font-mono); color: var(--ink-3); }
+.am-lim-ticks span { position: absolute; transform: translateX(-50%); }
+.am-lim-ticks span:first-child { transform: none; }
+.am-lim-note { font-size: 11px; color: var(--ink-2); margin-left: 6px; }
+
+/* ── tree ─────────────────────────── */
+.am-tree { font-size: 13px; }
+.am-tree-root { display: flex; justify-content: center; position: relative; padding-bottom: 18px; }
+.am-tree-root::after { content: ""; position: absolute; bottom: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-root--solo { padding-bottom: 12px; }
+.am-tree-root--solo::after { display: none; }
+.am-tree-box {
+  border: var(--bw) solid var(--line); background: var(--paper); padding: 6px 14px; text-align: center;
+  border-radius: var(--radius); font-weight: 600;
+}
+.am-tree-box small { display: block; font-weight: 400; color: var(--ink-2); font-size: 12px; }
+.am-tree-box--root { background: var(--accent-bg); font-size: 15px; padding: 8px 28px; }
+.am-tree-cols { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); }
+.am-tree-col { position: relative; padding: 18px 8px 0; min-width: 0; }
+.am-tree-col::before { content: ""; position: absolute; top: 0; left: 0; right: 0; border-top: var(--bw) solid var(--line); }
+.am-tree-col:first-child::before { left: 50%; }
+.am-tree-col:last-child::before { right: 50%; }
+.am-tree-col::after { content: ""; position: absolute; top: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-list, .am-tree-list ul { list-style: none; margin: 0; padding: 0; }
+.am-tree-col > .am-tree-list { margin: 8px 0 0 14px; }
+.am-tree-list ul { margin-left: 16px; }
+.am-tree-list li { position: relative; padding: 3px 0 3px 18px; }
+.am-tree-list li::before { content: ""; position: absolute; left: 0; top: 0.95em; width: 12px; border-top: 1px solid var(--ink-3); }
+.am-tree-list li::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; border-left: 1px solid var(--ink-3); }
+.am-tree-list li:last-child::after { bottom: auto; height: 0.95em; }
+.am-tree-tag { font: 11px var(--font-mono); color: var(--ink-3); margin-right: 4px; }
+.am-tree code { font: 12px var(--font-mono); }
+.am-tree-sub { display: block; font-size: 11.5px; color: var(--ink-2); }
+.am-tree-hi > .am-tree-label { color: var(--accent); font-weight: 600; }
+
+/* ── Diagrams (flow / sequence) ───────────────── */
+.am-diagram { margin: 0; overflow-x: auto; text-align: center; }
+/* Embedded previews can lose html[data-theme]; the fallbacks keep diagrams readable, and defined theme variables still win. */
+.am-diagram svg { max-width: 100%; height: auto; font-family: var(--font-sans, sans-serif); }
+.am-diagram text { fill: var(--ink, #16181d); font-size: 13px; }
+.am-node-shape { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-node--hi .am-node-shape { fill: var(--accent-bg, #e4ecf8); stroke: var(--accent, #1d5fbf); }
+.am-node--hi text { fill: var(--accent, #1d5fbf); font-weight: 600; }
+.am-edge { fill: none; stroke: var(--ink-2, #4b5260); stroke-width: 1.3; }
+.am-edge--dashed { stroke-dasharray: 5 4; }
+.am-arrow { fill: var(--ink-2, #4b5260); }
+.am-edge-label rect { fill: var(--paper, #ffffff); }
+.am-diagram .am-edge-label text { fill: var(--accent, #1d5fbf); font-size: 11.5px; }
+.am-cluster { fill: var(--fill, #f3f5f8); stroke: var(--line-2, #d6dae1); stroke-width: 1; stroke-dasharray: 4 3; }
+.am-diagram .am-cluster-label { fill: var(--ink-2, #4b5260); font: 11px var(--font-mono, monospace); }
+.am-lifeline { stroke: var(--ink-3, #8b929e); stroke-width: 1; stroke-dasharray: 4 4; }
+.am-actor { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-note { fill: var(--warn-bg, #fdf3e2); stroke: var(--warn, #a8620a); stroke-width: 1; }
+.am-diagram .am-step { fill: var(--ink-3, #8b929e); font: 10px var(--font-mono, monospace); }
+
+/* ── doc template ────────────────────────── */
+.am-doc { max-width: 1120px; margin: 0 auto; padding: 40px 28px 64px; }
+.am-doc-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px; align-items: start; }
+.am-doc-layout--notoc { grid-template-columns: minmax(0, 1fr); max-width: 860px; }
+.am-toc { position: sticky; top: 24px; font-size: 13px; }
+.am-toc a { display: block; color: var(--ink-2); text-decoration: none; padding: 4px 0 4px 10px; border-left: 2px solid var(--line-2); }
+.am-toc a:hover { color: var(--ink); border-left-color: var(--accent); }
+.am-doc-body > .am-panel + .am-panel { margin-top: 20px; }
+
+/* ── Responsive and print ─────────────────────────── */
+@media (max-width: 1100px) {
+  .am-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .am-grid > .am-panel { grid-column: auto !important; }
+  .am-grid > .am-panel.am-span-wide { grid-column: 1 / -1 !important; }
+}
+@media (max-width: 760px) {
+  .am-sheet, .am-doc { padding: 56px 12px 24px; }
+  .am-head { padding-right: 0; }
+  .am-grid { grid-template-columns: minmax(0, 1fr); }
+  .am-grid > .am-panel.am-span-wide { grid-column: auto !important; }
+  html[data-theme="blueprint"] .am-frame { padding: 0; border: 0; }
+  html[data-theme="blueprint"] .am-frame::before, html[data-theme="blueprint"] .am-ruler { display: none; }
+  .am-doc-layout { grid-template-columns: minmax(0, 1fr); }
+  .am-toc { position: static; }
+  .am-timeline--h { grid-template-columns: minmax(0, 1fr); }
+  .am-tree-cols { grid-template-columns: minmax(0, 1fr); }
+  /* Tables and diagrams keep their size: the wrapper scrolls horizontally when they overflow. */
+  .am-md th, .am-md td { min-width: 6em; }
+  .am-diagram svg { max-width: none; }
+}
+.am-colophon { text-align: center; padding: 0 0 28px; font: 11px var(--font-mono); color: var(--ink-3); }
+
+@media print {
+  .am-toolbar { display: none; }
+  body { background: var(--paper); }
+  .am-panel { break-inside: avoid; box-shadow: none; }
+}
+.am-panel--bare { border: 0; background: transparent; box-shadow: none; }
+.am-panel--bare > .am-panel-body { padding: 0; }
+.am-panel--bare .am-kv { background: var(--paper); }
+
+</style>
+</head>
+<body>
+<div class="am-toolbar">
+<button class="am-btn" type="button" data-am="theme" data-labels="{&quot;blueprint&quot;:&quot;Theme: Blueprint&quot;,&quot;shadcn&quot;:&quot;Theme: Cards&quot;}">Theme: Cards</button>
+<button class="am-btn" type="button" data-am="mode" data-labels="{&quot;auto&quot;:&quot;Mode: Auto&quot;,&quot;light&quot;:&quot;Mode: Light&quot;,&quot;dark&quot;:&quot;Mode: Dark&quot;}">Mode: Auto</button>
+<button class="am-btn" type="button" data-am="copy" data-done="Copied ✓">Copy source</button>
+</div>
+<main class="am-doc">
+<header class="am-head"><h1>Metal KernelWiki</h1><p class="am-sub">English guide to the skill and its knowledge library</p></header>
+<div class="am-doc-layout">
+<nav class="am-toc" aria-label="目录"><a href="#panel-A">A · What is in this skill?</a><a href="#panel-B">B · How does the skill work?</a><a href="#panel-C">C · Deployment and serving (7 topics)</a><a href="#panel-D">D · MSL programming and optimization (11 topics)</a><a href="#panel-E">E · Local observations and failure boundaries (16 topics)</a><a href="#panel-F">F · Mechanisms, hardware and measurement (10 topics)</a><a href="#panel-G">G · What does the evidence establish?</a><a href="#panel-H">H · Retrieve, install and maintain</a></nav><div class="am-doc-body">
+<section class="am-panel" id="panel-A">
+<header class="am-panel-head"><span class="am-panel-id">A</span><h2>What is in this skill?</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>The skill retrieves deployment and kernel knowledge for Apple Silicon, MLX and llama.cpp.</p>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Count</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Topics</td>
+<td>44</td>
+</tr>
+<tr>
+<td>English companions</td>
+<td>44</td>
+</tr>
+<tr>
+<td>Registered sources</td>
+<td>177</td>
+</tr>
+<tr>
+<td>Local-experiment sources</td>
+<td>25</td>
+</tr>
+</tbody></table></div>
+<p>English guides cover mechanisms, main observations and limits. Chinese records retain full tables, code and history.</p>
+<p>This is a companion edition, not a line-by-line translation. Shared source notes retain their original language.</p>
+<p><a href="index.html">中文 / bilingual overview</a>
+<a href="https://github.com/qhy991/metal-kernelwiki/blob/main/README.en.md">English README</a> · <a href="https://github.com/qhy991/metal-kernelwiki/blob/main/README.md">中文 README</a></p>
+</div></div>
+</section>
+<section class="am-panel" id="panel-B">
+<header class="am-panel-head"><span class="am-panel-id">B</span><h2>How does the skill work?</h2></header>
+<div class="am-panel-body"><div class="am-md"><ol>
+<li>Identify the device, framework, workload and target metric.</li>
+<li>Retrieve the relevant topics and inspect their sources.</li>
+<li>Compare distinct candidates under the same numerical contract.</li>
+<li>Validate correctness, then measure full call costs.</li>
+</ol>
+<p>The thin skill points to this repository. It does not duplicate the wiki.</p>
+<p><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/skill/metal-kernelwiki/SKILL.md">SKILL.md</a> · <a href="https://github.com/qhy991/metal-kernelwiki/blob/main/references/en/optimization-workflow.md">Workflow</a></p>
+</div></div>
+</section>
+<section class="am-panel" id="panel-C">
+<header class="am-panel-head"><span class="am-panel-id">C</span><h2>Deployment and serving (7 topics)</h2></header>
+<div class="am-panel-body"><div class="am-md"><div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>English topic</th>
+<th>中文 record</th>
+<th>Evidence basis</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-deployment.md">llama.cpp Metal deployment: offload, capacity and PP/TG</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-deployment.md">中文</a></td>
+<td>documented</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-metal-tuning.md">llama.cpp Metal tuning: GPU families, numerical gates and Tensor paths</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-metal-tuning.md">中文</a></td>
+<td>source-reported</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-serving.md">llama.cpp serving: slots, prefix reuse and speculative decoding</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-serving.md">中文</a></td>
+<td>documented</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-deployment.md">MLX-LM deployment: capacity, quantization and staged benchmarks</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-deployment.md">中文</a></td>
+<td>documented</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-execution.md">MLX execution: lazy graphs, compilation and custom Metal</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-execution.md">中文</a></td>
+<td>documented</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-kv-cache.md">MLX KV cache: reuse, rotation, quantization and correctness</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-kv-cache.md">中文</a></td>
+<td>source-reported</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-serving.md">MLX serving: batching eligibility, cache budgets and speculation</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-serving.md">中文</a></td>
+<td>source-reported</td>
+</tr>
+</tbody></table></div>
+</div></div>
+</section>
+<section class="am-panel" id="panel-D">
+<header class="am-panel-head"><span class="am-panel-id">D</span><h2>MSL programming and optimization (11 topics)</h2></header>
+<div class="am-panel-body"><div class="am-md"><div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>English topic</th>
+<th>中文 record</th>
+<th>Evidence basis</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-f32-divide.md">MSL F32 division: function choice, rounding and input provenance</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-f32-divide.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-gemv.md">MSL GEMV: lane assignment, weight layout and reduction order</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-gemv.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-half-arithmetic.md">MSL half arithmetic: promotion, reciprocal and subnormal boundaries</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-half-arithmetic.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-matrix.md">MSL matrix multiplication: fragments, tails and accumulation precision</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-matrix.md">中文</a></td>
+<td>source-reported</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-optimization.md">MSL optimization: candidate mechanisms and their costs</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-optimization.md">中文</a></td>
+<td>source-reported</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-programming.md">MSL programming: address spaces, vector layout and synchronization</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-programming.md">中文</a></td>
+<td>source-reported</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-quantized-gemv.md">MSL quantized GEMV: 4-bit unpacking and affine rounding</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-quantized-gemv.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-softmax.md">MSL softmax: online state, split reduction and empty masks</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-softmax.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-softmax-lowp.md">Low-precision softmax: storage, accumulation and subnormal outputs</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-softmax-lowp.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-softmax-timing.md">MSL softmax timing: full call cost and statistical scope</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-softmax-timing.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-tiles.md">MSL tiles: direct loading, shared operands and BK tradeoffs</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-tiles.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+</tbody></table></div>
+</div></div>
+</section>
+<section class="am-panel" id="panel-E">
+<header class="am-panel-head"><span class="am-panel-id">E</span><h2>Local observations and failure boundaries (16 topics)</h2></header>
+<div class="am-panel-body"><div class="am-md"><div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>English topic</th>
+<th>中文 record</th>
+<th>Evidence basis</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-fa-paths.md">llama.cpp Metal FA: dispatch, quantized KV and temporary memory</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-fa-paths.md">中文</a></td>
+<td>source-reported</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-validation.md">llama.cpp Metal validation: executed cases, numerical scope and timing</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-validation.md">中文</a></td>
+<td>source-reported</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/local-mlx-m4.md">Local M4 baseline: SDPA, quantized matmul and tool limits</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/local-mlx-m4.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-async-evaluation.md">MLX async evaluation: dependency chains and completion boundaries</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-async-evaluation.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-cache-lifecycle.md">Rotating KV cache: preserve request policy through batching</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-cache-lifecycle.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-cache-mask-alignment.md">Rotating-cache masks: align visibility with returned slots</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-cache-mask-alignment.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-cache-persistence.md">Cache persistence: tensor round-trip and continuation are separate gates</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-cache-persistence.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-custom-rms.md">Custom Metal RMSNorm: two outputs and stride costs</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-custom-rms.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-float32-precision.md">MLX float32 precision: singleton GQA as a diagnostic</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-float32-precision.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-qmm-path-comparison.md">Quantized linear layers: packed execution, decode cost and resident dense memory</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-qmm-path-comparison.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-quantized-attention.md">Quantized KV attention: isolate QK, softmax and PV</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-quantized-attention.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-regression-probes.md">MLX boundary probes: observed results and remaining scope</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-regression-probes.md">中文</a></td>
+<td>experimental</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-residual-rms.md">Residual RMSNorm: expressions, compile and fast primitives</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-residual-rms.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-rope-qk.md">Joint Q/K RoPE: positions, layout and numerical gates</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-rope-qk.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-swiglu.md">SwiGLU: existing compiled helpers and custom Metal arithmetic</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-swiglu.md">中文</a></td>
+<td>locally-measured</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/quantized-matmul-validation.md">Quantized matmul: separate quantization loss, decoding and execution error</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/quantized-matmul-validation.md">中文</a></td>
+<td>source-reported</td>
+</tr>
+</tbody></table></div>
+</div></div>
+</section>
+<section class="am-panel" id="panel-F">
+<header class="am-panel-head"><span class="am-panel-id">F</span><h2>Mechanisms, hardware and measurement (10 topics)</h2></header>
+<div class="am-panel-body"><div class="am-md"><div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>English topic</th>
+<th>中文 record</th>
+<th>Evidence basis</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/attention.md">Attention: separate prefill, decode and GQA paths</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/attention.md">中文</a></td>
+<td>inferred</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/fusion.md">Fusion and submission: establish the source of overhead</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/fusion.md">中文</a></td>
+<td>inferred</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/gemm-moe.md">GEMM, GEMV and MoE: choose algorithms for actual shapes</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/gemm-moe.md">中文</a></td>
+<td>source-reported</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/measurement.md">Measurement: turn slow inference into testable bottlenecks</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/measurement.md">中文</a></td>
+<td>inferred</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/metal-capabilities.md">Metal capabilities and deployment boundaries</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/metal-capabilities.md">中文</a></td>
+<td>documented</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/metal-memory-threadgroups.md">Metal memory, threadgroups and synchronization</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/metal-memory-threadgroups.md">中文</a></td>
+<td>documented</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/metal-profiling.md">Metal LLM profiling and evidence</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/metal-profiling.md">中文</a></td>
+<td>documented</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/metal-tensors.md">TensorOps, quantization and fusion candidates</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/metal-tensors.md">中文</a></td>
+<td>documented</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/quantization.md">Weights, KV and low precision: choose compression boundaries</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/quantization.md">中文</a></td>
+<td>inferred</td>
+</tr>
+<tr>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/runtime-measurement.md">Runtime validation and GPU timing with limited tools</a></td>
+<td><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/runtime-measurement.md">中文</a></td>
+<td>documented</td>
+</tr>
+</tbody></table></div>
+</div></div>
+</section>
+<section class="am-panel" id="panel-G">
+<header class="am-panel-head"><span class="am-panel-id">G</span><h2>What does the evidence establish?</h2></header>
+<div class="am-panel-body"><div class="am-md"><div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>Label</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>documented</td>
+<td>Documented mechanism</td>
+</tr>
+<tr>
+<td>source-reported</td>
+<td>Upstream implementation or author report</td>
+</tr>
+<tr>
+<td>inferred</td>
+<td>Analysis-based inference</td>
+</tr>
+<tr>
+<td>experimental</td>
+<td>Candidate awaiting validation</td>
+</tr>
+<tr>
+<td>locally-measured</td>
+<td>Bounded local device/version observation</td>
+</tr>
+</tbody></table></div>
+<p>A page may contain several evidence bases. Read the scope of each claim.</p>
+<p>Primitive success does not establish model quality or deployment speed. Exporting a trace does not establish profiler analysis.</p>
+<p>Failures remain in the records. Raw experiments are external and unpublished.</p>
+<p><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/data/catalog.json">Catalog</a> · <a href="https://github.com/qhy991/metal-kernelwiki/blob/main/PROVENANCE.en.md">Provenance</a></p>
+</div></div>
+</section>
+<section class="am-panel" id="panel-H">
+<header class="am-panel-head"><span class="am-panel-id">H</span><h2>Retrieve, install and maintain</h2></header>
+<div class="am-panel-body"><pre class="am-code"><code data-lang="bash">./mwiki query &quot;MSL reduction precision&quot; --lang en
+./mwiki get msl-f32-divide --lang en --follow-sources
+./mwiki get measurement --lang zh
+./mwiki validate
+python3 scripts/install_skill.py</code></pre>
+<div class="am-md"><p>Retrieval uses Python&#39;s standard library and starts no GPU work. Source following prints metadata only.</p>
+<p>Topic links open rendered Markdown on GitHub. This overview also opens locally without a server.</p>
+<p><a href="https://github.com/qhy991/metal-kernelwiki/blob/main/MAINTENANCE.en.md">Maintenance</a> · <a href="https://github.com/qhy991/metal-kernelwiki/blob/main/references/en/examples.md">Examples</a> · <a href="https://github.com/qhy991/metal-kernelwiki/blob/main/docs/README.md">Rebuild HTML</a></p>
+</div></div>
+</section>
+</div>
+</div>
+</main>
+<footer class="am-colophon">Generated by Answer me with HTML 0.4.8 · 2026-10-09 08:47</footer>
+<textarea id="am-source" hidden readonly aria-hidden="true">---
+template: doc
+theme: shadcn
+lang: en
+title: Metal KernelWiki
+subtitle: English guide to the skill and its knowledge library
+style: 80
+---
+
+## A What is in this skill?
+
+The skill retrieves deployment and kernel knowledge for Apple Silicon, MLX and llama.cpp.
+
+| Item | Count |
+|---|---|
+| Topics | 44 |
+| English companions | 44 |
+| Registered sources | 177 |
+| Local-experiment sources | 25 |
+
+English guides cover mechanisms, main observations and limits. Chinese records retain full tables, code and history.
+
+This is a companion edition, not a line-by-line translation. Shared source notes retain their original language.
+
+[中文 / bilingual overview](index.html)
+[English README](https://github.com/qhy991/metal-kernelwiki/blob/main/README.en.md) · [中文 README](https://github.com/qhy991/metal-kernelwiki/blob/main/README.md)
+
+## B How does the skill work?
+
+1. Identify the device, framework, workload and target metric.
+2. Retrieve the relevant topics and inspect their sources.
+3. Compare distinct candidates under the same numerical contract.
+4. Validate correctness, then measure full call costs.
+
+The thin skill points to this repository. It does not duplicate the wiki.
+
+[SKILL.md](https://github.com/qhy991/metal-kernelwiki/blob/main/skill/metal-kernelwiki/SKILL.md) · [Workflow](https://github.com/qhy991/metal-kernelwiki/blob/main/references/en/optimization-workflow.md)
+
+## C Deployment and serving (7 topics)
+
+| English topic | 中文 record | Evidence basis |
+|---|---|---|
+| [llama.cpp Metal deployment: offload, capacity and PP/TG](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-deployment.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-deployment.md) | documented |
+| [llama.cpp Metal tuning: GPU families, numerical gates and Tensor paths](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-metal-tuning.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-metal-tuning.md) | source-reported |
+| [llama.cpp serving: slots, prefix reuse and speculative decoding](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-serving.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-serving.md) | documented |
+| [MLX-LM deployment: capacity, quantization and staged benchmarks](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-deployment.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-deployment.md) | documented |
+| [MLX execution: lazy graphs, compilation and custom Metal](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-execution.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-execution.md) | documented |
+| [MLX KV cache: reuse, rotation, quantization and correctness](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-kv-cache.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-kv-cache.md) | source-reported |
+| [MLX serving: batching eligibility, cache budgets and speculation](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-serving.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-serving.md) | source-reported |
+
+## D MSL programming and optimization (11 topics)
+
+| English topic | 中文 record | Evidence basis |
+|---|---|---|
+| [MSL F32 division: function choice, rounding and input provenance](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-f32-divide.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-f32-divide.md) | locally-measured |
+| [MSL GEMV: lane assignment, weight layout and reduction order](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-gemv.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-gemv.md) | locally-measured |
+| [MSL half arithmetic: promotion, reciprocal and subnormal boundaries](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-half-arithmetic.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-half-arithmetic.md) | locally-measured |
+| [MSL matrix multiplication: fragments, tails and accumulation precision](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-matrix.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-matrix.md) | source-reported |
+| [MSL optimization: candidate mechanisms and their costs](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-optimization.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-optimization.md) | source-reported |
+| [MSL programming: address spaces, vector layout and synchronization](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-programming.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-programming.md) | source-reported |
+| [MSL quantized GEMV: 4-bit unpacking and affine rounding](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-quantized-gemv.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-quantized-gemv.md) | locally-measured |
+| [MSL softmax: online state, split reduction and empty masks](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-softmax.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-softmax.md) | locally-measured |
+| [Low-precision softmax: storage, accumulation and subnormal outputs](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-softmax-lowp.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-softmax-lowp.md) | locally-measured |
+| [MSL softmax timing: full call cost and statistical scope](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-softmax-timing.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-softmax-timing.md) | locally-measured |
+| [MSL tiles: direct loading, shared operands and BK tradeoffs](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-tiles.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-tiles.md) | locally-measured |
+
+## E Local observations and failure boundaries (16 topics)
+
+| English topic | 中文 record | Evidence basis |
+|---|---|---|
+| [llama.cpp Metal FA: dispatch, quantized KV and temporary memory](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-fa-paths.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-fa-paths.md) | source-reported |
+| [llama.cpp Metal validation: executed cases, numerical scope and timing](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-validation.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-validation.md) | source-reported |
+| [Local M4 baseline: SDPA, quantized matmul and tool limits](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/local-mlx-m4.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/local-mlx-m4.md) | locally-measured |
+| [MLX async evaluation: dependency chains and completion boundaries](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-async-evaluation.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-async-evaluation.md) | locally-measured |
+| [Rotating KV cache: preserve request policy through batching](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-cache-lifecycle.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-cache-lifecycle.md) | locally-measured |
+| [Rotating-cache masks: align visibility with returned slots](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-cache-mask-alignment.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-cache-mask-alignment.md) | locally-measured |
+| [Cache persistence: tensor round-trip and continuation are separate gates](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-cache-persistence.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-cache-persistence.md) | locally-measured |
+| [Custom Metal RMSNorm: two outputs and stride costs](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-custom-rms.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-custom-rms.md) | locally-measured |
+| [MLX float32 precision: singleton GQA as a diagnostic](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-float32-precision.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-float32-precision.md) | locally-measured |
+| [Quantized linear layers: packed execution, decode cost and resident dense memory](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-qmm-path-comparison.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-qmm-path-comparison.md) | locally-measured |
+| [Quantized KV attention: isolate QK, softmax and PV](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-quantized-attention.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-quantized-attention.md) | locally-measured |
+| [MLX boundary probes: observed results and remaining scope](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-regression-probes.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-regression-probes.md) | experimental |
+| [Residual RMSNorm: expressions, compile and fast primitives](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-residual-rms.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-residual-rms.md) | locally-measured |
+| [Joint Q/K RoPE: positions, layout and numerical gates](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-rope-qk.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-rope-qk.md) | locally-measured |
+| [SwiGLU: existing compiled helpers and custom Metal arithmetic](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-swiglu.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-swiglu.md) | locally-measured |
+| [Quantized matmul: separate quantization loss, decoding and execution error](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/quantized-matmul-validation.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/quantized-matmul-validation.md) | source-reported |
+
+## F Mechanisms, hardware and measurement (10 topics)
+
+| English topic | 中文 record | Evidence basis |
+|---|---|---|
+| [Attention: separate prefill, decode and GQA paths](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/attention.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/attention.md) | inferred |
+| [Fusion and submission: establish the source of overhead](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/fusion.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/fusion.md) | inferred |
+| [GEMM, GEMV and MoE: choose algorithms for actual shapes](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/gemm-moe.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/gemm-moe.md) | source-reported |
+| [Measurement: turn slow inference into testable bottlenecks](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/measurement.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/measurement.md) | inferred |
+| [Metal capabilities and deployment boundaries](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/metal-capabilities.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/metal-capabilities.md) | documented |
+| [Metal memory, threadgroups and synchronization](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/metal-memory-threadgroups.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/metal-memory-threadgroups.md) | documented |
+| [Metal LLM profiling and evidence](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/metal-profiling.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/metal-profiling.md) | documented |
+| [TensorOps, quantization and fusion candidates](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/metal-tensors.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/metal-tensors.md) | documented |
+| [Weights, KV and low precision: choose compression boundaries](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/quantization.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/quantization.md) | inferred |
+| [Runtime validation and GPU timing with limited tools](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/runtime-measurement.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/runtime-measurement.md) | documented |
+
+## G What does the evidence establish?
+
+| Label | Meaning |
+|---|---|
+| documented | Documented mechanism |
+| source-reported | Upstream implementation or author report |
+| inferred | Analysis-based inference |
+| experimental | Candidate awaiting validation |
+| locally-measured | Bounded local device/version observation |
+
+A page may contain several evidence bases. Read the scope of each claim.
+
+Primitive success does not establish model quality or deployment speed. Exporting a trace does not establish profiler analysis.
+
+Failures remain in the records. Raw experiments are external and unpublished.
+
+[Catalog](https://github.com/qhy991/metal-kernelwiki/blob/main/data/catalog.json) · [Provenance](https://github.com/qhy991/metal-kernelwiki/blob/main/PROVENANCE.en.md)
+
+## H Retrieve, install and maintain
+
+~~~bash
+./mwiki query &quot;MSL reduction precision&quot; --lang en
+./mwiki get msl-f32-divide --lang en --follow-sources
+./mwiki get measurement --lang zh
+./mwiki validate
+python3 scripts/install_skill.py
+~~~
+
+Retrieval uses Python&#39;s standard library and starts no GPU work. Source following prints metadata only.
+
+Topic links open rendered Markdown on GitHub. This overview also opens locally without a server.
+
+[Maintenance](https://github.com/qhy991/metal-kernelwiki/blob/main/MAINTENANCE.en.md) · [Examples](https://github.com/qhy991/metal-kernelwiki/blob/main/references/en/examples.md) · [Rebuild HTML](https://github.com/qhy991/metal-kernelwiki/blob/main/docs/README.md)
+</textarea>
+<script>
+(() => {
+  const root = document.documentElement;
+  const cycle = (list, cur) => list[(list.indexOf(cur) + 1) % list.length];
+  const label = (btn, value) => {
+    const map = JSON.parse(btn.dataset.labels || '{}');
+    btn.textContent = map[value] || value;
+  };
+  const bind = (name, attr, values) => {
+    const btn = document.querySelector(`[data-am="${name}"]`);
+    if (!btn) return;
+    label(btn, root.getAttribute(attr));
+    btn.addEventListener('click', () => {
+      const next = cycle(values, root.getAttribute(attr));
+      root.setAttribute(attr, next);
+      label(btn, next);
+    });
+  };
+  bind('theme', 'data-theme', ['blueprint', 'shadcn']);
+  bind('mode', 'data-mode', ['auto', 'light', 'dark']);
+
+  const copyBtn = document.querySelector('[data-am="copy"]');
+  copyBtn?.addEventListener('click', async () => {
+    const nodes = document.querySelectorAll('#am-source');
+    const text = nodes[nodes.length - 1]?.value ?? '';
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const ta = Object.assign(document.createElement('textarea'), { value: text });
+      document.body.append(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    const original = copyBtn.textContent;
+    copyBtn.textContent = copyBtn.dataset.done;
+    setTimeout(() => { copyBtn.textContent = original; }, 1400);
+  });
+})();
+(() => {
+// Pure planner for justified ("photo wall") rows on sheet pages. No DOM access.
+//
+// This file must stay inlinable into the page script: top-level declarations only, no imports, and the exports are
+// `planLayout` and the constants the DOM adapter shares (STEP, MAX_SCALE, MIN_SCALE). The page build strips the `export ` keyword,
+// and test/layout-plan.test.js checks that this still works.
+//
+// planLayout({ width, gap, cols, panels }) -> { rows: [{ columns: [{ panels: [index, ...], width }], height }] }
+//
+// Input (all lengths in px):
+//   width   container width
+//   gap     space between columns, and between two panels stacked in one column
+//   cols    most columns in one row (the planner never uses more than MAX_COLUMNS, but spans stay shares of `cols`)
+//   panels  one entry per panel, in reading order:
+//     samples   [{ w, h }] panel height at sampled widths, ascending by w (heights between samples are interpolated)
+//     minWidth  narrowest feasible width (clamped to `width`)
+//     maxWidth  widest useful width; beyond it the panel only gains empty space (default: no limit)
+//     natural   natural diagram width for a diagram-only panel (default: none)
+//     pad       panel width not used by the diagram (padding and border; default 0)
+//     span      the author's width hint in grid columns (default 1); span >= cols keeps the panel alone in its row
+//
+// Output: { rows, maxScale }. Rows are in reading order; a row is a list of columns (at most `cols`); a column holds one panel or two
+// consecutive panels, stacked. For integer inputs the column widths plus the gaps between them equal `width`.
+// Rows are chosen by dynamic programming over break points; widths by a search in STEP px steps. Cost per row:
+//   H = tallest column; waste = sum((H - columnHeight) * columnWidth) + sum over diagrams wider than maxWidth of (w - maxWidth) * h
+//   dev = sum(((w - preferred) / oneColumn)^2) + SCALE_WEIGHT * sum over diagrams of (ln(scale) / ln(MAX_SCALE))^2
+//   cost = waste / 1000 + PREF_WEIGHT * dev * H
+// Scale band: diagrams on one page stay at similar sizes. With the result's `maxScale` as the diagram size limit, a diagram is
+// shown at scale min(maxScale, (width - pad) / natural). The planner tries a few bands [lo, lo * BAND_RATIO] (lo in BAND_LOS) and
+// keeps the cheapest plan in which no diagram is narrower than scale lo and none is shown above the band's top, so the largest and
+// smallest diagram scale on the page differ by at most BAND_RATIO. A panel wider than its diagram's top size keeps the diagram at
+// that size, and the page script must set the diagram's max-width to natural * maxScale. The band starts no higher than the
+// largest scale the page allows the least roomy diagram, so one wide diagram lowers the band for the others.
+// If no band is feasible the plan is made without a band (maxScale = MAX_SCALE); if no plan fits (or the input is unusable) the
+// result is a single column: one panel per row at the full width.
+
+const STEP = 10;
+const MAX_SCALE = 1.25;
+const MIN_SCALE = 0.75; // the narrowest a diagram is shown, as a share of its natural width
+const MAX_COLUMNS = 6; // rows with more columns are unreadable, and the search grows steeply with the column count
+const BAND_RATIO = 1.25; // the largest and smallest diagram scale on a page differ by at most this
+const BAND_LOS = [MIN_SCALE, 0.85, 0.95, 1]; // lower ends tried for the band; lo * BAND_RATIO is the upper end (1.25 means no upper limit)
+const SCALE_WEIGHT = 3;
+const PREF_WEIGHT = 0.15;
+
+function heightAt(samples, w) {
+  const i = samples.findIndex((s) => s.w >= w);
+  if (i === -1) return samples[samples.length - 1].h;
+  if (i === 0) return samples[0].h;
+  const a = samples[i - 1];
+  const b = samples[i];
+  return a.h + ((b.h - a.h) * (w - a.w)) / (b.w - a.w);
+}
+
+// Every way to split `len` consecutive panels into columns of 1 or 2 panels, as lists of column sizes.
+function splits(len) {
+  if (len === 0) return [[]];
+  return [1, 2].filter((k) => k <= len).flatMap((k) => splits(len - k).map((rest) => [k, ...rest]));
+}
+
+function singleColumn(width, panels) {
+  return { rows: panels.map((_, i) => ({ columns: [{ panels: [i], width }], height: 0 })) };
+}
+
+function planLayout({ width, gap = 0, cols = 3, panels }) {
+  const usable = Number.isFinite(width) && width > 0 && panels.every((p) => Array.isArray(p.samples) && p.samples.length > 0);
+  if (!usable) return singleColumn(width, panels);
+
+  // `cols` stays the unit of the author's spans; no row gets more than MAX_COLUMNS columns however large `cols` is.
+  const maxColumns = Math.min(cols, MAX_COLUMNS);
+  const oneColumn = Math.max(1, (width - gap * (cols - 1)) / cols);
+  // Per-panel limits. With a band [lo, lo * BAND_RATIO], a diagram is no narrower than scale lo and shown at most at the top of the
+  // band: a wider panel keeps it at that size and gains empty space, which the cost counts as waste.
+  const prepare = (lo) => panels.map((p) => {
+    const pad = p.pad ?? 0;
+    const diagram = lo > 0 && p.natural > 0;
+    const scaleCap = diagram ? Math.min(MAX_SCALE, lo * BAND_RATIO) : MAX_SCALE;
+    return {
+      ...p,
+      minWidth: Math.min(width, Math.max(Math.ceil(p.minWidth || 0), diagram ? Math.ceil(p.natural * lo + pad) : 0)),
+      maxWidth: Math.min(p.maxWidth ?? Infinity, diagram ? p.natural * scaleCap + pad : Infinity),
+      scaleCap,
+      pad,
+      preferred: Math.min(width, (p.span ?? 1) * oneColumn + ((p.span ?? 1) - 1) * gap),
+      alone: (p.span ?? 1) >= cols,
+    };
+  });
+  let info = prepare(0);
+  // Beyond its maxWidth a panel only gains empty space, so its height stops changing there (matters when a band lowers maxWidth).
+  const heightOf = (p, w) => heightAt(p.samples, Math.min(w, p.maxWidth));
+  const columnHeight = (col, w) => col.reduce((h, k) => h + heightOf(info[k], w), 0) + gap * (col.length - 1);
+
+  function bestColumns(columns) {
+    const avail = width - gap * (columns.length - 1);
+    const mins = columns.map((c) => Math.max(...c.map((k) => info[k].minWidth)));
+    const minsFrom = mins.map((_, n) => mins.slice(n).reduce((s, w) => s + w, 0));
+    if (minsFrom[0] > avail) return null;
+    let best = null;
+    const evaluate = (ws) => {
+      const hs = ws.map((w, n) => columnHeight(columns[n], w));
+      const H = Math.max(...hs);
+      let waste = 0;
+      let dev = 0;
+      ws.forEach((w, n) => {
+        waste += (H - hs[n]) * w;
+        for (const k of columns[n]) {
+          const p = info[k];
+          if (w > p.maxWidth) waste += (w - p.maxWidth) * heightOf(p, w);
+          dev += ((w - p.preferred) / oneColumn) ** 2;
+          if (p.natural > 0) {
+            const scale = Math.min(p.scaleCap, Math.max(w - p.pad, 1) / p.natural);
+            dev += SCALE_WEIGHT * (Math.log(scale) / Math.log(MAX_SCALE)) ** 2;
+          }
+        }
+      });
+      const cost = waste / 1000 + PREF_WEIGHT * dev * H;
+      if (!best || cost < best.cost) best = { cost, ws, height: H, columns };
+    };
+    const choose = (n, used, ws) => {
+      if (n === columns.length - 1) {
+        const w = avail - used;
+        if (w >= mins[n]) evaluate([...ws, w]);
+        return;
+      }
+      for (let w = mins[n]; used + w + minsFrom[n + 1] <= avail; w += STEP) choose(n + 1, used + w, [...ws, w]);
+    };
+    choose(0, 0, []);
+    return best;
+  }
+
+  // Best columns for one row of panels i..j.
+  function bestRow(i, j) {
+    if (j > i && info.slice(i, j + 1).some((p) => p.alone)) return null;
+    let best = null;
+    for (const split of splits(j - i + 1)) {
+      if (split.length > maxColumns) continue;
+      let next = i;
+      const columns = split.map((size) => Array.from({ length: size }, () => next++));
+      const r = bestColumns(columns);
+      if (r && (!best || r.cost < best.cost)) best = r;
+    }
+    return best;
+  }
+
+  // Row breaks in reading order, for the band set up in `info`. A row holds at most 2 * maxColumns panels. Null if nothing fits.
+  function solve() {
+    const n = panels.length;
+    const total = Array(n + 1).fill(Infinity);
+    const from = Array(n + 1).fill(-1);
+    const chosen = Array(n + 1).fill(null);
+    total[0] = 0;
+    for (let j = 1; j <= n; j++) {
+      for (let i = Math.max(0, j - 2 * maxColumns); i < j; i++) {
+        if (total[i] === Infinity) continue;
+        const r = bestRow(i, j - 1);
+        if (r && total[i] + r.cost < total[j]) {
+          total[j] = total[i] + r.cost;
+          from[j] = i;
+          chosen[j] = r;
+        }
+      }
+    }
+    if (total[n] === Infinity) return null;
+    const rows = [];
+    for (let j = n; j > 0; j = from[j]) {
+      const r = chosen[j];
+      rows.unshift({ columns: r.columns.map((panelsInColumn, c) => ({ panels: panelsInColumn, width: r.ws[c] })), height: r.height });
+    }
+    return { rows, cost: total[n] };
+  }
+
+  let best = null;
+  const diagrams = panels.filter((p) => p.natural > 0);
+  if (diagrams.length > 1) {
+    // No diagram can be shown larger than the page allows, so the band cannot start above the smallest of those limits.
+    const reach = Math.min(...diagrams.map((p) => Math.min(MAX_SCALE, Math.max(width - (p.pad ?? 0), 1) / p.natural)));
+    for (const lo of new Set([...BAND_LOS.filter((x) => x < reach), reach])) {
+      info = prepare(lo);
+      const r = solve();
+      if (r && (!best || r.cost < best.cost)) best = { ...r, maxScale: Math.min(MAX_SCALE, lo * BAND_RATIO) };
+    }
+    info = prepare(0);
+  }
+  best ??= solve();
+  return best ? { rows: best.rows, maxScale: best.maxScale ?? MAX_SCALE } : singleColumn(width, panels);
+}
+
+// DOM adapter for the sheet's justified ("photo wall") layout. Not a module: compose.js puts it after src/runtime/layout-plan.js
+// (which defines planLayout and the shared STEP, MAX_SCALE, MIN_SCALE) inside one function scope of the page script.
+//
+// It measures every panel at sampled widths, asks planLayout for rows and column widths, and applies them with flexbox.
+// The rendered HTML keeps the plain CSS grid: with JavaScript off, at the single-column breakpoint, or while printing, the grid is what
+// shows (the planned widths belong to the screen width, so print never gets a mix of the two); after printing the layout comes back.
+
+const grid = document.querySelector('.am-grid');
+const panels = grid ? [...grid.children].filter((el) => el.classList.contains('am-panel')) : [];
+
+if (panels.length > 1) {
+  const SINGLE_COLUMN = '(max-width: 760px)'; // the single-column breakpoint in src/themes/base.css
+  const TWO_COLUMNS = '(max-width: 1100px)'; // below this the CSS grid has two columns
+  const SAMPLE_STEP = 20; // width sampling step, px; the planner interpolates between samples
+  const TEXT_MIN = 260; // text keeps at least about 16 CJK characters per line
+  const TABLE_COL_MIN = 96; // per table column, px
+  const DIAGRAM_MIN = 160;
+  const RESIZE_DELAY = 150;
+  const OVERFLOWING = '.am-table-wrap, .am-diagram, .am-annot-scroll, pre';
+
+  const original = new Map([grid, ...panels, ...grid.querySelectorAll('.am-diagram > svg')].map((el) => [el, el.getAttribute('style')]));
+  const restoreStyle = (el) => (original.get(el) === null ? el.removeAttribute('style') : el.setAttribute('style', original.get(el)));
+
+  // Back to the plain grid markup and styles.
+  const restore = () => {
+    for (const box of grid.querySelectorAll(':scope > .am-col')) box.replaceWith(...box.children);
+    for (const el of original.keys()) restoreStyle(el);
+  };
+
+  // The author's width hint, rendered as data-span only when the author wrote one. The inline grid-column is the no-JavaScript fallback
+  // and may hold spans the server added, so it is never read here.
+  const spanHint = (el) => Number(el.dataset.span) || 1;
+  const diagramOnly = (el) => {
+    const body = el.querySelector(':scope > .am-panel-body');
+    return body && body.children.length === 1 ? body.querySelector(':scope > .am-diagram > svg') : null;
+  };
+  const naturalWidth = (svg) => Number(svg.getAttribute('width')) || 0;
+
+  // Height (and, for panels with tables or code, the narrowest width without sideways scrolling) at sampled widths.
+  // Only one panel is displayed while it is measured, so each width change lays out that panel alone.
+  function measure(width) {
+    grid.style.display = 'block';
+    for (const el of panels) {
+      el.style.display = 'none';
+      el.style.boxSizing = 'border-box';
+      for (const svg of el.querySelectorAll('.am-diagram > svg')) {
+        svg.style.width = '100%';
+        svg.style.maxWidth = `${naturalWidth(svg) * MAX_SCALE}px`;
+      }
+    }
+    const info = panels.map((el) => {
+      const svg = diagramOnly(el);
+      const svgs = [...el.querySelectorAll('.am-diagram > svg')];
+      const scrollers = el.querySelectorAll(OVERFLOWING);
+      const tableCols = Math.max(0, ...[...el.querySelectorAll('table tr:first-child')].map((tr) => tr.children.length));
+      el.style.display = '';
+      el.style.width = `${width}px`;
+      const pad = svg ? el.offsetWidth - svg.parentElement.clientWidth : 0;
+      const natural = svg ? naturalWidth(svg) : 0;
+      const shrunk = Math.max(0, ...svgs.map((s) => naturalWidth(s) * MIN_SCALE)) + (svg ? pad : 34);
+      const floor = svg ? Math.max(DIAGRAM_MIN, natural * MIN_SCALE + pad) : Math.max(TEXT_MIN, shrunk, tableCols * TABLE_COL_MIN + 34);
+      const from = Math.min(width, Math.floor(floor / STEP) * STEP);
+      const samples = [];
+      let fits = null;
+      for (let w = from; ; w += SAMPLE_STEP) {
+        w = Math.min(w, width);
+        el.style.width = `${w}px`;
+        if (fits === null && !svg && scrollers.length && ![...scrollers].some((s) => s.scrollWidth > s.clientWidth + 1)) fits = w;
+        samples.push({ w, h: el.offsetHeight });
+        if (w === width) break;
+      }
+      el.style.display = 'none';
+      return {
+        samples,
+        minWidth: svg ? floor : Math.max(floor, fits ?? (scrollers.length ? width : 0)),
+        maxWidth: svg ? natural * MAX_SCALE + pad : Infinity,
+        natural,
+        pad,
+        span: spanHint(el),
+      };
+    });
+    for (const el of panels) {
+      el.style.display = '';
+      el.style.width = '';
+    }
+    return info;
+  }
+
+  // Each column gets a fixed width. A row adds up to the full width, so flex-wrap breaks rows by itself.
+  // Stacked panels go into a column wrapper whose last panel absorbs the extra height.
+  function apply(plan, gap) {
+    grid.style.display = 'flex';
+    grid.style.flexWrap = 'wrap';
+    grid.style.alignItems = 'stretch';
+    grid.style.gap = `${gap}px`;
+    for (const el of panels) {
+      el.style.gridColumn = '';
+      el.style.gridRow = '';
+      el.style.flex = '0 0 auto';
+    }
+    for (const row of plan.rows) {
+      for (const col of row.columns) {
+        const width = `${col.width}px`;
+        if (col.panels.length === 1) {
+          panels[col.panels[0]].style.width = width;
+          continue;
+        }
+        const box = document.createElement('div');
+        box.className = 'am-col';
+        box.style.cssText = `width:${width};flex:0 0 auto;display:flex;flex-direction:column;gap:${gap}px`;
+        panels[col.panels[0]].before(box);
+        for (const k of col.panels) {
+          panels[k].style.width = '';
+          box.append(panels[k]);
+        }
+        panels[col.panels[col.panels.length - 1]].style.flex = '1 1 auto';
+      }
+    }
+  }
+
+  // Diagram-only panels show their diagram at most at the top of the page's scale band; a wider panel gains empty space instead.
+  function capDiagrams(maxScale) {
+    for (const el of panels) {
+      const svg = diagramOnly(el);
+      if (svg) svg.style.maxWidth = `${naturalWidth(svg) * maxScale}px`;
+    }
+  }
+
+  const containerWidth = () => Math.floor(grid.getBoundingClientRect().width);
+
+  function justify() {
+    if (printing || printQuery.matches) return;
+    try {
+      // A vertical scrollbar can appear or vanish once the rows change height; plan again if the width moved.
+      let planned = -1;
+      for (let pass = 0; pass < 3 && planned !== containerWidth(); pass++) {
+        restore();
+        if (matchMedia(SINGLE_COLUMN).matches) return;
+        planned = containerWidth();
+        const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+        const cols = Math.max(1, Number(getComputedStyle(grid).getPropertyValue('--cols')) || 3);
+        const plan = planLayout({ width: planned, gap, cols: matchMedia(TWO_COLUMNS).matches ? Math.min(cols, 2) : cols, panels: measure(planned) });
+        apply(plan, gap);
+        capDiagrams(plan.maxScale);
+      }
+      // The width never settled: columns planned for another width would overflow or leave gaps, so show the plain grid.
+      if (planned !== containerWidth()) restore();
+    } catch {
+      restore();
+    }
+  }
+
+  // Printing: back to the plain grid (spans and all), and the layout again afterwards. Browsers disagree on which of the
+  // `beforeprint` event and the print media query change fires first, or at all, so listen to both; both are idempotent.
+  // While `printing` is set (beforeprint to afterprint) justify() does nothing, so a late resize cannot bring flex widths into the print layout.
+  let printing = false;
+  const printQuery = matchMedia('print');
+  let timer = 0;
+  const later = () => {
+    clearTimeout(timer);
+    timer = setTimeout(justify, RESIZE_DELAY);
+  };
+  const toPrint = () => {
+    clearTimeout(timer);
+    restore();
+  };
+  justify();
+  addEventListener('resize', later);
+  addEventListener('beforeprint', () => {
+    printing = true;
+    toPrint();
+  });
+  addEventListener('afterprint', () => {
+    printing = false;
+    later();
+  });
+  printQuery.addEventListener('change', (e) => (e.matches ? toPrint() : later()));
+  // Late changes to panel heights: web fonts arriving, and images inside the grid finishing their load (load does not bubble, so capture it).
+  document.fonts?.ready.then(later);
+  grid.addEventListener('load', later, true);
+  // Switching theme changes paddings and fonts, hence panel heights.
+  document.querySelector('[data-am="theme"]')?.addEventListener('click', later);
+}
+})();
+</script>
+</body>
+</html>

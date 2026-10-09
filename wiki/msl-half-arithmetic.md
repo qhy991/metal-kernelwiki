@@ -1,5 +1,7 @@
 # MSL half 算术：类型提升、倒数与次正规数
 
+[English companion](en/msl-half-arithmetic.md)
+
 输出buffer是half，并不表示表达式用half计算。本页区分源码类型、生成签名、表达式宽度与最终位模式。首次探针因类型别名检查停止；独立后继的28项数值检查通过，并发现部分F32倒数差异被half舍入掩盖。两次记录都不唯一解释[低精度softmax](msl-softmax-lowp.md)的原生全零行，也没有速度结论。
 
 ## 把运算与输出转换写成两个边界

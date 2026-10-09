@@ -1,5 +1,7 @@
 # MSL 矩阵乘：SIMD-group、尾块、累加精度与 tile 复用
 
+[English companion](en/msl-matrix.md)
+
 本页研究 `simdgroup_matrix` 的公开接口与 MLX Steel 的具体写法。2026-10-07 在 M4 / MLX 0.31.2 完成四路径、324项模型外检查：三条 float32 计算路径各81项通过，half 矩阵路径81项均未达到同一个 F32 输出精度合同。**没有性能测量，也没有专用矩阵硬件使用证明。** 原始失败保留，不把这组小矩阵等同于 LLM GEMM 验收。
 
 ## 公共接口保证什么

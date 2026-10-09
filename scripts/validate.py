@@ -133,6 +133,29 @@ def validate(data):
             read_page(page)
         except KnowledgeBaseError as exc:
             errors.append(str(exc))
+        translations = page.get("translations", {})
+        if not isinstance(translations, dict):
+            errors.append("{} translations must be an object".format(label))
+            continue
+        for language, edition in translations.items():
+            if language != "en" or not isinstance(edition, dict):
+                errors.append("{} has unsupported translation {!r}".format(label, language))
+                continue
+            for field in ("path", "title", "summary"):
+                if not nonempty_text(edition.get(field)):
+                    errors.append("{} {} edition requires {}".format(label, language, field))
+            if edition.get("edition") != "companion":
+                errors.append("{} {} edition must identify companion scope".format(label, language))
+            if set(edition) - {"path", "title", "summary", "edition"}:
+                errors.append("{} {} edition cannot override topic identity or metadata".format(label, language))
+            try:
+                path = safe_path(edition.get("path"))
+                if path in page_paths:
+                    errors.append("duplicate page path: {}".format(edition.get("path")))
+                page_paths.add(path)
+                read_page(dict(page, **edition))
+            except KnowledgeBaseError as exc:
+                errors.append(str(exc))
     wiki = ROOT / "wiki"
     if wiki.is_dir():
         for path in wiki.rglob("*.md"):

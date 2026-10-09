@@ -1,5 +1,7 @@
 # llama.cpp Metal 验证：防止空跑，定位数值差异
 
+[English companion](en/llamacpp-validation.md)
+
 适用：改 Metal 算子、融合或调度后，需要证明目标用例确实执行，并区分数值失败与计时口径差异。证据级别为 `source-reported`；2026-10-07 核对上游可变 `master`，本地部分仅只读源码观察，未运行测试或 GPU，commit 与二进制映射未知。
 
 后续独立 [FA 限定运行](llamacpp-fa-paths.md)已执行现存 binary 的45项测试，并以SQL完整参数和设备日志排除空跑；它没有补齐构建身份或保存数值数组，也不能追溯性地把本页原只读观察变成已执行验证。

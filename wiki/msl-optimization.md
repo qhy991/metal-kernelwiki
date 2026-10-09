@@ -1,5 +1,7 @@
 # MSL 优化：从源码写法到待验证的性能机制
 
+[English companion](en/msl-optimization.md)
+
 适用：已定位到逐元素 epilogue、归约或小 kernel 热点，需要修改 MSL。先读 [地址空间、对齐与同步](msl-programming.md)。以下以 **MLX v0.31.2 源码**和 Apple 官方资料解释候选；没有为这些参数组合测得通用最优值，也不把历史 Apple 演示数字当作 M4 LLM 收益。
 
 ## 每线程多做一点，先看线程数和访问布局

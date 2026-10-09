@@ -1,5 +1,7 @@
 # Attention：prefill、decode 和 GQA 分开选路径
 
+[English companion](en/attention.md)
+
 适用于 profiler 已定位 attention，或长上下文带来显存/延迟压力。先用框架 fast primitive 比较，再考虑手写。候选默认待验证；有限 SDPA 数值与主机调用计时见 [M4 本地记录](local-mlx-m4.md)，没有端到端收益结论。
 
 ## 保持数学语义

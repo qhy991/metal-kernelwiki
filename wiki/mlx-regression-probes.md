@@ -1,5 +1,7 @@
 # MLX 边界探针：异步依赖、singleton GQA、多行 qvm 与缓存生命周期
 
+[English companion](en/mlx-regression-probes.md)
+
 检查日期：2026-10-07。**四项均已有范围限定的 M4 观测；第 3 项数值门失败，第 4 项发现策略损失；另测 keep=0 mask 有限定失败，服务仍未测**。保留原始设计与后续观测的区别。执行新配置前固定芯片、OS、安装版本、seed、dtype、shape、容差与求值范围，按项目授权和 gate 运行，失败保留原始记录。
 
 本地 r1 只检查了同步 SDPA 的 `D=64`、四组非 singleton 长度，以及另一组 `transpose=True/M>=16` 量化乘法和缓存 API 行为；其结果见 [M4 本地观测](local-mlx-m4.md)，相关方法见 [量化乘法验证](quantized-matmul-validation.md)。r1 结果不覆盖下面四项，独立 capture 导出也没有解析执行路径。后续运行 `2026-10-07-mlx-boundaries` 单独保留了第 1、2 项结果，没有改变 r1 的证据范围。

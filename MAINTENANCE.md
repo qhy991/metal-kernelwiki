@@ -1,5 +1,9 @@
 # 来源、版本与维护
 
+[English](MAINTENANCE.en.md)
+
+每个 topic 的 `translations.en` 注册英文标题、摘要、路径和 `edition=companion`，共享原 topic ID 与来源，不另计主题数。英文伴读版覆盖机制、主要结果及限制；中文保留详细表格、代码与历史。技术结论更新时同步两版，并重新生成 HTML 总览；HTML 是 catalog 的浏览视图，不拥有另一份证据索引。
+
 本技能借鉴 KernelWiki 的“来源 → 主题页 → 检索”结构。已有本地 MetalKernelWiki 草稿只作为组织方式参考，未将其无来源条目或空索引继承为事实。内容主要覆盖 Apple Silicon 上 Metal/MLX/llama.cpp；不声称全面涵盖 Core ML、独立 ANE、Intel/AMD Metal、分布式推理或每款芯片。
 
 ## 单一索引

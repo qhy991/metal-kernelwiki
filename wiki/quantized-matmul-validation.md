@@ -1,5 +1,7 @@
 # 量化矩阵乘：把性能路径与数值路径一起比较
 
+[English companion](en/quantized-matmul-validation.md)
+
 证据状态：上游报告、M4 限定数值与三路径性能观测，核查于 2026-10-07。r1 数值现象见 [M4 本地记录](local-mlx-m4.md)；后续多行 QVM 失败见本页。尚无整模型收益或质量结论。
 
 ## 先确定误差来自哪里

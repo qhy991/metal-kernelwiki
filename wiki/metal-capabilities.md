@@ -1,5 +1,7 @@
 # Metal 能力与部署边界
 
+[English companion](en/metal-capabilities.md)
+
 适用：选择 LLM 后端、编译自定义 kernel、排查快路径没有启用。**证据是官方能力说明；本文方案未在本机运行。**
 
 ## 先确定四层条件

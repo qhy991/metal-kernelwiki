@@ -1,5 +1,7 @@
 # MLX 求值边界：依赖链延迟与独立任务吞吐
 
+[English companion](en/mlx-async-evaluation.md)
+
 证据：官方 API、2026-10-07 的 M4/MLX 0.31.2 有界本地观察。`async_eval` 是待按任务验证的执行策略，不能从函数返回耗时直接判断推理速度。
 
 ## 改变的是何时提交、何时等待

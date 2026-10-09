@@ -57,6 +57,22 @@ def read_page(page):
         raise KnowledgeBaseError("Cannot read page {}: {}".format(page.get("id"), exc))
 
 
+def localized_page(page, language):
+    """Select a registered edition while preserving topic and source identity."""
+    if language == "zh":
+        return dict(page)
+    if language != "en":
+        raise KnowledgeBaseError("Unsupported language: {}".format(language))
+    edition = page.get("translations", {}).get(language)
+    if not isinstance(edition, dict):
+        raise KnowledgeBaseError("Page {} has no {} edition".format(page.get("id"), language))
+    result = dict(page)
+    for field in ("path", "title", "summary", "edition"):
+        result[field] = edition.get(field)
+    result["language"] = language
+    return result
+
+
 def unique_index(rows, label):
     result = {}
     for row in rows:
@@ -125,7 +141,13 @@ def matching_resource(data, identifier):
         return "page", pages[identifier]
     if identifier in sources:
         return "source", sources[identifier]
-    matches = [page for page in pages.values() if page.get("path") == identifier]
+    matches = []
+    for page in pages.values():
+        if page.get("path") == identifier:
+            matches.append(page)
+        for language, edition in page.get("translations", {}).items():
+            if edition.get("path") == identifier:
+                matches.append(localized_page(page, language))
     if len(matches) == 1:
         return "page", matches[0]
     if len(matches) > 1:

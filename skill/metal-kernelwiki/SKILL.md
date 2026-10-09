@@ -6,8 +6,10 @@ description: Retrieve and maintain evidence-backed Metal LLM deployment and kern
 # Metal KernelWiki
 
 The installed `knowledge/` directory exposes linked documents from the canonical
-repository; `repository.json` locates its command entry. Begin with
-`knowledge/README.md` and `knowledge/references/optimization-workflow.md`, then
+repository; `repository.json` locates its command entry. For Chinese, begin with
+`knowledge/README.md` and `knowledge/references/optimization-workflow.md`. For
+English, use `knowledge/README.en.md` and
+`knowledge/references/en/optimization-workflow.md`, then
 retrieve the relevant mechanism pages and their registered sources. When using
 the repository template directly, these documents live at the repository root.
 
@@ -19,6 +21,8 @@ python3 scripts/wiki.py get msl-optimization
 python3 scripts/wiki.py get measurement
 python3 scripts/wiki.py get quantized-matmul-validation --follow-sources
 python3 scripts/wiki.py get local-mlx-m4
+python3 scripts/wiki.py query "MSL reduction precision" --lang en
+python3 scripts/wiki.py get msl-f32-divide --lang en --follow-sources
 python3 scripts/wiki.py validate
 ```
 
@@ -26,6 +30,14 @@ Commands are relative to this skill, or use the absolute launcher path. They
 require only Python 3.9+ and perform CPU-only retrieval. The repository's
 `data/catalog.json` is the single page/source index. If a keyword query misses,
 try a narrower keyword or a relevant filter; do not invent missing evidence.
+
+Use the user's language for answers. `--lang en` selects an English companion
+guide for every registered topic; the default `zh` selects the detailed Chinese
+record. The English edition explains mechanisms, results and limitations but
+does not translate every experiment table or code listing. Follow its Chinese
+record for omitted detail. Both editions share topic IDs and original source
+metadata; following sources may include Chinese notes. Language coverage does
+not expand scientific coverage.
 
 Explain ideas through the observed cost, proposed transformation, applicability,
 tradeoffs and validation. Keep prefill, decode and service latency distinct.
@@ -44,7 +56,7 @@ Inspect framework-generated signatures and actual strides; source-level vectors,
 thread arrays and specialization do not prove vector instructions, register
 residency or a speedup. Match language-version rules to the installed toolchain.
 
-For maintenance, read `knowledge/MAINTENANCE.md`, retain source/version/scope,
+For maintenance, read `knowledge/MAINTENANCE.md` or `knowledge/MAINTENANCE.en.md`, retain source/version/scope,
 update the relevant page and catalog, then validate and exercise retrieval.
 Keep raw experiments outside the checkout and respect the task's reference-access,
 frozen-revision and acceptance rules. This skill does not itself authorize model

@@ -1,5 +1,7 @@
 # MSL softmax：在线归一化、分块合并与 mask 契约
 
+[English companion](en/msl-softmax.md)
+
 softmax 优化需要一起决定输入读几遍、保留多少局部值、如何合并归约，以及空行输出什么。本页给出原创 MSL 写法、MLX v0.31.2 的源码线索和 M4 有限检查。它只输出给定 logits 的概率，没有实现 QK/PV、KV cache 或完整 FlashAttention，原数值运行未计时；后续[独立计时页](msl-softmax-timing.md)记录同一候选的主机完成成本与统计差异。
 
 ## 先定义有效集合，再谈稳定计算

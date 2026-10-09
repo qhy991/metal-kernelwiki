@@ -1,5 +1,7 @@
 # MSL softmax 低精度：存储、累加与次正规输出
 
+[English companion](en/msl-softmax-lowp.md)
+
 低精度优化要分别说明输入保存为什么类型、统计量在哪里舍入、输出怎样窄化。本页在[softmax 三遍 SIMD 归约](msl-softmax.md)上显式使用 float 状态，并与 MLX 的低精度原生路线比较。M4 的有限检查保留了失败，不能把 `precise=True`、输出dtype或CPU参考通过替代成通用质量与性能保证。
 
 ## MSL 类型边界要写出来
