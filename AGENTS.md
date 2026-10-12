@@ -1,5 +1,14 @@
 # Metal KernelWiki owner rules
 
+## GitHub Project tracking
+
+For newly authorized qhy991-managed work, follow the canonical
+[agent tracking policy](https://github.com/users/qhy991/projects/1) in the
+Project README. Read it before task work and perform its checkpoint updates
+through the authenticated GitHub CLI/API. This binding adds tracking metadata
+only; the repository's existing issue, lifecycle, resource, privacy and acceptance
+rules retain their authority.
+
 Maintain optimization knowledge through mechanisms, conditions, tradeoffs and scoped observations. Use primary sources and name the version and examined domain. A local primitive test is not a general hardware guarantee or model acceptance; trace export is not profiler analysis.
 
 `wiki/` owns synthesis, `data/catalog.json` owns the page/source index, and external experiment directories own raw facts. Preserve failures and superseded observations. Do not import weights, datasets, credentials, raw model conversations, trace bundles or caches. Do not mutate experiments, Compiler revisions or approvals while maintaining this library.
