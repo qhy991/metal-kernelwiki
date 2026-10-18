@@ -1111,7 +1111,9 @@
       "sources": [
         "apple-m5-ml",
         "apple-mpp-guide",
-        "apple-wwdc26-tensors"
+        "apple-wwdc26-tensors",
+        "apple-mpp-sdk-headers-270",
+        "apple-msl-spec-41"
       ],
       "summary": "按版本核查 TensorOps，提出缓存分块、量化和融合候选，并保留边界、布局与数值验证。",
       "translations": {
@@ -1201,7 +1203,11 @@
         "mlx-custom-metal-impl-0312",
         "local-mlx-rope-qk-20261007",
         "local-mlx-swiglu-20261007",
-        "mlx-lm-swiglu-0313"
+        "mlx-lm-swiglu-0313",
+        "mlx-metal-kernel-writer-0323",
+        "mlx-custom-metal-impl-0323",
+        "mlx-python-fast-0323",
+        "mlx-metal-device-0323"
       ],
       "summary": "完成惰性求值再计时，优先采用 fast 原语与稳定子图编译，最后依据 profile 编写 custom Metal。",
       "translations": {
@@ -1279,7 +1285,10 @@
       "confidence": "source-reported",
       "sources": [
         "mlx-server-code",
-        "mlx-generate-code"
+        "mlx-generate-code",
+        "mlx-random-0323",
+        "mlx-random-0312",
+        "mlx-python-random-0323"
       ],
       "summary": "检查请求是否进入 batch，围绕延迟目标搜索并发，并将 speculative decoding 作为独立候选。",
       "translations": {
@@ -1452,7 +1461,10 @@
         "mlx-qvm-kernel-0312",
         "mlx-qvm-dispatch-0312",
         "local-mlx-qmm-paths-20261007",
-        "local-mlx-quantized-attention-20261007"
+        "local-mlx-quantized-attention-20261007",
+        "mlx-quantized-dispatch-0323",
+        "mlx-quantized-kernel-0323",
+        "mlx-metal-device-0323"
       ],
       "summary": "分离量化与kernel误差；保留多行QVM失败和前缀一致仍算错的诊断。另有transpose=True三路径的数值、时间和内存观测，不据此生成通用分派阈值。",
       "translations": {
@@ -1581,7 +1593,11 @@
         "mlx-async-eval-api",
         "mlx-synchronize-api",
         "mlx-eval-implementation-0312",
-        "local-mlx-boundaries-20261007"
+        "local-mlx-boundaries-20261007",
+        "mlx-metal-device-0323",
+        "mlx-metal-device-0312",
+        "mlx-metal-eval-0323",
+        "mlx-env-utils-0323"
       ],
       "summary": "M4/MLX0.31.2 比较三种32步依赖链求值边界与独立任务；三进程均过CPU oracle，保留主机完成区间的分布和环境干扰，不推导decode加速。",
       "translations": {
@@ -2098,7 +2114,10 @@
         "apple-msl-generic-pointers",
         "mlx-custom-metal-impl-0312",
         "mlx-custom-metal-guide-0312",
-        "local-msl-usage-20261007"
+        "local-msl-usage-20261007",
+        "mlx-metal-kernel-writer-0323",
+        "apple-metal-bp-persistent",
+        "apple-metal-bp-libraries"
       ],
       "summary": "MSL4.1版本规则与原创packed/归约示例；修正版170数值通过，但singleton stride元数据1项失败，首版constant/device编译错误保留。无性能承诺。",
       "translations": {
@@ -3949,9 +3968,9 @@
       "url": "https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf",
       "kind": "official-doc",
       "revision": "Version 4.1; 2026-06-04",
-      "checked": "2026-10-08",
+      "checked": "2026-10-18",
       "mutable": true,
-      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。 矩阵页另读§2.4/6.8/7.2.1，区分同T公开签名、未规定lane映射及MPP接口条件。 GEMV页另读§6.10.2的shuffle XOR与活跃lane reduction语义。 量化GEMV页另读§3.1无符号移位与§6.10.2归约参与语义。 Softmax页另核对float exp精度表、precise/fast区分、活跃lane归约及threadgroup barrier；不从函数拼写推定周边算术精度。 2026-10-08 reread sections 1.6.3,2.23,2.24,3.1,8.1,8.2,8.4,8.6. BF16/half to float lossless; default float-to-BF16/half ties-to-even, but Metal4.1 RTZ conversion option can override. Arithmetic accuracy/FTZ and compiler reordering are separate; runtime flags unobserved. Lowp CPU diagnosis additionally read §8.5/8.6: permitted arithmetic FTZ differs from float-to-half conversion of newly generated subnormals; no actual runtime option attribution. Half arithmetic probe sources: pp26,110–112,205–209,368,370–376. divide(T,T) supports half/float; explicit fast/precise documented for float. Arithmetic FTZ differs from float-to-half subnormal conversion; no explicit half/integer rank table found. Source guarantees only; compiler sizeof observations are registered separately as a limited local record. F32divide follow-up reread pp15–17,112,205–209,368,370–371,375–376: separate defaultFP32functions and mathmode axes; explicitfast/precise floatvariants. Table8.2 fastreciprocal1ULP and generaldivide2.5ULP have separate rows and denominator domain. Correctrounding subjectto8.2 RNE/RTZ; ULP uses exactrealreference, notdistancefromRNE. No actualruntimeflag attribution."
+      "note": "已下载并提取383页；实际阅读§1.3/1.6.3/2.2/2.2.3/2.4/2.5/4/6.10/6.16/8.1-8.4。§4旧式pointer绝对措辞需与generic官方文章按版本交代。 矩阵页另读§2.4/6.8/7.2.1，区分同T公开签名、未规定lane映射及MPP接口条件。 GEMV页另读§6.10.2的shuffle XOR与活跃lane reduction语义。 量化GEMV页另读§3.1无符号移位与§6.10.2归约参与语义。 Softmax页另核对float exp精度表、precise/fast区分、活跃lane归约及threadgroup barrier；不从函数拼写推定周边算术精度。 2026-10-08 reread sections 1.6.3,2.23,2.24,3.1,8.1,8.2,8.4,8.6. BF16/half to float lossless; default float-to-BF16/half ties-to-even, but Metal4.1 RTZ conversion option can override. Arithmetic accuracy/FTZ and compiler reordering are separate; runtime flags unobserved. Lowp CPU diagnosis additionally read §8.5/8.6: permitted arithmetic FTZ differs from float-to-half conversion of newly generated subnormals; no actual runtime option attribution. Half arithmetic probe sources: pp26,110–112,205–209,368,370–376. divide(T,T) supports half/float; explicit fast/precise documented for float. Arithmetic FTZ differs from float-to-half subnormal conversion; no explicit half/integer rank table found. Source guarantees only; compiler sizeof observations are registered separately as a limited local record. F32divide follow-up reread pp15–17,112,205–209,368,370–371,375–376: separate defaultFP32functions and mathmode axes; explicitfast/precise floatvariants. Table8.2 fastreciprocal1ULP and generaldivide2.5ULP have separate rows and denominator domain. Correctrounding subjectto8.2 RNE/RTZ; ULP uses exactrealreference, notdistancefromRNE. No actualruntimeflag attribution. 2026-10-18 reread pp.94, 100 and 109: slice<SliceExtents...>(index...) and slice(index...) forms; origin-shifted tensors; cooperative tensor get_multidimensional_index and is_valid_element (access to an invalid element is undefined behavior). No static_slice member found in the spec text."
     },
     {
       "id": "apple-msl-generic-pointers",
@@ -4342,6 +4361,156 @@
       "mutable": false,
       "artifact_ref": "2026-10-08-msl-divide-provenance/derived/summary.json",
       "note": "One contiguous N16384 domain, TG128. Three divide outputs plus one promotion,3 metadata,7 wrappers,9 events independently CPU audited; exact quality3/3 pass, promotion bits exact. Inline has1248 non-RNE and1232 neither-RNE-nor-RTZ; GPU-materialized F32 and CPU-F32 controls are bitwise equal and match RNE. Shared consumer wrapper/launch and12 host identity links verified; no actual dispatch/resource/compiler-pass or speed claim. Old difference retained; raw records unpublished."
+    },
+    {
+      "id": "mlx-quantized-dispatch-0323",
+      "title": "MLX v0.32.3 quantized Metal dispatch",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/quantized.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-18",
+      "revision": "v0.32.3 tag (64ea011); binary dispatch not verified",
+      "mutable": true,
+      "note": "Read get_qmv_batch_limit L89-149, qmm L1042-1090, qmm_splitk L1152-1202 and QuantizedMatmul::eval_gpu L1884-1962: the kernel family and the number of K partitions depend on M, K, N, architecture name and OS. Source routing only, not an observed dispatch."
+    },
+    {
+      "id": "mlx-quantized-kernel-0323",
+      "title": "MLX v0.32.3 quantized Metal kernels",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/kernels/quantized.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-18",
+      "revision": "v0.32.3 tag; byte-identical to the header shipped in the mlx 0.32.3 wheel",
+      "mutable": true,
+      "note": "affine_qmm_t template defaults BM=BK=BN=32 at L1900-1903. Used only when the NAX path is not taken."
+    },
+    {
+      "id": "mlx-metal-device-0323",
+      "title": "MLX v0.32.3 Metal device and command encoder",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/device.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-18",
+      "revision": "v0.32.3 tag",
+      "mutable": true,
+      "note": "set_compile_options L36-62 (math mode only), get_metal_version L64-79, input byte accounting L345-351 and output via set_input_array L360-366, dispatch counter L408-421, needs_commit L511-514, counter reset L558-561, per-architecture-letter limits L595-627, build_library_ L650-662, get_library cache L800-818, is_nax_available L952-971."
+    },
+    {
+      "id": "mlx-metal-device-0312",
+      "title": "MLX v0.31.2 Metal device and command encoder",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/device.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-18",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "needs_commit L445-447 and per-architecture-letter limits L499-522 have the same values as v0.32.3."
+    },
+    {
+      "id": "mlx-metal-eval-0323",
+      "title": "MLX v0.32.3 Metal eval",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/eval.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-18",
+      "revision": "v0.32.3 tag",
+      "mutable": true,
+      "note": "L59-64: after a primitive is encoded, needs_commit() ends encoding and commits the command buffer."
+    },
+    {
+      "id": "mlx-env-utils-0323",
+      "title": "MLX v0.32.3 environment helpers",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/utils.h",
+      "kind": "upstream-code",
+      "checked": "2026-10-18",
+      "revision": "v0.32.3 tag",
+      "mutable": true,
+      "note": "L193-202: MLX_MAX_OPS_PER_BUFFER and MLX_MAX_MB_PER_BUFFER override the per-architecture defaults."
+    },
+    {
+      "id": "mlx-metal-kernel-writer-0323",
+      "title": "MLX v0.32.3 metal_kernel signature writer",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/common/metal_kernel.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-18",
+      "revision": "v0.32.3 tag; installed-binary mapping not verified",
+      "mutable": true,
+      "note": "max_constant_array_size=8 L18; constant/device choice L101-102; _shape/_strides/_ndim parameters L117-133, added when the source text contains the name L238-240; thread attributes by name L243-270; body appended verbatim L174."
+    },
+    {
+      "id": "mlx-custom-metal-impl-0323",
+      "title": "MLX v0.32.3 custom Metal dispatch",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/custom_kernel.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-18",
+      "revision": "v0.32.3 tag; installed-binary mapping not verified",
+      "mutable": true,
+      "note": "Copies only when ensure_row_contiguous and the input is not row-contiguous L33-42; library name = kernel name + hash(source) + compile options, fetched through Device::get_library L50-54."
+    },
+    {
+      "id": "mlx-python-fast-0323",
+      "title": "MLX v0.32.3 Python fast bindings",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.32.3/python/src/fast.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-18",
+      "revision": "v0.32.3 tag",
+      "mutable": true,
+      "note": "parse_compile_options L90-112 accepts only the key math_mode (safe/relaxed/fast) and raises on any other key; metal_kernel returns nb::cpp_function wrapping PyCustomKernelFunction L434-435."
+    },
+    {
+      "id": "mlx-random-0323",
+      "title": "MLX v0.32.3 random",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/random.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-18",
+      "revision": "v0.32.3 tag",
+      "mutable": true,
+      "note": "categorical_inverse_cdf L392-413; categorical_impl L415-432 takes it when logits hold one row and the sample shape is non-empty, else Gumbel-max; overloads L434-480."
+    },
+    {
+      "id": "mlx-random-0312",
+      "title": "MLX v0.31.2 random",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/random.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-18",
+      "revision": "v0.31.2 tag",
+      "mutable": true,
+      "note": "categorical_impl L382-393 always samples by Gumbel-max (argmax of logits + Gumbel noise)."
+    },
+    {
+      "id": "apple-mpp-sdk-headers-270",
+      "title": "MetalPerformancePrimitives headers, MacOSX27.0 SDK (Xcode 27.0, 27A266a)",
+      "url": "https://developer.apple.com/xcode/",
+      "kind": "official-doc",
+      "checked": "2026-10-18",
+      "revision": "MacOSX27.0.sdk headers read locally; no per-file public URL",
+      "mutable": false,
+      "note": "MPPTensorOpsMatMul2d.h: example L112-139 (slice), L165-167 and L205 (static_slice), L282-309 (get_mask, get_multidimensional_index, \"32 x 64\" destination tile), run() signature L434. __impl/MPPTensorOpsMatMul2dImpl.h L4815-4822: store() static_assert on element type. No declaration of get_mask was found in the MPP headers; the metal_tensor standard header was not read (Metal Toolchain not installed)."
+    },
+    {
+      "id": "apple-metal-bp-persistent",
+      "title": "Metal Best Practices Guide: Persistent Objects",
+      "url": "https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/PersistentObjects.html",
+      "kind": "official-doc",
+      "checked": "2026-10-18",
+      "revision": "Documentation Archive, updated 2017-03-27",
+      "mutable": false,
+      "note": "Create one device and one command queue per GPU and reuse them; avoid building a library or fetching functions inside a compute loop; build compute pipeline states once and reuse them."
+    },
+    {
+      "id": "apple-metal-bp-libraries",
+      "title": "Metal Best Practices Guide: Functions and Libraries",
+      "url": "https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/FunctionsandLibraries.html",
+      "kind": "official-doc",
+      "checked": "2026-10-18",
+      "revision": "Documentation Archive, updated 2017-03-27",
+      "mutable": false,
+      "note": "Compiling MSL source is described as one of the most expensive stages; build libraries at build time, or at runtime only when the source is generated at runtime."
+    },
+    {
+      "id": "mlx-python-random-0323",
+      "title": "MLX v0.32.3 Python random bindings",
+      "url": "https://github.com/ml-explore/mlx/blob/v0.32.3/python/src/random.cpp",
+      "kind": "upstream-code",
+      "checked": "2026-10-18",
+      "revision": "v0.32.3 tag",
+      "mutable": true,
+      "note": "categorical binding L461-480: with neither shape nor num_samples it calls categorical(logits, axis, key), whose sample shape is logits.shape without axis."
     }
   ]
 }

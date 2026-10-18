@@ -32,3 +32,17 @@ WWDC26 增加 FP4/FP8/INT2 与 E8M0 scales plane 的 27 系统路线，并展示
 正确但变慢的 shape 不应被宽泛 dispatch 掩盖；保留显式适用范围与原始基线。
 
 量化候选还需要区分存储收益与计算收益：减小模型体积不保证反量化后算子更快，算子误差合格也不保证生成质量保持。记录权重位宽、分组大小、缩放方式、累加类型与模型评测结果。若只测过一个矩阵尺寸，应将条目标为该尺寸的候选证据，等待边界与真实请求验证后再扩大适用范围。
+
+## MPP `matmul2d` 接口拼写（2026-10-18 核查头文件与规范）
+
+证据类别：源码/文档（MacOSX27.0 SDK、Xcode 27.0 的 MetalPerformancePrimitives 头文件，MSL 4.1 规范）。本轮没有编译或运行这些写法；Metal Toolchain 未安装，标准库 `metal_tensor` 头文件未读。
+
+| 事项 | 头文件或规范所示 | 依据 |
+|---|---|---|
+| `run` 的操作数 | `run(thread LeftOperandType &left, thread RightOperandType &right, thread DestinationOperandType &destination)` 取非 const 左值引用；示例先 `auto mA = A.slice(...)` 绑定变量再传入 | `MPPTensorOpsMatMul2d.h` L134-139、L434 |
+| slice 写法 | 规范列出 `slice<SliceExtents...>(index...)` 与 `slice(index...)`，规范文本中没有 `static_slice`；MPP 头文件注释示例使用 `static_slice<32, 64>(...)` 与 `slice(...)` | MSL 4.1 p.94、p.100；`MPPTensorOpsMatMul2d.h` L165-167、L205 |
+| 坐标顺序 | 示例中 `A` 为 M×K，`A.slice(0, tgid.y*64)` 满足 `mA[x,y] == A[x,tgid.y*64+y]`；m=64、n=32 的目标 tile 在注释中称为 "32 x 64"。即下标 [0] 沿列（N/K），[1] 沿行（M） | `MPPTensorOpsMatMul2d.h` L112-113、L132、L305-309 |
+| 有效元素 | 规范：`is_valid_element(idx)` 为 false 时访问该元素是未定义行为；`get_multidimensional_index(idx)` 返回逻辑多维下标。头文件注释示例写作 `get_mask(i)`，MPP 头文件中未找到其声明 | MSL 4.1 p.109；`MPPTensorOpsMatMul2d.h` L282-283、L302 |
+| cooperative 目标的 store | `store` 对目标 tensor 的元素类型做 `static_assert`（"Tensor datatype does not match cooperative tensor"）：只能写入与 cooperative tensor 元素类型相同的 tensor，换类型需先显式转换 | `__impl/MPPTensorOpsMatMul2dImpl.h` L4815-4822 |
+
+头文件注释示例与规范的拼写不一致时，以安装 SDK 的编译结果为准；本页不判断哪一种在该 SDK 中可编译。

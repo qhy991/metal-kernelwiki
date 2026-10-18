@@ -34,6 +34,13 @@ MLX-LM 0.31.3 的 SwiGLU 和 MLX 0.31.2 的 `nn.silu` 已带编译装饰。[限�
 
 本机 0.31.2 的接口没有上面新版文档的 `compile_options` 参数；[版本源码](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/custom_kernel.cpp)与所保留安装接口相符。[本轮双输出探针](mlx-custom-rms.md)在安装版本下验证了连续/隔列切片与 D4103 尾部，不能扩展为任意布局支持。
 
+**2026-10-18 补注（v0.32.3 源码，未验证安装二进制）**：v0.32.3 已有 `compile_options`，但 Python 绑定只接受键 `math_mode`（`safe`/`relaxed`/`fast`），其他键抛出 "Unknown compile option"（[python/src/fast.cpp L90-112](https://github.com/ml-explore/mlx/blob/v0.32.3/python/src/fast.cpp#L90-L112)）。MSL 语言版本由 OS 决定（macOS 27 为 4.1、26 为 4.0、15 为 3.2，否则 3.1），`build_library_` 设置 math mode 与语言版本；debug 构建（未定义 `NDEBUG`）且语言版本 ≥ 3.2 时另外调用 `setEnableLogging(true)`（[device.cpp L36-79、L650-667](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/device.cpp#L36-L79)）；因此不能经此接口固定语言版本或其他 `MTLCompileOptions` 字段。上文"0.31.2 没有 `compile_options`"仍只描述 0.31.2。
+
+同版本的其他源码事实：
+- 签名生成移到 [backend/common/metal_kernel.cpp](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/common/metal_kernel.cpp)。`source` 在生成的签名后原样拼接（L174），辅助函数放在 `header`。`<name>_shape`（`const constant int*`）、`<name>_strides`（`const constant int64_t*`）、`<name>_ndim`（`const constant int&`）只在源码文本包含这些名字时加入（L117-133、L238-240）；`thread_position_in_grid` 等属性同样按名字加入（L243-270）。
+- library 缓存键为 kernel 名 + `hash(source)` + 编译选项，经 `Device::get_library` 命中已建 library（[custom_kernel.cpp L50-54](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/custom_kernel.cpp#L50-L54)，device.cpp L800-818）。
+- `mx.fast.metal_kernel` 返回包装 `PyCustomKernelFunction` 的 `nb::cpp_function`（fast.cpp L434-435），没有读取已编译 pipeline 属性（如 threadgroup 内存长度）的接口。
+
 以连续、转置、切片、尾部、不同 dtype 和极值输入对照参考；将隐式复制计入路径。搜索 threadgroup 与每线程工作量时观察 profiler 的分配、调度、访存及占用相关证据。采用条件是正确性、代表性 shape 和端到端收益同时成立；某个孤立 kernel 更快不足以通过。所有建议均为候选生成规则，不是跨 Apple 芯片的固定调参答案。
 
 ## 记录诊断与停止条件

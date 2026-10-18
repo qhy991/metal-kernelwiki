@@ -14,6 +14,10 @@ Math namespace, math mode, FP32 function set, contraction and storage narrowing 
 
 The local M4/MLX 0.31.2 teaching run preserved an initial address-space compilation failure. Its independent corrected candidate passed 170 numerical outputs but failed singleton-stride metadata expectations; the overall record remained failed.
 
+2026-10-18 note: MLX v0.32.3 keeps the same constant-address-space rule (fewer than 8 elements); the writer moved to `mlx/backend/common/metal_kernel.cpp` (L18, L101-102).
+
+Native Objective-C hosts: the Metal Best Practices Guide (documentation archive, updated 2017-03-27) says to create one device and one command queue per GPU and reuse them, not to build a library or fetch functions inside a compute loop, and to build compute pipeline states once; it calls compiling MSL source one of the most expensive stages. For a wrapper entered on every call (for example each `forward()`), keep the device, library, pipeline, queue and unchanging weight buffers in static or cached objects. `MTLDevice.h` documents `newLibraryWithSource:options:error:` only as "Load a MTLLibrary from source"; this page makes no claim about its internal caching.
+
 Compilation, numerical correctness, generated instruction behavior and speed are separate evidence. See [optimization](msl-optimization.md), [matrix](msl-matrix.md) and [softmax](msl-softmax.md). Raw local examples and records remain unpublished.
 
 ## Registered sources
@@ -24,6 +28,9 @@ These are shared with the Chinese record. Source metadata retains its original l
 - [apple-msl-generic-pointers](https://developer.apple.com/documentation/metal/writing-reusable-gpu-functions-with-generic-pointers) (official-doc)
 - [mlx-custom-metal-impl-0312](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/custom_kernel.cpp) (upstream-code)
 - [mlx-custom-metal-guide-0312](https://github.com/ml-explore/mlx/blob/v0.31.2/docs/src/dev/custom_metal_kernels.rst) (official-doc)
+- [mlx-metal-kernel-writer-0323](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/common/metal_kernel.cpp) (upstream-code)
+- [apple-metal-bp-persistent](https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/PersistentObjects.html) (official-doc)
+- [apple-metal-bp-libraries](https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/FunctionsandLibraries.html) (official-doc)
 - local-msl-usage-20261007: `2026-10-07-msl-usage/derived/summary.json` (local experiment; raw record unpublished).
 
 [Shared source catalog](../../data/catalog.json)

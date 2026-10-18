@@ -14,6 +14,8 @@
 
 因此先观察实际路径，再谈参数效果。不能声称 KV 量化、固定 seed、所有模型、所有 speculative 配置都能同时使用连续批处理；也不能为了进入 batch 偷改业务要求的采样语义。安装版本不同则重新检查条件。
 
+**2026-10-18 源码补注：固定 seed 的采样结果依赖 MLX 版本。** v0.32.3 的 `categorical_impl` 在 logits 只有一行（`logits.size() == n`）且采样 shape 非空时，走 `categorical_inverse_cdf`：对 `exp(x - max)` 做 cumsum，用 uniform 乘总和后 searchsorted；其余情况仍为 Gumbel-max（logits 加 Gumbel 噪声取 argmax）（[random.cpp L392-432](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/random.cpp#L392-L432)）。v0.31.2 始终用 Gumbel-max（[L382-393](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/random.cpp#L382-L393)）。两种路径从同一 key 抽取的随机数组 shape 不同，因此跨这两个版本比较固定 seed 的采样输出前要先确认走的是哪条路径。形如 `[1, V]` 的 logits 满足"一行"条件；一维 `[V]` logits 用默认参数调用时采样 shape 为空，仍走 Gumbel-max（random.cpp L472-480；Python 绑定 [python/src/random.cpp L461-480](https://github.com/ml-explore/mlx/blob/v0.32.3/python/src/random.cpp#L461-L480)）。本条为源码阅读，未运行对照。
+
 ## 并发与缓存一起预算
 
 分别扫描 prompt 并发、decode 并发和 prefill 步长，记录各请求的延迟分布，尤其加入一个长 prompt 对其余请求的影响。检查活跃 KV 与可复用 prompt cache 的总预算；所见实现会从 prompt cache 预算减去活动 batch 的 cache 字节。[缓存预算实现](https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/server.py)

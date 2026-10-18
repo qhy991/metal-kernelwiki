@@ -18,6 +18,19 @@
 
 把 kernel MAE 除以“理想结果仅做最终 dtype 舍入”的 MAE，是描述性比值，不是 ULP 数、合法误差上限或缺陷判据。分母很小时，float32 也可能得到很大的比值。应同时看绝对误差与任务质量，而非只看倍数。M4 的已测结果与上游环境不同，只能支持相似现象，不能宣称复现同一个根因。
 
+## v0.32.3 源码：M 决定 kernel 家族与 K 分区数（2026-10-18）
+
+证据类别：上游源码（v0.32.3 tag），未观测实际二进制 dispatch。[`QuantizedMatmul::eval_gpu`](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/quantized.cpp#L1884-L1962) 的路由：
+
+| 条件 | 路径 | 依据 |
+|---|---|---|
+| `transpose=True` 且 M < `get_qmv_batch_limit(K, N, d)` | qmv 家族（quad / wide / fast / general） | L1890、L1919-1937；家族选择 L1825-1866（K 为 64/128 走 quad，M ≥ 2 可走 wide）；限值按架构代、架构名末字母与 K、N 取 6-33，L89-149 |
+| `transpose=False` 且 M < 4 | K < 1024 走 qvm，否则 qvm_split_k | L1890、L1939-1962 |
+| M ≥ 限值、`transpose=True`、B = 1 | qmm_splitk：32×32 输出 tile，`split_k = max(1, 512 / tile 数)`，再受 `K / k_align` 与整除约束；`split_k ≤ 1` 时退回 qmm | L1893-1900、L1152-1202 |
+| 其余 M ≥ 限值 | qmm：NAX 可用（架构代 ≥ 17，名末字母为 p 时 ≥ 18；macOS ≥ 26.2）、模式允许（`transpose` 为真或 `mode == "affine"`）、K 为 64 的倍数、`transpose=False` 时 N 也为 64 的倍数、且 dtype 非 float32（或启用 TF32）时走 qmm_nax（quantized.cpp L1062-1066）；否则走 `<mode>_qmm_t` / `<mode>_qmm_n`，affine 模式且 `transpose=True` 时为 `affine_qmm_t`，模板默认 BM = BK = BN = 32，host 侧 bm = bn = 32 | L1042-1090；[device.cpp L952-971](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/device.cpp#L952-L971)；[kernels/quantized.h L1900-1903](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/kernels/quantized.h#L1900-L1903) |
+
+由源码推出：同一 packed 权重在不同 M 下可能走不同 kernel、不同 K 分区数，归约顺序随之改变；在一个 M 上两种 kernel 逐位相等，不能推出另一个 M 上也相等，换 K、N、架构或 OS 同样不能推出。这与上节 issue #4613 的 Split-K 现象一致，但本节只是源码条件，不是复现。
+
 ## 多行 QVM：前缀一致仍可能一起算错
 
 2026-10-07 在 Apple M4/16GB、macOS 27.0（26A428）、MLX 0.31.2、NumPy 2.4.3、Python 3.14.3 上执行一次无模型探针，默认 GPU，`MLX_ENABLE_TF32` 未设置。覆盖 [历史回归测试](https://github.com/ml-explore/mlx/pull/3497/commits/2ecf184f9150b85b0aa139f7d827751011874d35) 的形状范围，但使用自己的 CPU PCG64 输入，并非原测试输入重放：

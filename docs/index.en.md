@@ -15,7 +15,7 @@ The skill retrieves deployment and kernel knowledge for Apple Silicon, MLX and l
 |---|---|
 | Topics | 44 |
 | English companions | 44 |
-| Registered sources | 177 |
+| Registered sources | 192 |
 | Local-experiment sources | 25 |
 
 English guides cover mechanisms, main observations and limits. Chinese records retain full tables, code and history.
