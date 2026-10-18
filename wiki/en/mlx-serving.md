@@ -14,11 +14,16 @@ Speculative decoding adds draft computation, verification, weights and cache. Ve
 
 Use [measurement](measurement.md), [KV cache](mlx-kv-cache.md) and [cache lifecycle](mlx-cache-lifecycle.md). Inspect the installed server implementation before applying current-main defaults. No local service benchmark or end-to-end speculative-decoding validation is claimed here.
 
+2026-10-18 source note: seeded sampling depends on the MLX version. In v0.32.3, `categorical_impl` uses `categorical_inverse_cdf` (cumsum of `exp(x - max)`, a scaled uniform draw, then searchsorted) when the logits hold one row (`logits.size() == n`) and the sample shape is non-empty; otherwise it uses Gumbel-max (`random.cpp` L392-432). v0.31.2 always uses Gumbel-max (L382-393). The two paths draw differently shaped random arrays from the same key, so check which path runs before comparing seeded samples across these versions. `[1, V]` logits meet the one-row condition; 1-D `[V]` logits called with default arguments have an empty sample shape and still use Gumbel-max (`random.cpp` L472-480; Python binding `python/src/random.cpp` L461-480). Source reading only; no comparison was run.
+
 ## Registered sources
 
 These are shared with the Chinese record. Source metadata retains its original language.
 
 - [mlx-server-code](https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/server.py) (upstream-code)
 - [mlx-generate-code](https://github.com/ml-explore/mlx-lm/blob/main/mlx_lm/generate.py) (upstream-code)
+- [mlx-random-0323](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/random.cpp) (upstream-code)
+- [mlx-random-0312](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/random.cpp) (upstream-code)
+- [mlx-python-random-0323](https://github.com/ml-explore/mlx/blob/v0.32.3/python/src/random.cpp) (upstream-code)
 
 [Shared source catalog](../../data/catalog.json)

@@ -10,6 +10,15 @@ MLX 惰性构图；`eval` 提交并等待结果，`async_eval` 调度求值，�
 
 比较前先画清数据依赖：下一步需要前一步 GPU 数组，与下一步必须由 CPU 读取该值后决定，是不同的限制。保存异步返回前区间和最终完成区间，每次新建图；重复求值已经物化的同一结果不能衡量重复计算。
 
+## command buffer 何时提交（v0.31.2 / v0.32.3 源码，2026-10-18）
+
+证据类别：上游源码，未观测本机提交边界。每个 primitive 编码后，若 `needs_commit()` 为真就结束编码并提交 command buffer（[eval.cpp L59-64](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/eval.cpp#L59-L64)）。条件是 `buffer_ops_ > max_ops` 或 `(buffer_sizes_ >> 20) > max_mb`（[device.cpp L511-514](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/device.cpp#L511-L514)；[v0.31.2 L445-447](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/device.cpp#L445-L447)）：
+
+- `buffer_ops_` 每次 dispatch 加 1（L408-421）；`buffer_sizes_` 累加本 command buffer 中首次出现的输入 buffer 的 `data_size`，输出经 `set_output_array` 调用 `set_input_array` 同样计入（L345-351、L360-366）；提交后两者清零（L558-561）。
+- 限值按架构名末字母：`p` 20 ops / 40 MB，`g` 40 / 40，`s` 50 / 50，`d` 50 / 50，其他 40 / 40（L603-624；v0.31.2 L499-520 相同）；源码注释分别标为 phone、base/pro、max、ultra。环境变量 `MLX_MAX_OPS_PER_BUFFER`、`MLX_MAX_MB_PER_BUFFER` 可覆盖（[utils.h L193-202](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/utils.h#L193-L202)）。
+
+由源码推出：dispatch 数与 buffer 字节数是两个独立计数；多一个输出分配可以在 dispatch 数不变时把提交点提前，减少 dispatch 也未必移动提交点。比较候选时把 command buffer 边界作为单独观测项，不由 dispatch 数推断。
+
 ## 四种路径有两种工作负载
 
 | 路径 | 实际工作 | 结束点 |

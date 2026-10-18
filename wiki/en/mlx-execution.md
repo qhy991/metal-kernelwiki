@@ -14,6 +14,8 @@ Attention semantics include GQA broadcasting, float softmax calculations and low
 
 New documentation can describe options absent from installed 0.31.2, including `force_fused` or custom compile-option interfaces. Do not infer runtime flags from current documentation or change tolerances to accommodate a failed candidate.
 
+2026-10-18 note (v0.32.3 source, installed binary not checked): `compile_options` exists in 0.32.3, but the Python binding accepts only the key `math_mode` (`safe`/`relaxed`/`fast`) and raises on any other key (`python/src/fast.cpp` L90-112). The MSL language version follows the OS (4.1 on macOS 27, 4.0 on 26, 3.2 on 15, else 3.1), and `build_library_` sets only math mode and language version (`device.cpp` L36-79, L650-662), so this interface cannot pin the language version or other `MTLCompileOptions` fields. The signature writer is now `mlx/backend/common/metal_kernel.cpp`: the body is appended verbatim (L174); `<name>_shape`, `<name>_strides` (`int64_t`) and `<name>_ndim` are added only when the source text contains them (L117-133, L238-240), and thread attributes likewise (L243-270). Libraries are cached by kernel name + `hash(source)` + options (`custom_kernel.cpp` L50-54; `device.cpp` L800-818). `mx.fast.metal_kernel` returns an `nb::cpp_function` (`fast.cpp` L434-435) with no accessor for compiled-pipeline properties.
+
 See [async evaluation](mlx-async-evaluation.md), [fusion](fusion.md), [MSL programming](msl-programming.md) and [precision diagnostics](mlx-float32-precision.md).
 
 ## Registered sources
@@ -35,5 +37,9 @@ These are shared with the Chinese record. Source metadata retains its original l
 - local-mlx-rope-qk-20261007: `2026-10-07-mlx-rope-qk/derived/summary.json` (local experiment; raw record unpublished).
 - local-mlx-swiglu-20261007: `2026-10-07-mlx-swiglu/derived/summary.json` (local experiment; raw record unpublished).
 - [mlx-lm-swiglu-0313](https://github.com/ml-explore/mlx-lm/blob/v0.31.3/mlx_lm/models/activations.py) (upstream-code)
+- [mlx-metal-kernel-writer-0323](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/common/metal_kernel.cpp) (upstream-code)
+- [mlx-custom-metal-impl-0323](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/custom_kernel.cpp) (upstream-code)
+- [mlx-python-fast-0323](https://github.com/ml-explore/mlx/blob/v0.32.3/python/src/fast.cpp) (upstream-code)
+- [mlx-metal-device-0323](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/device.cpp) (upstream-code)
 
 [Shared source catalog](../../data/catalog.json)

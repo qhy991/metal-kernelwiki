@@ -14,6 +14,18 @@ The [MPP guide](https://developer.apple.com/download/files/Metal-Performance-Pri
 
 Fix target, shape, quantization scheme, tolerance and framework baseline. Compare tile/cache, dequantization and fusion independently. Cover tails, transpose/strides, masks, empty rows, accumulation and task quality. Measure kernel and complete-path costs and inspect actual hardware selection. A smaller checkpoint or successful compilation does not establish faster inference.
 
+## MPP `matmul2d` spellings (headers and specification checked 2026-10-18)
+
+Evidence class: source/documentation (MetalPerformancePrimitives headers of the MacOSX27.0 SDK, Xcode 27.0; MSL 4.1). Nothing here was compiled or run; the Metal Toolchain was not installed, so the `metal_tensor` standard header was not read.
+
+- `run` takes non-const lvalue references (`thread T &`) for left, right and destination; the header example binds `auto mA = A.slice(...)` before calling it (`MPPTensorOpsMatMul2d.h` L134-139, L434).
+- The specification lists `slice<SliceExtents...>(index...)` and `slice(index...)` and has no `static_slice`; the MPP header examples use `static_slice<32, 64>(...)` as well as `slice(...)` (MSL 4.1 pp. 94, 100; header L165-167, L205).
+- Coordinates: for an M×K `A`, `A.slice(0, tgid.y*64)` gives `mA[x,y] == A[x,tgid.y*64+y]`, and the m=64, n=32 destination tile is called "32 x 64". Index [0] runs along columns (N/K), [1] along rows (M) (header L112-113, L132, L305-309).
+- `is_valid_element(idx)` false means access is undefined behavior; `get_multidimensional_index(idx)` returns the logical index (MSL 4.1 p. 109). The header example writes `get_mask(i)`; no declaration of it was found in the MPP headers (L282-283, L302).
+- A cooperative destination's `store` has a `static_assert` that the target tensor's element type equals its own (`__impl/MPPTensorOpsMatMul2dImpl.h` L4815-4822); convert explicitly to write another type.
+
+Where header examples and the specification differ, the installed SDK's compiler decides; this page does not say which spelling compiles.
+
 ## Registered sources
 
 These are shared with the Chinese record. Source metadata retains its original language.
@@ -21,5 +33,7 @@ These are shared with the Chinese record. Source metadata retains its original l
 - [apple-m5-ml](https://developer.apple.com/videos/play/tech-talks/111432/) (official-doc)
 - [apple-mpp-guide](https://developer.apple.com/download/files/Metal-Performance-Primitives-Programming-Guide.pdf) (official-doc)
 - [apple-wwdc26-tensors](https://developer.apple.com/videos/play/wwdc2026/330/) (official-doc)
+- apple-mpp-sdk-headers-270: MetalPerformancePrimitives headers, MacOSX27.0 SDK (official-doc; read locally, no per-file URL)
+- [apple-msl-spec-41](https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf) (official-doc)
 
 [Shared source catalog](../../data/catalog.json)

@@ -15,6 +15,8 @@ MSL kernel 的第一步是把访问与参与规则写对，再讨论是否更快
 
 依据 [规范 §4](https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf)。入口的 buffer 索引、dtype、shape、stride、起始 offset 都是调用合同。MLX 会生成入口签名，不能只看 Python 里的“array”：本轮最初把所有输入假定为 device，**N=1 时编译器实际收到 `const constant float*`，packed 转型失败**。[v0.31.2 `write_signature`](https://github.com/ml-explore/mlx/blob/v0.31.2/mlx/backend/metal/custom_kernel.cpp#L66-L74)按 `arr.size()<8` 选择 constant，否则为 device；这是元素数条件，不是字节数，也不限单元素。调试时检查生成源，而不是删除限定符或跨域强转。
 
+**2026-10-18 补注**：v0.32.3 保留同一规则，签名生成移到 [backend/common/metal_kernel.cpp](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/common/metal_kernel.cpp#L18) （`max_constant_array_size = 8`，L18；`arr.size() < 8` 选 constant，L101-102）。
+
 新版本还有 [MSL 4.1 generic pointers](https://developer.apple.com/documentation/metal/writing-reusable-gpu-functions-with-generic-pointers)：覆盖 thread/threadgroup/device，入口资源仍需显式限定，constant 不在这个集合中；无法静态决定地址空间可能增加分支和寄存器成本。规范 §4 仍有旧式绝对措辞，不能据此断言所有版本都没有 generic pointer。本页用显式重载，不要求升级工具链。
 
 ## `float4`、packed 与每线程四元素不是一回事
@@ -99,6 +101,12 @@ barrier 要同时检查参与线程、控制流和内存域。`mem_none` 不为�
 
 
 原子计数只解决对应对象的原子性，不能代替普通 payload 的发布协议或全 grid barrier。旧版 relaxed 接口的限制不能泛化到 4.1 新增 order/mem_flags 接口；atomic_float 类型存在也不表示所有地址空间都支持同样运算，threadgroup add/sub 支持有版本条件。浮点原子累加仍可能因顺序变化而数值不同。本轮没有执行原子、跨组同步或 4.1 新接口实验。[规范 §6.16](https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf)
+
+## 原生 Objective-C 宿主：持久对象只建一次
+
+证据类别：官方文档（Metal Best Practices Guide，文档档案，更新于 2017-03-27）。每个 GPU 建一个 `MTLDevice` 和一个 command queue 并复用；不要在 compute 循环中建 library 或取 function；compute pipeline state 只建一次，之后每个 encoder 复用。[Persistent Objects](https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/PersistentObjects.html) 该指南把编译 MSL 源码列为最昂贵的阶段之一，运行时建 library 只用于运行时才生成源码的情况。[Functions and Libraries](https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/FunctionsandLibraries.html)
+
+对按调用执行的宿主包装（例如每次 `forward()` 进入的 `.mm`），这意味着把 device、library、pipeline、queue 和不变的权重 buffer 放在静态或缓存对象里，而不是在每次调用里 `newLibraryWithSource`、建 pipeline 或复制权重。SDK 头文件 `MTLDevice.h` 对 `newLibraryWithSource:options:error:` 只写 "Load a MTLLibrary from source"，没有说明重复调用是否命中缓存；本页不对其内部缓存作判断。
 
 ## 本地教学检查与未覆盖范围
 
