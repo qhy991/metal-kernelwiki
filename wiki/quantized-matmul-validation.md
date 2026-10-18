@@ -27,9 +27,9 @@
 | `transpose=True` 且 M < `get_qmv_batch_limit(K, N, d)` | qmv 家族（quad / wide / fast / general） | L1890、L1919-1937；家族选择 L1825-1866（K 为 64/128 走 quad，M ≥ 2 可走 wide）；限值按架构代、架构名末字母与 K、N 取 6-33，L89-149 |
 | `transpose=False` 且 M < 4 | K < 1024 走 qvm，否则 qvm_split_k | L1890、L1939-1962 |
 | M ≥ 限值、`transpose=True`、B = 1 | qmm_splitk：32×32 输出 tile，`split_k = max(1, 512 / tile 数)`，再受 `K / k_align` 与整除约束；`split_k ≤ 1` 时退回 qmm | L1893-1900、L1152-1202 |
-| 其余 M ≥ 限值 | qmm：NAX 可用（架构代 ≥ 17，名末字母为 p 时 ≥ 18；macOS ≥ 26.2）、K 为 64 的倍数且 dtype 非 float32（或启用 TF32）时走 qmm_nax；否则 `affine_qmm_t`，模板默认 BM = BK = BN = 32，host 侧 bm = bn = 32 | L1042-1090；[device.cpp L952-971](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/device.cpp#L952-L971)；[kernels/quantized.h L1900-1903](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/kernels/quantized.h#L1900-L1903) |
+| 其余 M ≥ 限值 | qmm：NAX 可用（架构代 ≥ 17，名末字母为 p 时 ≥ 18；macOS ≥ 26.2）、模式允许（`transpose` 为真或 `mode == "affine"`）、K 为 64 的倍数、`transpose=False` 时 N 也为 64 的倍数、且 dtype 非 float32（或启用 TF32）时走 qmm_nax（quantized.cpp L1062-1066）；否则走 `<mode>_qmm_t` / `<mode>_qmm_n`，affine 模式且 `transpose=True` 时为 `affine_qmm_t`，模板默认 BM = BK = BN = 32，host 侧 bm = bn = 32 | L1042-1090；[device.cpp L952-971](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/device.cpp#L952-L971)；[kernels/quantized.h L1900-1903](https://github.com/ml-explore/mlx/blob/v0.32.3/mlx/backend/metal/kernels/quantized.h#L1900-L1903) |
 
-由源码推出：同一 packed 权重在不同 M 下可能走不同 kernel、不同 K 分区数，归约顺序随之改变；在一个 M 上两种 kernel 逐位相等，不能推出另一个 M 上也相等。逐位比较要在目标部署的 M、K、N、架构与 OS 上做。这与上节 issue #4613 的 Split-K 现象一致，但本节只是源码条件，不是复现。
+由源码推出：同一 packed 权重在不同 M 下可能走不同 kernel、不同 K 分区数，归约顺序随之改变；在一个 M 上两种 kernel 逐位相等，不能推出另一个 M 上也相等，换 K、N、架构或 OS 同样不能推出。这与上节 issue #4613 的 Split-K 现象一致，但本节只是源码条件，不是复现。
 
 ## 多行 QVM：前缀一致仍可能一起算错
 
