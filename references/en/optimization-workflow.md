@@ -15,6 +15,8 @@ Separate loading, queueing, prefill, decode and completion. Read [measurement](.
 
 Propose a few structurally different candidates with applicability, expected bottleneck changes, tradeoffs and validation. Start with existing fast primitives and supported framework paths. Write MSL when hotspot evidence supports kernel work.
 
+For Apple Neural Engine questions, start with [capability surface](../../wiki/en/ane-reachability.md) (compile-and-run is the only support criterion), then [roofline and dispatch](../../wiki/en/ane-roofline-dispatch.md) (working set first, then the dispatch floor), [placement](../../wiki/en/ane-placement.md) (class, batch and energy), [shape and numeric contract](../../wiki/en/ane-shape-numerics.md), [weight forms](../../wiki/en/ane-weights.md) and [execution and measurement](../../wiki/en/ane-execution-measurement.md) and [quick reference](../../wiki/en/ane-quick-reference.md). Those topics report a third-party paper on M1/M5; they are not local measurements, and the private route below Core ML is research-only.
+
 For deployment, examine capacities, KV policy, quantization, batching, prefix reuse and speculation separately. For MSL, inspect address spaces, physical strides, participation, numerical types and output ownership before tuning thread/tile work.
 
 Validate against an independent oracle before performance acceptance. Use equal workload conditions and repeated timings; obtain profiler evidence to explain mechanisms. A source heuristic, fewer reads or an exported trace is not measured acceleration.

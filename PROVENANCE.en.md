@@ -15,3 +15,5 @@ The detailed Chinese provenance record retains per-run history. Important limits
 The repository publishes derived interpretation and logical artifact references. It does not publish raw scripts, arrays, logs, trace bundles, models or the source-ID-to-machine-path mapping. Readers cannot independently replay the original runs from this checkout.
 
 The HTML overview is a generated catalog view. It is not another evidence store or scientific qualification. The public repository does not assign licenses to third-party material or interpret citations as permission to redistribute complete upstream text or code.
+
+Six ANE topics (`ane-reachability`, `ane-roofline-dispatch`, `ane-placement`, `ane-shape-numerics`, `ane-weights`, `ane-execution-measurement`) summarize the third-party reverse-engineering paper arXiv:2606.22283v2. They rest on the author's M1/M5 measurements and decompilation (`source-reported`), carry no local reproduction, and keep the paper's own measured/decompile-derived/predicted marks per claim. The private route below Core ML that the paper describes is measurement and research context only, never a shippable implementation.
