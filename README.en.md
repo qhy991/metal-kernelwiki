@@ -2,9 +2,9 @@
 
 [中文](README.md) · [English HTML overview](docs/index.en.html) · [中英文 HTML 总览](docs/index.html)
 
-Evidence-backed LLM deployment and kernel optimization knowledge for Apple Silicon, Metal, MLX/MLX-LM and llama.cpp. Guides connect optimization mechanisms with conditions, costs, numerical behavior and primary sources.
+Evidence-backed LLM deployment and kernel optimization knowledge for Apple Silicon, Metal, MLX/MLX-LM, llama.cpp and Core ML/Apple Neural Engine placement. Guides connect optimization mechanisms with conditions, costs, numerical behavior and primary sources.
 
-The library has **44 topics and 177 registered sources**, including **25 local-experiment records**. Every topic has a detailed Chinese record and an English companion guide. The English edition covers mechanisms, main observations and limits; it is not a line-by-line translation of every table, code listing or historical record. Shared source metadata keeps its original language.
+The library has **51 topics and 178 registered sources**, including **25 local-experiment records**; six ANE topics summarize a third-party reverse-engineering paper and carry no local measurement. Every topic has a detailed Chinese record and an English companion guide. The English edition covers mechanisms, main observations and limits; it is not a line-by-line translation of every table, code listing or historical record. Shared source metadata keeps its original language.
 
 Local M4 primitive checks do not establish model quality or deployment speed. Exporting a trace does not establish profiler analysis. Raw experiments remain external and unpublished.
 
@@ -14,6 +14,7 @@ Local M4 primitive checks do not establish model quality or deployment speed. Ex
 - [MLX deployment](wiki/en/mlx-deployment.md), [execution](wiki/en/mlx-execution.md), [KV cache](wiki/en/mlx-kv-cache.md) and [serving](wiki/en/mlx-serving.md).
 - [llama.cpp deployment](wiki/en/llamacpp-deployment.md), [FA paths](wiki/en/llamacpp-fa-paths.md), [tuning](wiki/en/llamacpp-metal-tuning.md) and [validation](wiki/en/llamacpp-validation.md).
 - [Attention](wiki/en/attention.md), [GEMM/MoE](wiki/en/gemm-moe.md), [quantization](wiki/en/quantization.md) and [fusion](wiki/en/fusion.md).
+- [ANE capability surface](wiki/en/ane-reachability.md), [roofline and dispatch](wiki/en/ane-roofline-dispatch.md), [placement](wiki/en/ane-placement.md), [shape and numeric contract](wiki/en/ane-shape-numerics.md), [weight forms](wiki/en/ane-weights.md), [execution and measurement](wiki/en/ane-execution-measurement.md) and [quick reference](wiki/en/ane-quick-reference.md).
 - [MSL programming](wiki/en/msl-programming.md), [optimization](wiki/en/msl-optimization.md), [matrix operations](wiki/en/msl-matrix.md), [tiles](wiki/en/msl-tiles.md), [GEMV](wiki/en/msl-gemv.md) and [quantized GEMV](wiki/en/msl-quantized-gemv.md).
 - [Softmax](wiki/en/msl-softmax.md), [timing](wiki/en/msl-softmax-timing.md), [low precision](wiki/en/msl-softmax-lowp.md), [half arithmetic](wiki/en/msl-half-arithmetic.md) and [F32 division](wiki/en/msl-f32-divide.md).
 - Browse all topics in the HTML overview or [single catalog](data/catalog.json).

@@ -2,11 +2,11 @@
 
 [English](README.en.md) · [中英文 HTML 总览](docs/index.html) · [English HTML overview](docs/index.en.html)
 
-全部 44 个主题均有英文伴读版（`wiki/en/`），介绍机制、主要结果与验证限制，并链接中文详细记录；不是每张表、代码和历史记录的逐句翻译。来源元数据保留原语言。使用 `--lang en` 返回英文标题、摘要和正文，默认 `zh` 保留中文。HTML 文件已提交到仓库；GitHub 文件页显示源码，下载或 clone 后打开即可浏览。
+全部 51 个主题均有英文伴读版（`wiki/en/`），介绍机制、主要结果与验证限制，并链接中文详细记录；不是每张表、代码和历史记录的逐句翻译。来源元数据保留原语言。使用 `--lang en` 返回英文标题、摘要和正文，默认 `zh` 保留中文。HTML 文件已提交到仓库；GitHub 文件页显示源码，下载或 clone 后打开即可浏览。
 
-面向 Apple Silicon、Metal、MLX/MLX-LM 和 llama.cpp 的 LLM 部署与 kernel 优化知识库。以优化机制、适用条件、代价交换与有范围的观测组织内容，并保留一手来源。
+面向 Apple Silicon、Metal、MLX/MLX-LM、llama.cpp 以及 Core ML/ANE 放置判断的 LLM 部署与 kernel 优化知识库。以优化机制、适用条件、代价交换与有范围的观测组织内容，并保留一手来源。
 
-截至 2026-10-08：**44 个主题页、177 个来源条目**，其中 25 项为本地实验记录。M4 原语验证不代表整模型加速；捕获已导出不代表 profiler 已解析。详细范围见 [本地观测](wiki/local-mlx-m4.md)。
+截至 2026-11-10：**51 个主题页、178 个来源条目**，其中 25 项为本地实验记录；6 个 ANE 主题整理自第三方逆向工程论文，不含本机测量。M4 原语验证不代表整模型加速；捕获已导出不代表 profiler 已解析。详细范围见 [本地观测](wiki/local-mlx-m4.md)。
 
 ## 从哪里开始
 
@@ -17,6 +17,7 @@
 - [Attention](wiki/attention.md)、[GEMM/MoE](wiki/gemm-moe.md)、[量化 matmul 验证](wiki/quantized-matmul-validation.md)。
 - [Metal 能力](wiki/metal-capabilities.md)、[内存与线程组](wiki/metal-memory-threadgroups.md)、[运行时测量](wiki/runtime-measurement.md)。
 - [MSL 用法与正确性示例](wiki/msl-programming.md)、[MSL 优化方法](wiki/msl-optimization.md)、[矩阵乘与累加精度](wiki/msl-matrix.md)、[tile 共享与直接装载](wiki/msl-tiles.md)、[GEMV 与归约顺序](wiki/msl-gemv.md)、[量化 GEMV 与 affine 舍入](wiki/msl-quantized-gemv.md)、[softmax 与分块归约](wiki/msl-softmax.md)、[softmax 调用成本与计时差异](wiki/msl-softmax-timing.md)、[低精度 softmax 与次正规输出](wiki/msl-softmax-lowp.md)、[half 算术与类型提升](wiki/msl-half-arithmetic.md)、[F32 除法与输入来源](wiki/msl-f32-divide.md)。
+- [ANE 能力面](wiki/ane-reachability.md)、[roofline 与 dispatch](wiki/ane-roofline-dispatch.md)、[放置](wiki/ane-placement.md)、[形状与数值](wiki/ane-shape-numerics.md)、[权重形式](wiki/ane-weights.md)、[执行与测量](wiki/ane-execution-measurement.md)、[速查表](wiki/ane-quick-reference.md)。
 - [M4 本地记录](wiki/local-mlx-m4.md)、[异步求值边界](wiki/mlx-async-evaluation.md)、[float32 精度诊断](wiki/mlx-float32-precision.md)。
 - [量化三路径的时间与内存](wiki/mlx-qmm-path-comparison.md)、[缓存生命周期与 keep 策略](wiki/mlx-cache-lifecycle.md)。
 - [旋转缓存 mask 对齐](wiki/mlx-cache-mask-alignment.md)、[缓存保存恢复与续写](wiki/mlx-cache-persistence.md)。

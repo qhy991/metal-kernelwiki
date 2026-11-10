@@ -53,6 +53,13 @@ python3 scripts/validate.py
 | RoPE、Q/K 合并、批量单 token 或长 offset 精度 | [位置与布局验证](../wiki/mlx-rope-qk.md) |
 | SwiGLU、SiLU、FFN 激活、compiled 与手写 Metal | [已有融合与舍入/计时验证](../wiki/mlx-swiglu.md) |
 | 边界探针已测与未测范围 | [探针进度](../wiki/mlx-regression-probes.md) |
+| ANE 上某个算子能不能跑、要哪一代 | [能力面](../wiki/ane-reachability.md) |
+| ANE 慢：是工作集、dispatch 地板还是算力 | [roofline 与 dispatch](../wiki/ane-roofline-dispatch.md) |
+| 放 CPU / GPU / ANE 哪个、batch 拐点在哪 | [放置](../wiki/ane-placement.md) |
+| ANE 编译被拒、形状不对、出现 inf | [形状与数值契约](../wiki/ane-shape-numerics.md) |
+| ANE 权重压缩选哪种、为什么没变快 | [权重形式](../wiki/ane-weights.md) |
+| ANE 计时、常驻状态、能观测什么 | [执行与测量](../wiki/ane-execution-measurement.md) |
+| 查 ANE 操作状态、每代限制、预算数字 | [速查表](../wiki/ane-quick-reference.md)、[机器可读表](../data/ane-tables.json) |
 | MSL 写法、地址空间、packed 对齐、barrier 与精度 | [编程与有限检查](../wiki/msl-programming.md) |
 | MSL 矩阵乘、fragment、累加精度、M/N/K tail | [公开 API、Steel 模式与本地数值边界](../wiki/msl-matrix.md) |
 | MSL F32除法、fast/precise、数学模式、同值输入存储差异 | [函数精度与未解释舍入差异](../wiki/msl-f32-divide.md) |

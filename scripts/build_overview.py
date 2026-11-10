@@ -56,6 +56,8 @@ def draft(data, language):
     common = {
         "measurement", "runtime-measurement", "metal-capabilities", "metal-memory-threadgroups",
         "metal-profiling", "metal-tensors", "attention", "gemm-moe", "quantization", "fusion",
+        "ane-reachability", "ane-roofline-dispatch", "ane-placement", "ane-shape-numerics",
+        "ane-weights", "ane-execution-measurement",
     }
     groups = [
         ("C", "Deployment and serving", "部署与服务", [page for page in pages if page["id"] in deployment]),

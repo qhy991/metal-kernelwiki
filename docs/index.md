@@ -13,9 +13,9 @@ style: 80
 
 | 内容 | 数量 |
 |---|---|
-| 主题 | 44 |
-| 英文伴读版 | 44 |
-| 来源条目 | 177 |
+| 主题 | 51 |
+| 英文伴读版 | 51 |
+| 来源条目 | 178 |
 | 本地实验来源 | 25 |
 
 所有主题都有英文伴读版，覆盖机制、主要结果与限制。中文保留详细表格、代码和历史记录。
@@ -64,10 +64,11 @@ style: 80
 | [MSL softmax 计时：线程分工、分块与实际调用成本](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-softmax-timing.md) | [MSL softmax timing: full call cost and statistical scope](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-softmax-timing.md) | locally-measured |
 | [MSL tile 优化：直接装载、跨 SIMD 共享与 BK 的代价](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-tiles.md) | [MSL tiles: direct loading, shared operands and BK tradeoffs](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-tiles.md) | locally-measured |
 
-## E 本地观测与失败边界 (16 topics)
+## E 本地观测与失败边界 (17 topics)
 
 | 中文主题 | English guide | 证据来源 |
 |---|---|---|
+| [ANE 速查：187 行操作矩阵、每代限制与预算数字](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-quick-reference.md) | [ANE quick reference: 187-row operation matrix, per-generation limits and budget numbers](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-quick-reference.md) | source-reported |
 | [llama.cpp Metal Attention：分派、量化 KV 与临时内存](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-fa-paths.md) | [llama.cpp Metal FA: dispatch, quantized KV and temporary memory](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-fa-paths.md) | source-reported |
 | [llama.cpp Metal 验证：防止空跑，定位数值差异](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-validation.md) | [llama.cpp Metal validation: executed cases, numerical scope and timing](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-validation.md) | source-reported |
 | [M4 本地观测：attention、量化 matmul 与 capture](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/local-mlx-m4.md) | [Local M4 baseline: SDPA, quantized matmul and tool limits](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/local-mlx-m4.md) | locally-measured |
@@ -85,10 +86,16 @@ style: 80
 | [SwiGLU：已有编译函数、显式表达式与自定义 Metal](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-swiglu.md) | [SwiGLU: existing compiled helpers and custom Metal arithmetic](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-swiglu.md) | locally-measured |
 | [量化矩阵乘的数值与性能路径](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/quantized-matmul-validation.md) | [Quantized matmul: separate quantization loss, decoding and execution error](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/quantized-matmul-validation.md) | source-reported |
 
-## F 机制、硬件与测量 (10 topics)
+## F 机制、硬件与测量 (16 topics)
 
 | 中文主题 | English guide | 证据来源 |
 |---|---|---|
+| [ANE 执行与测量：compile-once、常驻状态与可观测边界](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-execution-measurement.md) | [ANE execution and measurement: compile once, resident state, and the observability boundary](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-execution-measurement.md) | source-reported |
+| [ANE 放置：按类别、batch 与能耗在 CPU / GPU / ANE 之间取舍](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-placement.md) | [ANE placement: class, batch and energy decide between CPU, GPU and ANE](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-placement.md) | source-reported |
+| [ANE 能力面：宣称、可编译与真正可执行](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-reachability.md) | [ANE capability surface: advertised, compilable, actually executable](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-reachability.md) | source-reported |
+| [ANE roofline 与 dispatch 成本模型](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-roofline-dispatch.md) | [ANE roofline and dispatch cost model](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-roofline-dispatch.md) | source-reported |
+| [ANE 形状与数值契约：validator 上限、布局与饱和边界](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-shape-numerics.md) | [ANE shape and numeric contract: validator limits, layout and saturation edges](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-shape-numerics.md) | source-reported |
+| [ANE 权重形式：int4 LUT、结构化稀疏与 int8 的 stream/fold](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-weights.md) | [ANE weight forms: int4 LUT, structured sparsity and int8 stream-or-fold](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-weights.md) | source-reported |
 | [Attention：prefill、decode 与 GQA](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/attention.md) | [Attention: separate prefill, decode and GQA paths](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/attention.md) | inferred |
 | [融合与提交：小算子和 command buffer 开销](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/fusion.md) | [Fusion and submission: establish the source of overhead](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/fusion.md) | inferred |
 | [GEMM、GEMV、Split-K 与 MoE gather](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/gemm-moe.md) | [GEMM, GEMV and MoE: choose algorithms for actual shapes](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/gemm-moe.md) | source-reported |

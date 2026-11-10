@@ -13,9 +13,9 @@ The skill retrieves deployment and kernel knowledge for Apple Silicon, MLX and l
 
 | Item | Count |
 |---|---|
-| Topics | 44 |
-| English companions | 44 |
-| Registered sources | 177 |
+| Topics | 51 |
+| English companions | 51 |
+| Registered sources | 178 |
 | Local-experiment sources | 25 |
 
 English guides cover mechanisms, main observations and limits. Chinese records retain full tables, code and history.
@@ -64,10 +64,11 @@ The thin skill points to this repository. It does not duplicate the wiki.
 | [MSL softmax timing: full call cost and statistical scope](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-softmax-timing.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-softmax-timing.md) | locally-measured |
 | [MSL tiles: direct loading, shared operands and BK tradeoffs](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/msl-tiles.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/msl-tiles.md) | locally-measured |
 
-## E Local observations and failure boundaries (16 topics)
+## E Local observations and failure boundaries (17 topics)
 
 | English topic | 中文 record | Evidence basis |
 |---|---|---|
+| [ANE quick reference: 187-row operation matrix, per-generation limits and budget numbers](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-quick-reference.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-quick-reference.md) | source-reported |
 | [llama.cpp Metal FA: dispatch, quantized KV and temporary memory](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-fa-paths.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-fa-paths.md) | source-reported |
 | [llama.cpp Metal validation: executed cases, numerical scope and timing](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/llamacpp-validation.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/llamacpp-validation.md) | source-reported |
 | [Local M4 baseline: SDPA, quantized matmul and tool limits](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/local-mlx-m4.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/local-mlx-m4.md) | locally-measured |
@@ -85,10 +86,16 @@ The thin skill points to this repository. It does not duplicate the wiki.
 | [SwiGLU: existing compiled helpers and custom Metal arithmetic](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/mlx-swiglu.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/mlx-swiglu.md) | locally-measured |
 | [Quantized matmul: separate quantization loss, decoding and execution error](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/quantized-matmul-validation.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/quantized-matmul-validation.md) | source-reported |
 
-## F Mechanisms, hardware and measurement (10 topics)
+## F Mechanisms, hardware and measurement (16 topics)
 
 | English topic | 中文 record | Evidence basis |
 |---|---|---|
+| [ANE execution and measurement: compile once, resident state, and the observability boundary](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-execution-measurement.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-execution-measurement.md) | source-reported |
+| [ANE placement: class, batch and energy decide between CPU, GPU and ANE](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-placement.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-placement.md) | source-reported |
+| [ANE capability surface: advertised, compilable, actually executable](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-reachability.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-reachability.md) | source-reported |
+| [ANE roofline and dispatch cost model](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-roofline-dispatch.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-roofline-dispatch.md) | source-reported |
+| [ANE shape and numeric contract: validator limits, layout and saturation edges](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-shape-numerics.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-shape-numerics.md) | source-reported |
+| [ANE weight forms: int4 LUT, structured sparsity and int8 stream-or-fold](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/ane-weights.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/ane-weights.md) | source-reported |
 | [Attention: separate prefill, decode and GQA paths](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/attention.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/attention.md) | inferred |
 | [Fusion and submission: establish the source of overhead](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/fusion.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/fusion.md) | inferred |
 | [GEMM, GEMV and MoE: choose algorithms for actual shapes](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/en/gemm-moe.md) | [中文](https://github.com/qhy991/metal-kernelwiki/blob/main/wiki/gemm-moe.md) | source-reported |

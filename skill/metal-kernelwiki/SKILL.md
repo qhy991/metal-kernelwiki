@@ -1,6 +1,6 @@
 ---
 name: metal-kernelwiki
-description: Retrieve and maintain evidence-backed Metal LLM deployment and kernel optimization knowledge for Apple Silicon, MLX/MLX-LM and llama.cpp. Use for slow prefill/TTFT or decode, quantization, KV cache, batching, attention/GEMM/MoE, MSL programming and optimization (address spaces, SIMD reductions, vector layout, specialization), unified memory pressure and Metal profiling. Also matches MSL 用法、MSL 优化、Metal 优化、Mac 本地大模型部署、MLX 推理慢. Excludes generic graphics, CUDA-only work and ANE-only conversion.
+description: Retrieve and maintain evidence-backed Metal LLM deployment and kernel optimization knowledge for Apple Silicon, MLX/MLX-LM and llama.cpp. Use for slow prefill/TTFT or decode, quantization, KV cache, batching, attention/GEMM/MoE, MSL programming and optimization (address spaces, SIMD reductions, vector layout, specialization), unified memory pressure and Metal profiling. Also matches MSL 用法、MSL 优化、Metal 优化、Mac 本地大模型部署、MLX 推理慢、Apple Neural Engine、ANE 放置、ANE roofline、ANE 权重压缩、Core ML 选引擎. Excludes generic graphics and CUDA-only work.
 ---
 
 # Metal KernelWiki
@@ -55,6 +55,8 @@ synchronization contracts, then `msl-optimization` for implementation patterns.
 Inspect framework-generated signatures and actual strides; source-level vectors,
 thread arrays and specialization do not prove vector instructions, register
 residency or a speedup. Match language-version rules to the installed toolchain.
+
+For an Apple Neural Engine question, start with `ane-reachability` (what actually compiles and runs on the target family), then `ane-roofline-dispatch` (working set, dispatch floor, cost model), `ane-placement` (CPU/GPU/ANE choice by class, batch and energy), `ane-shape-numerics` (validator limits, layout and saturation edges), `ane-weights` (stream versus fold by generation) and `ane-execution-measurement` (compile-once, resident state and what is observable). The `ane-quick-reference` topic and `data/ane-tables.json` hold the mined tables (187 operation rows, per-generation limits, 28 compiler targets, 119 numeric rows) for lookups. Those topics summarize a third-party reverse-engineering paper and carry no local measurement; keep the paper's measured/decompiled/predicted marks and never turn them into a local guarantee.
 
 For maintenance, read `knowledge/MAINTENANCE.md` or `knowledge/MAINTENANCE.en.md`, retain source/version/scope,
 update the relevant page and catalog, then validate and exercise retrieval.

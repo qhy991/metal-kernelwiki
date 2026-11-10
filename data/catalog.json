@@ -647,6 +647,22 @@
       "先转换再除法",
       "单独转换",
       "物化"
+    ],
+    "ane": [
+      "apple neural engine",
+      "neural engine",
+      "神经引擎",
+      "神经处理单元",
+      "npu",
+      "ne"
+    ],
+    "coreml": [
+      "core ml",
+      "core-ml",
+      "coreml",
+      "mlprogram",
+      "ml program",
+      "espresso"
     ]
   },
   "pages": [
@@ -2570,6 +2586,268 @@
           "edition": "companion"
         }
       }
+    },
+    {
+      "id": "ane-reachability",
+      "title": "ANE 能力面：宣称、可编译与真正可执行",
+      "path": "wiki/ane-reachability.md",
+      "type": "hardware",
+      "engines": [
+        "ane"
+      ],
+      "tags": [
+        "ane",
+        "reachability",
+        "capability",
+        "operation-matrix",
+        "family-floor",
+        "compile-and-run",
+        "coreml"
+      ],
+      "symptoms": [
+        "ane-op-not-running",
+        "ane-compile-reject",
+        "ane-family-gate",
+        "ane-capability-doubt"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "ane-paper-2606-22283-v2"
+      ],
+      "summary": "先分家族地板与编译路线，再用目标芯片的编译加运行确认算子，而不是读能力位。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/ane-reachability.md",
+          "title": "ANE capability surface: advertised, compilable, actually executable",
+          "summary": "Name the family floor and compile route, then confirm an op by compiling and running it.",
+          "edition": "companion"
+        }
+      }
+    },
+    {
+      "id": "ane-roofline-dispatch",
+      "title": "ANE roofline 与 dispatch 成本模型",
+      "path": "wiki/ane-roofline-dispatch.md",
+      "type": "technique",
+      "engines": [
+        "ane"
+      ],
+      "tags": [
+        "ane",
+        "roofline",
+        "dispatch-floor",
+        "fusion",
+        "working-set",
+        "cost-model"
+      ],
+      "symptoms": [
+        "ane-slow-small-op",
+        "ane-bandwidth-bound",
+        "ane-underutilized",
+        "ane-fusion-candidate"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "ane-paper-2606-22283-v2"
+      ],
+      "summary": "按工作集、dispatch 地板、脊点的顺序定位一个 ANE 层，并带上成本模型的保真度边界。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/ane-roofline-dispatch.md",
+          "title": "ANE roofline and dispatch cost model",
+          "summary": "Locate an ANE layer by working set, dispatch floor, then ridge, with its error bars.",
+          "edition": "companion"
+        }
+      }
+    },
+    {
+      "id": "ane-placement",
+      "title": "ANE 放置：按类别、batch 与能耗在 CPU / GPU / ANE 之间取舍",
+      "path": "wiki/ane-placement.md",
+      "type": "deployment",
+      "engines": [
+        "ane",
+        "metal"
+      ],
+      "tags": [
+        "ane",
+        "placement",
+        "gpu",
+        "cpu",
+        "energy",
+        "batch",
+        "decode",
+        "prefill"
+      ],
+      "symptoms": [
+        "ane-wrong-device",
+        "ane-decode-slow",
+        "ane-batch-crossover",
+        "gpu-ane-split"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "ane-paper-2606-22283-v2"
+      ],
+      "summary": "decode 与大方阵 GEMM 归 GPU，卷积/视觉/短序列 attention 归 ANE，琐碎算子归 CPU。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/ane-placement.md",
+          "title": "ANE placement: class, batch and energy decide between CPU, GPU and ANE",
+          "summary": "GPU for decode and large GEMM, ANE for conv and short attention, CPU below the floor.",
+          "edition": "companion"
+        }
+      }
+    },
+    {
+      "id": "ane-shape-numerics",
+      "title": "ANE 形状与数值契约：validator 上限、布局与饱和边界",
+      "path": "wiki/ane-shape-numerics.md",
+      "type": "technique",
+      "engines": [
+        "ane"
+      ],
+      "tags": [
+        "ane",
+        "validator",
+        "shape-limits",
+        "layout",
+        "fp16",
+        "saturation",
+        "numerics"
+      ],
+      "symptoms": [
+        "ane-shape-reject",
+        "ane-silent-inf",
+        "ane-padding-slow",
+        "ane-numeric-mismatch"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "ane-paper-2606-22283-v2"
+      ],
+      "summary": "先用 validator 表与对齐规则排除不可能的形状，再核对饱和、NaN 与 denormal 的边界语义。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/ane-shape-numerics.md",
+          "title": "ANE shape and numeric contract: validator limits, layout and saturation edges",
+          "summary": "Rule out impossible shapes, then check saturation, NaN and denormal boundaries.",
+          "edition": "companion"
+        }
+      }
+    },
+    {
+      "id": "ane-weights",
+      "title": "ANE 权重形式：int4 LUT、结构化稀疏与 int8 的 stream/fold",
+      "path": "wiki/ane-weights.md",
+      "type": "technique",
+      "engines": [
+        "ane"
+      ],
+      "tags": [
+        "ane",
+        "quantization",
+        "weight-compression",
+        "int4",
+        "sparsity",
+        "int8",
+        "bandwidth"
+      ],
+      "symptoms": [
+        "ane-weight-bandwidth",
+        "ane-quant-no-gain",
+        "ane-weight-stream"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "ane-paper-2606-22283-v2"
+      ],
+      "summary": "按代际先判 stream 还是 fold 再选形态；量化只减流字节，不改 fp16 MAC。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/ane-weights.md",
+          "title": "ANE weight forms: int4 LUT, structured sparsity and int8 stream-or-fold",
+          "summary": "Decide stream versus fold per generation, then pick a form; bytes fall, fp16 MAC does not.",
+          "edition": "companion"
+        }
+      }
+    },
+    {
+      "id": "ane-execution-measurement",
+      "title": "ANE 执行与测量：compile-once、常驻状态与可观测边界",
+      "path": "wiki/ane-execution-measurement.md",
+      "type": "profiling",
+      "engines": [
+        "ane"
+      ],
+      "tags": [
+        "ane",
+        "execution-model",
+        "dispatch",
+        "resident-state",
+        "measurement",
+        "telemetry",
+        "coreml"
+      ],
+      "symptoms": [
+        "ane-dispatch-overhead",
+        "ane-measurement-trap",
+        "ane-kv-resident",
+        "ane-timing"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "ane-paper-2606-22283-v2"
+      ],
+      "summary": "把编译移出循环、用状态别名省拷贝，并只信整机级字节/能量通道。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/ane-execution-measurement.md",
+          "title": "ANE execution and measurement: compile once, resident state, and the observability boundary",
+          "summary": "Hoist compilation, alias state buffers, and trust only byte and energy channels.",
+          "edition": "companion"
+        }
+      }
+    },
+    {
+      "id": "ane-quick-reference",
+      "title": "ANE 速查：187 行操作矩阵、每代限制与预算数字",
+      "path": "wiki/ane-quick-reference.md",
+      "type": "hardware",
+      "engines": [
+        "ane"
+      ],
+      "tags": [
+        "ane",
+        "reference",
+        "operation-matrix",
+        "chip-limits",
+        "roofline",
+        "weight-forms",
+        "dataset",
+        "per-class-numbers",
+        "energy-by-class"
+      ],
+      "symptoms": [
+        "ane-lookup-table",
+        "ane-op-status",
+        "ane-limit-check",
+        "ane-budget-number",
+        "ane-class-numbers"
+      ],
+      "confidence": "source-reported",
+      "sources": [
+        "ane-paper-2606-22283-v2"
+      ],
+      "summary": "六页 ANE 主题的数据索引：操作矩阵、每代限制与预算数字，附机器可读表。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/ane-quick-reference.md",
+          "title": "ANE quick reference: 187-row operation matrix, per-generation limits and budget numbers",
+          "summary": "Data index for the ANE topics: operation matrix, limits, budget numbers.",
+          "edition": "companion"
+        }
+      }
     }
   ],
   "sources": [
@@ -4342,6 +4620,16 @@
       "mutable": false,
       "artifact_ref": "2026-10-08-msl-divide-provenance/derived/summary.json",
       "note": "One contiguous N16384 domain, TG128. Three divide outputs plus one promotion,3 metadata,7 wrappers,9 events independently CPU audited; exact quality3/3 pass, promotion bits exact. Inline has1248 non-RNE and1232 neither-RNE-nor-RTZ; GPU-materialized F32 and CPU-F32 controls are bitwise equal and match RNE. Shared consumer wrapper/launch and12 host identity links verified; no actual dispatch/resource/compiler-pass or speed claim. Old difference retained; raw records unpublished."
+    },
+    {
+      "id": "ane-paper-2606-22283-v2",
+      "title": "Apple Neural Engine: Architecture, Programming, and Performance (arXiv:2606.22283v2)",
+      "url": "https://arxiv.org/abs/2606.22283",
+      "kind": "research-paper",
+      "checked": "2026-11-10",
+      "revision": "arXiv:2606.22283v2, PDF dated 2026-10-15; 303 pages, 12 figures, 218 tables",
+      "mutable": false,
+      "note": "第三方逆向工程报告（S. Bryngelson），M1/M5 实测+反编译，逐条标注 measured/decompile-derived/predicted；不是 Apple 文档，也不含本机复测。私有直连路径仅用于测量与研究。"
     }
   ]
 }
