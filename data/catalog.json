@@ -2888,6 +2888,44 @@
           "edition": "companion"
         }
       }
+    },
+    {
+      "id": "ane-coreml-weight-axis",
+      "title": "Core ML 只接受沿输出轴分组的权重：ANE 上 sub-8-bit 的结构性边界",
+      "path": "wiki/ane-coreml-weight-axis.md",
+      "type": "technique",
+      "engines": [
+        "ane"
+      ],
+      "tags": [
+        "ane",
+        "coremltools",
+        "quantization",
+        "weight-compression",
+        "int8",
+        "int4",
+        "placement",
+        "huggingface"
+      ],
+      "symptoms": [
+        "ane-quant-no-gain",
+        "ane-op-not-running",
+        "ane-wrong-device",
+        "ane-weight-bandwidth"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "local-ane-coreml-axis-20261110"
+      ],
+      "summary": "分组的轴决定落点：输出轴可上 ANE，输入轴判给 CPU；HF 的 4-bit 格式全是输入轴分组，必须重编码。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/ane-coreml-weight-axis.md",
+          "title": "Core ML groups weights along the output axis only: the structural limit on sub-8-bit for the ANE",
+          "summary": "The grouping axis decides placement; published 4-bit checkpoints all group along the input axis and must be re-encoded.",
+          "edition": "companion"
+        }
+      }
     }
   ],
   "sources": [
@@ -4680,6 +4718,16 @@
       "mutable": false,
       "note": "一手测量：算子拼写与放置、split-K 的形状/芯片扫描、调色板码本数的时延、32 层常驻切换代价、residency 的 vm_stat 观测。真实训练权重与随机权重分别标注。时延为中位数，Core ML 侧用 last_predict_duration（引擎内时间），直连后端侧为墙钟。精度为单矩阵相对 rmse 对 float64 oracle，不是模型验收；无功耗测量；未在 M3/M5 复核。原始回执保留在仓库外的实验目录。",
       "artifact_ref": "2026-11-10-ane-write-levers/receipts/summary.json"
+    },
+    {
+      "id": "local-ane-coreml-axis-20261110",
+      "title": "Core ML weight-encoding placement axis on M1 Pro / M2 / M4",
+      "kind": "local-experiment",
+      "checked": "2026-11-10",
+      "revision": "coremltools 9.0, macOS 27.0.1; M4 Mac16,10 under the host Metal lock, M2 shared host, M1 Pro prior run 2026-10-16",
+      "mutable": false,
+      "note": "Operator-level placement read from MLComputePlan without execution, plus package bytes, host wired delta over seven fresh processes per cell, and relative RMSE against a float64 oracle. The axis sweep is built on the raw constexpr_lut_to_dense op, which accepts groupings the public compression APIs do not expose. No model acceptance, no profiler analysis, no private API. Raw records and scripts are retained externally (apxinf-metal PR 92, devlocal/ane-weight-formats) and are not included in this public repository.",
+      "artifact_ref": "2026-11-10-ane-coreml-axis/receipts/placement.json"
     }
   ]
 }
