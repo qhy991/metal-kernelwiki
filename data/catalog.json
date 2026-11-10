@@ -2848,6 +2848,46 @@
           "edition": "companion"
         }
       }
+    },
+    {
+      "id": "ane-write-level-levers",
+      "title": "ANE 写法杠杆：算子拼写、split-K 与调色板粒度的本机实测",
+      "path": "wiki/ane-write-level-levers.md",
+      "type": "technique",
+      "engines": [
+        "ane"
+      ],
+      "tags": [
+        "ane",
+        "layout",
+        "quantization",
+        "placement",
+        "tiling",
+        "split-k",
+        "palette",
+        "residency"
+      ],
+      "symptoms": [
+        "ane-op-not-running",
+        "ane-wrong-device",
+        "ane-quant-no-gain",
+        "ane-lookup-table",
+        "ane-underutilized",
+        "ane-measurement-trap"
+      ],
+      "confidence": "locally-measured",
+      "sources": [
+        "local-ane-write-levers-20261110"
+      ],
+      "summary": "换后端最多 1.2x，换写法最多 9.7x：batch-1 的 linear/matmul 掉 CPU 而 1x1 conv 上 ANE，split-K 在大 K 上值 2.5x，调色板码本数选错慢 3-10x。",
+      "translations": {
+        "en": {
+          "path": "wiki/en/ane-write-level-levers.md",
+          "title": "ANE write-level levers: op spelling, split-K and palette granularity, measured locally",
+          "summary": "Backend buys 1.2x, spelling buys 9.7x: linear/matmul fall to CPU at batch 1, split-K pays 2.5x at large K, palette table count costs 3-10x.",
+          "edition": "companion"
+        }
+      }
     }
   ],
   "sources": [
@@ -4630,6 +4670,16 @@
       "revision": "arXiv:2606.22283v2, PDF dated 2026-10-15; 303 pages, 12 figures, 218 tables",
       "mutable": false,
       "note": "第三方逆向工程报告（S. Bryngelson），M1/M5 实测+反编译，逐条标注 measured/decompile-derived/predicted；不是 Apple 文档，也不含本机复测。私有直连路径仅用于测量与研究。"
+    },
+    {
+      "id": "local-ane-write-levers-20261110",
+      "title": "ANE write-level lever measurements on M1 Pro / M4 / M2 (2026-11-10)",
+      "kind": "local-experiment",
+      "checked": "2026-11-10",
+      "revision": "macOS 27.0.1 (26A434), coremltools 9.0, MLX 0.32.4; M2 laptop, M1 Pro 16-core ANE, M4 mac mini",
+      "mutable": false,
+      "note": "一手测量：算子拼写与放置、split-K 的形状/芯片扫描、调色板码本数的时延、32 层常驻切换代价、residency 的 vm_stat 观测。真实训练权重与随机权重分别标注。时延为中位数，Core ML 侧用 last_predict_duration（引擎内时间），直连后端侧为墙钟。精度为单矩阵相对 rmse 对 float64 oracle，不是模型验收；无功耗测量；未在 M3/M5 复核。原始回执保留在仓库外的实验目录。",
+      "artifact_ref": "2026-11-10-ane-write-levers/receipts/summary.json"
     }
   ]
 }
